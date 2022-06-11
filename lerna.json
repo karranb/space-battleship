@@ -1,0 +1,8 @@
+{
+  "packages": [
+    "node_server",
+    "phaser_game",
+    "shared"
+  ],
+  "version": "0.0.0"
+}

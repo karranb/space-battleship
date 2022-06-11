@@ -1,0 +1,15 @@
+0 silly argv {
+0 silly argv   _: [ 'create' ],
+0 silly argv   lernaVersion: '4.0.0',
+0 silly argv   '$0': '/usr/local/bin/lerna',
+0 silly argv   name: 'shared'
+0 silly argv }
+1 notice cli v4.0.0
+2 verbose rootPath /Users/karranbesen/repositories/game
+3 error Error: Invalid package name "@shared": name can only contain URL-friendly characters
+3 error     at invalidPackageName (/Users/karranbesen/repositories/game/node_modules/npm-package-arg/npa.js:84:15)
+3 error     at Result.setName (/Users/karranbesen/repositories/game/node_modules/npm-package-arg/npa.js:119:11)
+3 error     at new Result (/Users/karranbesen/repositories/game/node_modules/npm-package-arg/npa.js:110:10)
+3 error     at Function.resolve (/Users/karranbesen/repositories/game/node_modules/npm-package-arg/npa.js:54:15)
+3 error     at new Package (/Users/karranbesen/repositories/game/node_modules/@lerna/package/index.js:95:26)
+3 error     at /Users/karranbesen/repositories/game/node_modules/@lerna/project/index.js:207:26

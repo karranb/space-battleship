@@ -1,0 +1,37 @@
+{
+  "name": "phaser_game",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "karranb <karranrb@gmail.com>",
+  "main": "dist/phaser_game.js",
+  "directories": {
+    "dist": "dist"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint --ext .ts,.tsx src/",
+    "prettier": "prettier --write src/**/*.{js,jsx,ts,tsx,json,css,scss,md}"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "@typescript-eslint/parser": "^5.20.0",
+    "eslint": "^8.13.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.6.2",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.5"
+  },
+  "dependencies": {
+    "normalize.css": "^8.0.1",
+    "phaser": "^3.55.2",
+    "shared": "^1.0.0",
+    "socket.io-client": "^4.5.0",
+    "vite-tsconfig-paths": "^3.4.1"
+  }
+}
