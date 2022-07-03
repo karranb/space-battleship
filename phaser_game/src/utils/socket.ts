@@ -1,4 +1,4 @@
-import { Commands } from 'shared'
+import { Commands } from 'interfaces/shared'
 import { Socket } from 'socket.io-client'
 
 export type SocketSceneOpenHandler = () => void
@@ -7,26 +7,26 @@ export type SocketHandlerIndex = {
   [key in Commands]?: (value: string) => void
 }
 
-export const createSocketHandler = (
-  webSocketClient: Socket,
-  handleIndex: SocketHandlerIndex,
-  openHandler: SocketSceneOpenHandler,
-  closeHandler: SocketSceneCloseHandler
-): void => {
-  webSocketClient.on('connect', openHandler)
-  webSocketClient.on('disconnect', closeHandler)
-  Object.entries(handleIndex).forEach(([key, value]) => {
-    webSocketClient.on(key, value)
-  })
-}
+// export const createSocketHandler = (
+//   webSocketClient: Socket,
+//   handleIndex: SocketHandlerIndex,
+//   openHandler: SocketSceneOpenHandler,
+//   closeHandler: SocketSceneCloseHandler
+// ): void => {
+//   webSocketClient.on('connect', openHandler)
+//   webSocketClient.on('disconnect', closeHandler)
+//   Object.entries(handleIndex).forEach(([key, value]) => {
+//     webSocketClient.on(key, value)
+//   })
+// }
 
-export const destroySocketHandler = (webSocketClient: Socket): void => {
-  webSocketClient.off()
-}
+// export const destroySocketHandler = (webSocketClient: Socket): void => {
+//   webSocketClient.off()
+// }
 
-export const socketSend = (webSocketClient: Socket, command: Commands, value?: string): void => {
-  webSocketClient.emit(command, value)
-}
+// export const socketSend = (webSocketClient: Socket, command: Commands, value?: string): void => {
+//   webSocketClient.emit(command, value)
+// }
 
 export class BaseSocketHandler {
   protected webSocketClient: Socket
@@ -52,6 +52,7 @@ export class BaseSocketHandler {
     openHandler: SocketSceneOpenHandler,
     closeHandler: SocketSceneCloseHandler
   ): void  {
+    this.webSocketClient.off()
     this.webSocketClient.on('connect', openHandler)
     this.webSocketClient.on('disconnect', closeHandler)
     Object.entries(handleIndex).forEach(([key, value]) => {

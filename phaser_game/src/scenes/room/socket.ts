@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io-client'
-import { Commands } from 'shared'
+import { Commands } from 'interfaces/shared'
 import { BaseSocketHandler } from 'utils/socket'
 
 class RoomSocketHandler extends BaseSocketHandler {
@@ -7,20 +7,20 @@ class RoomSocketHandler extends BaseSocketHandler {
     super(webSocketClient)
   }
 
-  public destroy(): void{
+  public destroy(): void {
     this.webSocketClient.off()
   }
 
   public sendMessageRefuse(id: string): void {
-    this.webSocketClient.emit(Commands.CHALLENGE_REFUSE, id)
+    this.webSocketClient.emit(Commands.CHALLENGE_CLOSE, id)
   }
 
   public sendMessageAccept(id: string): void {
-    this.webSocketClient.emit(Commands.CHALLENGE_ACCEPT, id)
+    this.webSocketClient.emit(Commands.CHALLENGE_CONFIRM, id)
   }
 
   public sendMessageCancel(id: string): void {
-    this.webSocketClient.emit(Commands.CHALLENGE_CANCEL, id)
+    this.webSocketClient.emit(Commands.CHALLENGE_CLOSE, id)
   }
 
   public sendChallenge(id: string): void {
@@ -45,20 +45,20 @@ class RoomSocketHandler extends BaseSocketHandler {
     handleUserConnected,
     handleRoomMessage,
     handleChallenge,
-    handleChallengeSent,
     handleAcceptChallenge,
-    handleCancelChallenge,
-    handleRefuseChallenge,
+    handleCloseChallenge,
+    handleErrorChallenge,
+    handleDisconnect
   }: {
     handleGetUsersList: (value: string) => void
     handleUserDisconnected: (value: string) => void
     handleUserConnected: (value: string) => void
     handleRoomMessage: (value: string) => void
     handleChallenge: (value: string) => void
-    handleChallengeSent: (value: string) => void
     handleAcceptChallenge: (value: string) => void
-    handleCancelChallenge: (value: string) => void
-    handleRefuseChallenge: (value: string) => void
+    handleCloseChallenge: (value: string) => void
+    handleErrorChallenge: (value: string) => void
+    handleDisconnect: () => void
   }): void {
     const socketMessageHandlers = {
       [Commands.GET_USERS_LIST]: handleGetUsersList,
@@ -66,15 +66,14 @@ class RoomSocketHandler extends BaseSocketHandler {
       [Commands.NEW_USER_SET]: handleUserConnected,
       [Commands.ROOM_MESSAGE]: handleRoomMessage,
       [Commands.CHALLENGE]: handleChallenge,
-      [Commands.CHALLENGE_SENT]: handleChallengeSent,
-      [Commands.CHALLENGE_ACCEPT]: handleAcceptChallenge,
-      [Commands.CHALLENGE_CANCEL]: handleCancelChallenge,
-      [Commands.CHALLENGE_REFUSE]: handleRefuseChallenge,
+      [Commands.CHALLENGE_CONFIRM]: handleAcceptChallenge,
+      [Commands.CHALLENGE_CLOSE]: handleCloseChallenge,
+      [Commands.COMMAND_ERROR]: handleErrorChallenge,
     }
     this.setSocketListeners(
       socketMessageHandlers,
       () => null,
-      () => null
+      handleDisconnect
     )
   }
 }

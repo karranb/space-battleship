@@ -1,5 +1,4 @@
 > TODO: 
 
-- setup dotenv
+- validate messages
 - readme
-- tests

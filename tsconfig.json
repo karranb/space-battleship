@@ -8,9 +8,8 @@
     "declarationMap": true,
 
     "target": "ESNext",
-    "module": "esnext",
+    "module": "ESNext",
     "lib": ["ESNext", "DOM"],
-
 
     /* Strict Type-Checking Options */
     "strict": true,

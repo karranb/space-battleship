@@ -1,5 +1,6 @@
 import Player from 'models/player'
 import SingleBullet from 'models/weapons/single-bullet'
+import Game from 'scenes/game'
 
 export type BaseSpaceshipProps = {
   x: number
@@ -7,18 +8,18 @@ export type BaseSpaceshipProps = {
   life: number
   maxLife: number
   speed: number
-  scene: Phaser.Scene
-  texture: string
+  scene: Game
   angle: number
   id?: number
   state?: 'MOVING' | 'STOPPED' | 'DESTROYED'
   owner?: Player
+  textures: { parent: string; moving: string; stopped: string }
 }
 
-abstract class BaseSpaceship extends Phaser.GameObjects.Sprite {
+abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
   x: number
   y: number
-  scene: Phaser.Scene
+  scene: Game
   angle: number
   state = 'STOPPED'
 
@@ -32,6 +33,7 @@ abstract class BaseSpaceship extends Phaser.GameObjects.Sprite {
   protected pathGraphic?: Phaser.GameObjects.Graphics
   protected targetSprite?: Phaser.GameObjects.Sprite
   protected owner?: Player
+  protected textures: { parent: string; moving: string; stopped: string }
 
   constructor({
     scene,
@@ -41,25 +43,28 @@ abstract class BaseSpaceship extends Phaser.GameObjects.Sprite {
     maxLife,
     speed,
     angle,
-    texture,
+    textures,
     owner,
     id,
   }: BaseSpaceshipProps) {
-    super(scene, x, y, texture)
+    super(scene, x, y, textures.parent)
+    this.textures = textures
+    this.play(textures.stopped)
     this.id = id
     this.scene = scene
     this.scene.add.existing(this)
     this.scene.physics.add.existing(this)
     this.body.debugBodyColor = 0xffffff
     this.setDisplaySize(36.8, 50)
-    this.setOrigin(0.3, 0.5)
+    this.setOrigin(0.5, 0.45)
+    this.setCircle(80, -5, 5)
     this.x = x
     this.y = y
     this.life = life
     this.maxLife = maxLife
     this.speed = speed
-    this.angle = angle
     this.owner = owner
+    this.angle = angle
     this.setAngle(angle)
     this.setRotation(Phaser.Math.DegToRad(angle))
   }
@@ -91,6 +96,7 @@ abstract class BaseSpaceship extends Phaser.GameObjects.Sprite {
     this.pathGraphic?.destroy()
     this.targetSprite?.destroy()
     if (this.destination) {
+      this.play(this.textures.moving)
       this.state = 'MOVING'
       this.scene.physics.moveToObject(this, this.destination, 50)
       const angle = Phaser.Math.Angle.Between(
@@ -99,7 +105,7 @@ abstract class BaseSpaceship extends Phaser.GameObjects.Sprite {
         this.destination.x,
         this.destination.y
       )
-      this.setRotation(angle)
+      this.setRotation(angle + Phaser.Math.DegToRad(90))
     }
   }
 
@@ -114,6 +120,7 @@ abstract class BaseSpaceship extends Phaser.GameObjects.Sprite {
     if (this.destination) {
       this.body.setVelocity(0, 0)
     }
+    this.play(this.textures.stopped)
     this.state = 'STOPPED'
     this.destination = undefined
     this.target = undefined
@@ -127,7 +134,8 @@ abstract class BaseSpaceship extends Phaser.GameObjects.Sprite {
   }
 
   destroy(): void {
-    this.state = 'DESTROYED'
+    this.state = 'DESTROYED'   
+    this.scene?.addExplosion(this.x, this.y) 
     super.destroy()
   }
 

@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import http from 'http'
-import { Commands } from 'shared'
+import { Commands } from 'interfaces/shared'
 
 type MessageListener = (value: string) => void
 

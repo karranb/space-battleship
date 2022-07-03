@@ -9,6 +9,7 @@ export const PHASER_CONFIG = {
     height: HEIGHT,
     orientation: Phaser.Scale.Orientation.LANDSCAPE,
   },
+  antialias: true,
   parent: 'app',
   dom: { createContainer: true },
   title: 'Title',
@@ -16,13 +17,13 @@ export const PHASER_CONFIG = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
-      debugShowBody: true,
-      debugShowStaticBody: true,
-      debugShowVelocity: true,
-      debugVelocityColor: 0xffff00,
-      debugBodyColor: 0x0000ff,
-      debugStaticBodyColor: 0xffffff,
+      // debug: true,
+      // debugShowBody: true,
+      // debugShowStaticBody: true,
+      // debugShowVelocity: true,
+      // debugVelocityColor: 0xffff00,
+      // debugBodyColor: 0x0000ff,
+      // debugStaticBodyColor: 0xffffff,
     },
   },
 }

@@ -1,0 +1,175 @@
+{
+	"frames": {
+		"red-1-move-1.png": {
+			"frame": {
+				"x": 1,
+				"y": 1,
+				"w": 131,
+				"h": 184
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 131,
+				"h": 184
+			},
+			"sourceSize": {
+				"w": 131,
+				"h": 184
+			}
+		},
+		"red-1-move-2.png": {
+			"frame": {
+				"x": 134,
+				"y": 1,
+				"w": 131,
+				"h": 184
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 131,
+				"h": 184
+			},
+			"sourceSize": {
+				"w": 131,
+				"h": 184
+			}
+		},
+		"red-1-move-3.png": {
+			"frame": {
+				"x": 267,
+				"y": 1,
+				"w": 131,
+				"h": 184
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 131,
+				"h": 184
+			},
+			"sourceSize": {
+				"w": 131,
+				"h": 184
+			}
+		},
+		"red-1-move-4.png": {
+			"frame": {
+				"x": 1,
+				"y": 187,
+				"w": 131,
+				"h": 184
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 131,
+				"h": 184
+			},
+			"sourceSize": {
+				"w": 131,
+				"h": 184
+			}
+		},
+		"red-1-move-5.png": {
+			"frame": {
+				"x": 134,
+				"y": 187,
+				"w": 131,
+				"h": 184
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 131,
+				"h": 184
+			},
+			"sourceSize": {
+				"w": 131,
+				"h": 184
+			}
+		},
+		"red-1-move-6.png": {
+			"frame": {
+				"x": 267,
+				"y": 187,
+				"w": 131,
+				"h": 184
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 131,
+				"h": 184
+			},
+			"sourceSize": {
+				"w": 131,
+				"h": 184
+			}
+		},
+		"red-1-move-7.png": {
+			"frame": {
+				"x": 400,
+				"y": 1,
+				"w": 131,
+				"h": 184
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 131,
+				"h": 184
+			},
+			"sourceSize": {
+				"w": 131,
+				"h": 184
+			}
+		},
+		"red-still.png": {
+			"frame": {
+				"x": 400,
+				"y": 187,
+				"w": 131,
+				"h": 158
+			},
+			"rotated": false,
+			"trimmed": false,
+			"spriteSourceSize": {
+				"x": 0,
+				"y": 0,
+				"w": 131,
+				"h": 158
+			},
+			"sourceSize": {
+				"w": 131,
+				"h": 158
+			}
+		}
+	},
+	"meta": {
+		"app": "http://www.codeandweb.com/texturepacker",
+		"version": "1.0",
+		"image": "spritesheet.png",
+		"format": "RGBA8888",
+		"size": {
+			"w": 532,
+			"h": 372
+		},
+		"scale": "1"
+	}
+}

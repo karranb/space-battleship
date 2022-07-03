@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && cp -r dist ../node_server/src/static/game",
     "preview": "vite preview",
     "lint": "eslint --ext .ts,.tsx src/",
     "prettier": "prettier --write src/**/*.{js,jsx,ts,tsx,json,css,scss,md}"
@@ -30,7 +30,6 @@
   "dependencies": {
     "normalize.css": "^8.0.1",
     "phaser": "^3.55.2",
-    "shared": "^1.0.0",
     "socket.io-client": "^4.5.0",
     "vite-tsconfig-paths": "^3.4.1"
   }

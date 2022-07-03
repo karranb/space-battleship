@@ -1,3 +1,4 @@
+import { Commands } from 'interfaces/shared'
 import 'phaser'
 import { SCENES } from 'utils/constants'
 import IdentificationDOMHandler from './dom'
@@ -20,18 +21,21 @@ class Identification extends Phaser.Scene {
 
   setupButtonListener = (): void => {
     const handleSubmit = (): void => {
+      this.DOMHandler?.hideFormContainer()
+      this.DOMHandler?.showLoadingContainer()
       this.socketHandler = new IdentificationSocketHandler(import.meta.env.VITE_SOCKET_SERVER)
 
       const handleSocketOpen = (): void =>
         this.socketHandler?.sendName(this.DOMHandler?.getNicknameInputValue() ?? '')
 
-      const handleNameMessage = (): void => {
-        this.destroy()
-        this.scene.launch(SCENES.Room, {
-          webSocketClient: this.socketHandler?.getWebSocketClient(),
-        })
+      const handleNameMessage = (message: string): void => {
+        const { command } = JSON.parse(message)
+        if (command === Commands.NAME) {
+          this.scene.start(SCENES.Room, {
+            webSocketClient: this.socketHandler?.getWebSocketClient(),
+          })
+        }
       }
-
       this.socketHandler.createIdentificationSocketHandler(handleNameMessage, handleSocketOpen)
     }
 
@@ -46,8 +50,10 @@ class Identification extends Phaser.Scene {
 
   create(): void {
     this.setupButtonListener()
-    this.scale.lockOrientation(`${Phaser.Scale.Orientation.LANDSCAPE}`)
-    // this.scale.startFullscreen();
+
+    setTimeout(() => {
+      window.scrollTo(0, 1)
+    }, 1000)
   }
 }
 

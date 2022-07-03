@@ -1,4 +1,5 @@
 export enum SCENES {
+  Boot = 'Boot',
   Identification = 'Identification',
   Room = 'Room',
   ShipsSelect = 'ShipsSelect',

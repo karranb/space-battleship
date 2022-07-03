@@ -1,5 +1,5 @@
+import { Commands } from 'interfaces/shared'
 import { io } from 'socket.io-client'
-import { Commands } from 'shared'
 import { BaseSocketHandler } from 'utils/socket'
 
 class IdentificationSocketHandler extends BaseSocketHandler {
@@ -16,7 +16,7 @@ class IdentificationSocketHandler extends BaseSocketHandler {
     handleSocketOpen: () => void
   ): void {
     const socketMessageHandlers = {
-      [Commands.NAME]: handleNameMessage,
+      [Commands.COMMAND_PROCESSED]: handleNameMessage,
     }
     this.setSocketListeners(socketMessageHandlers, handleSocketOpen, () => null)
   }

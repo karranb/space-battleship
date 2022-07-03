@@ -4,20 +4,27 @@
 
 html {
   background-color: black;
-
 }
 
-/* @media screen and (max-width: 767px) and (orientation: portrait) {
-  html {
-    /* 
-    transform-origin: left top;
-    width: 100vh;
-    height: 100vw;
-    overflow-x: hidden;
-    position: absolute; */
+input {
+  outline: none;
+}
 
-    /* transform: rotate(90deg); */
-    /* top: 100%;
-    left: 0; */
-  }
-} */
+::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@font-face {
+  font-family: planer;
+  src: url('assets/planer.ttf');
+  font-weight: 400;
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: neuropol;
+  src: url('assets/neuropol.otf');
+  font-weight: 400;
+  font-weight: normal;
+}

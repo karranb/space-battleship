@@ -1,9 +1,6 @@
 import 'phaser'
 
-import { SCENES } from 'utils/constants'
-import spaceshipImage from 'assets/blue-still.png'
-import targetImage from 'assets/target-cursor.png'
-import bulletImage from 'assets/bullet.png'
+import { HEIGHT, SCENES, WIDTH } from 'utils/constants'
 
 import Player from 'models/player'
 import SingleBullet from 'models/weapons/single-bullet'
@@ -11,36 +8,89 @@ import BaseSpaceship from 'models/spaceships/base'
 
 import GameDOMHandler from './dom'
 import { Socket } from 'socket.io-client'
-import { Commands } from 'shared'
+import GameSocketHandler from './socket'
+import { Commands, MAX_ROUNDS } from 'interfaces/shared'
 
 class Game extends Phaser.Scene {
-  private webSocketClient?: Socket
-  private enemy?: string
   gameHandler: GameDOMHandler | undefined
   players: Player[] = []
   bullets: SingleBullet[] = []
   bulletColliders: Phaser.Physics.Arcade.Collider[] = []
   spaceships: BaseSpaceship[] = []
-  state: 'STOPPED' | 'MOVING' = 'STOPPED'
+  state: 'STOPPED' | 'MOVING' | 'WAITING' = 'STOPPED'
   finalOverlap = undefined
   rounds = 0
-  challenger?: boolean
+  challenger?: string
+  challenged?: string
+  choices?: unknown
+  socketHandler?: GameSocketHandler
+  challengedName?: string
+  challengerName?: string
+  returnKey?: Phaser.Input.Keyboard.Key
+  timer?: Phaser.GameObjects.Text
 
   constructor() {
     super(SCENES.Game)
   }
 
-  preload(): void {
-    this.load.image('spaceship', spaceshipImage)
-    this.load.image('target', targetImage)
-    this.load.image('bullet', bulletImage)
+  clear() {
+    this.gameHandler = undefined
+    this.players = []
+    this.bullets = []
+    this.bulletColliders = []
+    this.spaceships = []
+    this.state = 'STOPPED'
+    this.finalOverlap = undefined
+    this.rounds = 0
+    this.challenger = undefined
+    this.challenged = undefined
+    this.choices = undefined
+    this.challengedName = undefined
+    this.challengerName = undefined
+    this.timer = undefined
   }
 
-  init(data: { webSocketClient: Socket; enemy: string; challenger: boolean }): void {
-    this.gameHandler = new GameDOMHandler(this)
-    this.webSocketClient = data.webSocketClient
-    this.enemy = data.enemy
+  init(data: {
+    webSocketClient: Socket
+    enemy: string
+    challenger: string
+    challenged: string
+    challengerName: string
+    challengedName: string
+    choices: unknown
+  }): void {
+    this.socketHandler = new GameSocketHandler(data.webSocketClient)
+    const isChallenger = this.socketHandler?.isMe(data.challenger)
+    this.gameHandler = new GameDOMHandler(
+      this,
+      isChallenger,
+      data.challengerName,
+      data.challengedName
+    )
     this.challenger = data.challenger
+    this.challenged = data.challenged
+    this.challengerName = data.challengerName
+    this.challengedName = data.challengedName
+    this.choices = data.choices
+    this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+  }
+
+  getPlayer(socketId: string): Player | undefined {
+    return this.players.find(player => player.getSocketId() === socketId)
+  }
+
+  addExplosion(x: number, y: number) {
+    this.anims.create({
+      key: 'explosion-animation',
+      frames: this.anims.generateFrameNames('explosion'),
+      repeat: 0,
+    })
+    const explosion = this.add.sprite(x, y, 'explosion')
+    explosion.setScale(0.5)
+    explosion.play('explosion-animation')
+    explosion.once('animationcomplete', () => {
+      explosion.destroy()
+    })
   }
 
   startRound(): void {
@@ -65,21 +115,185 @@ class Game extends Phaser.Scene {
     this.players.forEach(player => player.startRound())
   }
 
-  create(): void {
-    this.add
-      .text(700, 10, 'START')
-      .setInteractive()
-      .on('pointerdown', () => {
-        if (this.state === 'STOPPED') {
-          this.webSocketClient?.emit(Commands.SET_PLAYER_READY)
+  createTimer(): void {
+    if (this.timer) {
+      return
+    }
+
+    this.timer = this.add.text(550, 20, '30', {
+      color: '#fff',
+      font: '16px neuropol',
+    })
+
+    const interval = this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        if (this.timer && Number(this.timer.text) > 0) {
+          this.timer?.setText(`${Number(this.timer.text) - 1}`)
+        } else {
+          interval.remove()
         }
+      },
+      loop: true,
+    })
+  }
+
+  create(): void {
+    this.anims.create({
+      key: 'spaceship1-red-moving',
+      frames: this.anims.generateFrameNames('spaceship1-red').slice(0, -1),
+      frameRate: 20,
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: 'spaceship1-red-stopped',
+      frames: this.anims.generateFrameNames('spaceship1-red').slice(-1),
+    })
+
+    this.anims.create({
+      key: 'spaceship1-blue-moving',
+      frames: this.anims.generateFrameNames('spaceship1-blue').slice(0, -1),
+      frameRate: 20,
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: 'spaceship1-blue-stopped',
+      frames: this.anims.generateFrameNames('spaceship1-blue').slice(-1),
+    })
+
+    const background = this.add.image(WIDTH / 2, HEIGHT / 2, 'shipSelectBackgroundImage')
+    background.setScale(0.5)
+
+    this.createTimer()
+
+    this.gameHandler?.setReadyOnClick(() => {
+      this.socketHandler?.sendPlayerReady()
+      this.gameHandler?.showWaitingOponent()
+      this.players.forEach(player => {
+        player.setIsEditable(false)
       })
+    })
 
     const onSpaceshipClick: (player: Player) => (spaceship: BaseSpaceship) => void = (
       player: Player
     ) => {
       return player.createReachableArea
     }
+
+    const handleSubmitClick = (): void => {
+      this.socketHandler?.sendPrivateMessage(this.gameHandler?.getMessageInputValue() ?? '')
+      this.gameHandler?.resetMessageInputValue()
+    }
+
+    const handlePrivateMessage = (value: string) => {
+      const { id, message } = JSON.parse(value)
+      const name = this.challenger === id ? this.challengerName : this.challengedName
+      this.gameHandler?.addUserMessage(name ?? '', message)
+    }
+
+    const handleCommandProcessed = (value: string) => {
+      const handleSetTarget = (message: string) => {
+        const { x, y, spaceship: spaceshipId } = JSON.parse(message)
+        const player = this.getPlayer(this.socketHandler?.getWebSocketClient().id ?? '')
+        const spaceship = player?.getSpaceships().find(sp => sp.getId() === spaceshipId)
+        if (spaceship) {
+          const targetSprite = this.add.sprite(x, y, 'target')
+          player?.setSpaceshipTarget(spaceship, x, y, targetSprite)
+        }
+      }
+
+      const handleSetDestination = (message: string) => {
+        const { x, y, spaceship: spaceshipId } = JSON.parse(message)
+        const player = this.getPlayer(this.socketHandler?.getWebSocketClient().id ?? '')
+        const spaceship = player?.getSpaceships().find(sp => sp.getId() === spaceshipId)
+        if (spaceship) {
+          player?.setSpaceshipDestination(spaceship, x, y)
+        }
+      }
+
+      const { command, ...message } = JSON.parse(value)
+      if (command === Commands.SET_SPACESHIP_TARGET) {
+        handleSetTarget(JSON.stringify(message))
+        return
+      }
+      if (command === Commands.SET_SPACESHIP_DESTINATION) {
+        handleSetDestination(JSON.stringify(message))
+        return
+      }
+    }
+
+    const handleSetPlayerReady = (message: string) => {
+      const choices = JSON.parse(message) as Record<
+        string,
+        Record<string, { destination: { x: number; y: number }; target: { x: number; y: number } }>
+      >
+      Object.entries(choices).forEach(([socketId, spaceshipsChoices]) => {
+        if (this.timer) {
+          this.timer.destroy()
+          this.timer = undefined
+        }
+        const player = this.players.find(p => p.getSocketId() === socketId)
+        Object.entries(spaceshipsChoices).forEach(([spaceshipId, spaceshipChoices]) => {
+          const { x: destinationX, y: destinationY } = spaceshipChoices.destination ?? {}
+          const { x: targetX, y: targetY } = spaceshipChoices.target ?? {}
+          const spaceship = player
+            ?.getSpaceships()
+            .find(spaceship => spaceship.getId() === Number(spaceshipId))
+          if (spaceship && destinationX !== undefined && destinationY !== undefined) {
+            player?.setSpaceshipDestination(spaceship, destinationX, destinationY)
+          }
+          if (spaceship && targetX !== undefined && targetY !== undefined) {
+            player?.setSpaceshipTarget(spaceship, targetX, targetY)
+          }
+        })
+      })
+      this.startRound()
+    }
+
+    const handleRoundStarted = () => {
+      this.players.forEach(player => {
+        player.setIsEditable(true)
+      })
+      this.gameHandler?.showReadyButton()
+      this.createTimer()
+    }
+
+    const handleCloseGame = (message: string) => {
+      const { reason } = JSON.parse(message) as { reason: string }
+      if (
+        !this.socketHandler?.isMe(reason) &&
+        [this.challenged, this.challenger].includes(reason)
+      ) {
+        this.gameHandler?.showBadge('victory')
+      }
+
+      this.time.addEvent({
+        delay: 3000,
+        callback: () => {
+          this.clear()
+          this.scene.start(SCENES.Room, {
+            webSocketClient: this.socketHandler?.getWebSocketClient(),
+          })
+        },
+      })
+    }
+
+    const handleDisconnect = () => {
+      this.scene.start(SCENES.Identification)
+    }
+
+    this.socketHandler?.createGameSocketHandler({
+      handleCommandProcessed,
+      handleSetPlayerReady,
+      handlePrivateMessage,
+      handleCloseGame,
+      handleRoundStarted,
+      handleDisconnect,
+    })
+    this.gameHandler?.setOnSubmitMessage(handleSubmitClick)
+    this.returnKey?.on('down', handleSubmitClick)
 
     const onTargetClick: (
       player: Player
@@ -91,29 +305,22 @@ class Game extends Phaser.Scene {
     ) => void =
       (player: Player) =>
       (spaceship: BaseSpaceship, x: number, y: number, targetSprite: Phaser.GameObjects.Sprite) => {
-        this.webSocketClient?.emit(
-          Commands.SET_SPACESHIP_TARGET,
-          JSON.stringify({ spaceship: spaceship.getId(), x, y })
-        )
-        return player.setSpaceshipTarget(spaceship, x, y, targetSprite)
+        this.socketHandler?.sendSetTarget(spaceship.getId() ?? -1, x, y)
       }
 
     const onReachableAreaClick: (
       player: Player
     ) => (spaceship: BaseSpaceship, x: number, y: number) => void =
       (player: Player) => (spaceship: BaseSpaceship, x: number, y: number) => {
-        this.webSocketClient?.emit(
-          Commands.SET_SPACESHIP_DESTINATION,
-          JSON.stringify({ spaceship: spaceship.getId(), x, y })
-        )
-        return player.setSpaceshipDestination(spaceship, x, y)
+        this.socketHandler?.sendSetDestination(spaceship.getId() ?? -1, x, y)
       }
 
     this.players.push(
       new Player(
         this,
-        !!this.challenger,
+        !!this.socketHandler?.isMe(this.challenger ?? ''),
         'TOP',
+        this.challenger ?? '',
         onTargetClick,
         onReachableAreaClick,
         onSpaceshipClick
@@ -122,8 +329,9 @@ class Game extends Phaser.Scene {
     this.players.push(
       new Player(
         this,
-        !this.challenger,
+        !!this.socketHandler?.isMe(this.challenged ?? ''),
         'BOTTOM',
+        this.challenged ?? '',
         onTargetClick,
         onReachableAreaClick,
         onSpaceshipClick
@@ -145,6 +353,7 @@ class Game extends Phaser.Scene {
           if (this.state === 'STOPPED') {
             spaceship1.destroy()
             spaceship2.destroy()
+            this.checkHasEnded()
             return
           }
           if (contactInterval) {
@@ -161,31 +370,22 @@ class Game extends Phaser.Scene {
         })
       }
     }
+  }
 
-    this.webSocketClient?.on(Commands.SET_SPACESHIP_DESTINATION, message => {
-      console.log(message)
-    })
-
-    this.webSocketClient?.on(Commands.SET_SPACESHIP_TARGET, message => {
-      console.log(message)
-    })
-
-    this.webSocketClient?.on(Commands.SET_PLAYER_READY, message => {
-      const coordinates = JSON.parse(message)
-      const enemy = this.players.find(player => !player.getIsMe())
-      Object.entries(coordinates).forEach(([key, values]) => {
-        const [id, command] = key.split('-')
-        const { x, y } = values as { x: number; y: number }
-        const spaceship = enemy?.getSpaceships().find(spaceship => spaceship.getId() === Number(id))
-        if (command === 'destination' && spaceship) {
-          enemy?.setSpaceshipDestination(spaceship, x, y)
+  checkHasEnded(): void {
+    const looser = this.players.filter(player => !player.getSpaceships().length)
+    if (looser.length || this.rounds === MAX_ROUNDS) {
+      if (looser.length === 1) {
+        if (this.socketHandler?.isMe(looser[0].getSocketId())) {
+          this.gameHandler?.showBadge('defeat')
+        } else {
+          this.gameHandler?.showBadge('victory')
         }
-        if (command === 'target' && spaceship) {
-          enemy?.setSpaceshipTarget(spaceship, x, y)
-        }
-      })
-      this.startRound()
-    })
+      } else if (looser.length === 2 || this.rounds === MAX_ROUNDS) {
+        this.gameHandler?.showBadge('draw')
+      }
+      this.socketHandler?.sendClose()
+    }
   }
 
   finishRound(): void {
@@ -194,20 +394,13 @@ class Game extends Phaser.Scene {
       collider.destroy()
     })
     this.bulletColliders = []
-
     this.players.forEach(player => {
       player.finishRound()
     })
-
     this.bullets = []
     this.spaceships = this.spaceships.filter(spaceship => spaceship.state !== 'DESTROYED')
-
-    const looser = this.players.filter(player => !player.getSpaceships().length)
-
-    if (looser.length || this.rounds === 10) {
-      this.children.destroy()
-      return
-    }
+    this.socketHandler?.sendRoundStarted()
+    this.checkHasEnded()
   }
 
   update(): void {

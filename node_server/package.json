@@ -5,8 +5,9 @@
   "license": "MIT",
   "private": true,
   "scripts": {
+    "start": "npm run build && NODE_PATH=dist node dist/index.js",
     "dev": "NODE_ENV=development nodemon index.ts",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc --build && cp -r src/static dist/static ",
     "test": "NODE_ENV=test jest --no-cache"
   },
   "devDependencies": {
@@ -29,7 +30,6 @@
   },
   "dependencies": {
     "dotenv": "^16.0.1",
-    "shared": "^1.0.0",
     "socket.io": "^4.5.0",
     "socket.io-client": "^4.5.1",
     "tsconfig-paths": "^4.0.0",
