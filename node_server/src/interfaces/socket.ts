@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import http from 'http'
 import { Commands } from 'interfaces/shared'
+import { Request, Response } from 'express'
 
 type MessageListener = (value: string) => void
 
@@ -14,7 +15,7 @@ class WebSocket {
   constructor(httpServer: http.Server) {
     this.wss = new Server(httpServer, {
       cors: {
-        origin: process.env.CORS_ALLOW?.split(',').filter(value => !!value) ?? [],
+        origin: '*',
       },
     })
   }

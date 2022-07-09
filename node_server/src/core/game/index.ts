@@ -9,9 +9,9 @@ import WebSocket from 'interfaces/socket'
 class SpaceshipBattle extends gameMixin(challengeMixin(roomMixin(SpaceshipBattleBase))) {
   constructor(webSocket: WebSocket) {
     super(webSocket)
-    this.webSocket.addEventListener('connection', (socket: Socket) =>
+    this.webSocket.addEventListener('connection', (socket: Socket) => {
       this.setupSocketListeners(socket)
-    )
+    })
   }
 
   setupSocketListeners(socket: Socket): void {

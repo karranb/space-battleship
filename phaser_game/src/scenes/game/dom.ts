@@ -46,7 +46,7 @@ const html = (isChallenger: boolean, challengerName: string, challengedName: str
       <div id="chatDiv" style="background-color: rgba(79,79,79,.35); width: 100%; height: 60px;margin-top: 15px; color: white; font-family: planer; font-size: 12px;display: flex; flex-direction: column; overflow-y: scroll"></div>
 
       <div style="margin-top: 5px; display: flex; align-items: center; justify-content: space-between;">
-        <input id="messageInput" style="background-color: rgba(79,79,79,.35); border: 0;border-bottom: 1px solid #01c9cf; flex: 1; color: white;font-size: 12px;font-family: planer;"/> 
+        <input autocomplete="off" id="messageInput" style="background-color: rgba(79,79,79,.35); border: 0;border-bottom: 1px solid #01c9cf; flex: 1; color: white;font-size: 12px;font-family: planer;"/> 
         <img id="messageButton" src="${spaceshipArrowImage}" style=" width: 15px; object-fit: contain; margin-left: 5px; cursor: pointer" />
       </div>
     </div>

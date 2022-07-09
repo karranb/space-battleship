@@ -3,15 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1 maximum-scale=1 user-scalable=no"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1 maximum-scale=1 user-scalable=no,viewport-fit=cover"/>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Space BattleShip">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Space BattleShip</title>
   </head>
   <body>
     <div style="font-family: neuropol; position:absolute; left:-1000px; visibility:hidden;">.</div>
     <div style="font-family: planer; position:absolute; left:-1000px; visibility:hidden;">.</div>
-    <div id="app"></div>
+    <div id="app" style="min-height: 100vh"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

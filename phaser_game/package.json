@@ -28,6 +28,11 @@
     "vite": "^2.9.5"
   },
   "dependencies": {
+    "@capacitor/android": "^3.6.0",
+    "@capacitor/cli": "^3.6.0",
+    "@capacitor/core": "^3.6.0",
+    "@capacitor/ios": "^3.6.0",
+    "@capacitor/keyboard": "^1.2.3",
     "normalize.css": "^8.0.1",
     "phaser": "^3.55.2",
     "socket.io-client": "^4.5.0",

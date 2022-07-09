@@ -27,7 +27,7 @@ const html = `
               </div>
             </div>
             <div style="display: flex; flex-direction: row; height: 40px; align-items: center;">
-                <input id="messageInput" type="text" name="nameField" placeholder="Enter your message" style="font-size: 16px; background-color: transparent; color: white; border: 0; border-bottom: 1px solid #00f7fd;font-family: planer;flex: 1; margin-right: 20px; background-color: rgba(0,0,0,0.3); height: 28px">
+                <input autocomplete="off" id="messageInput" type="text" name="nameField" placeholder="Enter your message" style="font-size: 16px; background-color: transparent; color: white; border: 0; border-bottom: 1px solid #00f7fd;font-family: planer;flex: 1; margin-right: 20px; background-color: rgba(0,0,0,0.3); height: 28px">
                 <img src="${sendButton}" id="messageButton" style="object-fit: contain; width: 100px; cursor: pointer"/>
             </div>
         </div>
