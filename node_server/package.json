@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npm run build && NODE_PATH=dist node dist/index.js",
     "dev": "NODE_ENV=development nodemon index.ts",
-    "build": "rm -rf dist && tsc --build && cp -r src/static dist/static ",
+    "build": "rm -rf dist && tsc --build",
     "test": "NODE_ENV=test jest --no-cache"
   },
   "devDependencies": {
