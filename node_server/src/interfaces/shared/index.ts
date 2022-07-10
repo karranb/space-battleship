@@ -52,3 +52,5 @@ export const MAX_ROUNDS = 10
 export const CHOICE_SECONDS_LIMIT = 15
 
 export const CHALLENGE_SECONDS_LIMIT = 15
+
+export const VERSION = '0.0.1'

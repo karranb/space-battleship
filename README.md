@@ -1,10 +1,32 @@
-todo.
+todo:
 
-1. finish MVP
-2. setup git
-3. improve readme
-4. fix prettier / eslint
-5. minimal gameplay (bugs, message)
-6. more spaceships
-7. more weapons
-8. campaign mode
+important minor changes
+    react for dom
+    error scene
+    salvar nome de usuario
+    about screen
+    debounces on inputs
+    out of space checks
+    refactor armory / spaceships / game screen
+    new deploy, including google play
+----
+good to have improvements
+    show life
+    show damage hit
+    new spaceships
+    new armory
+    improve tutorial and other hints (tooltips, toasters)
+    i18n
+----
+webrtc
+    create room
+    admin / kick / ban
+    quick game
+    flags
+-----
+database to register players / game results / clans
+-----
+campaign mode using AI
+-----
+
+ws://44.207.7.52:8000

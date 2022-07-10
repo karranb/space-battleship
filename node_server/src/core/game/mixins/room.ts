@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io'
-import { Commands, User } from 'interfaces/shared'
+import { Commands, User, VERSION } from 'interfaces/shared'
 import { SpaceshipBattleMixin } from '../types'
 import { SocketError } from 'utils/errors'
 
@@ -15,14 +15,21 @@ function roomMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       }
     }
 
-    handleSetUserName(socket: Socket, name: string): void {
+    handleSetUserName(socket: Socket, message: string): void {
       if (socket.data.name) {
         throw new SocketError('Name is already set')
       }
+      const { name, version } = JSON.parse(message)
+
       const parsedName = name.trim()
       if (!parsedName) {
         throw new SocketError('Empty name is not allowed')
       }
+
+      if (version !== VERSION) {
+        throw new SocketError('Wrong version')
+      }
+
       socket.data.name = parsedName
       this.sendProcessedMessage(socket, Commands.NAME)
       this.webSocket.broadcastMessage(

@@ -1,13 +1,15 @@
-import { Commands } from 'interfaces/shared'
 import 'phaser'
+
+import { Commands } from 'interfaces/shared'
 import { SCENES } from 'utils/constants'
+
 import IdentificationDOMHandler from './dom'
 import IdentificationSocketHandler from './socket'
 
 class Identification extends Phaser.Scene {
-  private DOMHandler: IdentificationDOMHandler | undefined
-  private returnKey: Phaser.Input.Keyboard.Key | undefined
-  private socketHandler: IdentificationSocketHandler | undefined
+  private DOMHandler?: IdentificationDOMHandler
+  private returnKey?: Phaser.Input.Keyboard.Key
+  private socketHandler?: IdentificationSocketHandler
 
   constructor() {
     super(SCENES.Identification)
@@ -36,7 +38,16 @@ class Identification extends Phaser.Scene {
           })
         }
       }
-      this.socketHandler.createIdentificationSocketHandler(handleNameMessage, handleSocketOpen)
+
+      const handleError = (message: string) => {
+        console.error(message)
+      }
+
+      this.socketHandler.createIdentificationSocketHandler(
+        handleNameMessage,
+        handleSocketOpen,
+        handleError
+      )
     }
 
     this.DOMHandler?.setSigninButtonOnClick(handleSubmit)
