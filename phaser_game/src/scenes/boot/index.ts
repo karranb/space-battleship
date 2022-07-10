@@ -10,6 +10,7 @@ import red1 from 'assets/spritesheet_red_1.png'
 import red1Atlas from 'assets/spritesheet_red_1.json'
 import explosion from 'assets/explosion_spritesheet.png'
 import explosionAtlas from 'assets/explosion_spritesheet.json'
+import backgroundMenu from 'assets/background_menu.png'
 
 import blue1 from 'assets/spritesheet_blue_1.png'
 import blue1Atlas from 'assets/spritesheet_blue_1.json'
@@ -29,6 +30,7 @@ class Boot extends Phaser.Scene {
     this.load.image('target', targetImage)
     this.load.image('bullet', bulletImage)
     this.load.image('backgroundImage', backgroundImage)
+    this.load.image('backgroundMenu', backgroundMenu)
     this.load.image('shipSelectBackgroundImage', shipSelectBackgroundImage)
     this.load.image('identificationBackground', identificationBackground)
     this.load.image('multiplayerButton', multiplayerButton)
@@ -36,14 +38,6 @@ class Boot extends Phaser.Scene {
     this.load.atlas('explosion', explosion, explosionAtlas)
     this.load.atlas('spaceship1-blue', blue1, blue1Atlas)
     this.scale.lockOrientation(`${Phaser.Scale.Orientation.LANDSCAPE}`)
-    // 
-    // this.load.spritesheet('startGameSpritesheet', )
-    // this.load.atlas("startGameButton", startButtonSprite, startButtonAtlas);
-    // this.load.spritesheet('mainButtonAnimated', mainButtonAnimated, {
-    //   frameWidth: 1128,
-    //   frameHeight: 200,
-    // })
-
     this.load.image('logo', logoImage)
 
     this.load.on('complete', () => {
