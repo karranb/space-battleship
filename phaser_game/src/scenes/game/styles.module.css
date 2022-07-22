@@ -1,0 +1,143 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+}
+
+.rightPanel {
+  position: absolute;
+  right: 0px;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.51);
+  border-left: 2px solid #01c9cf;
+  padding: 10px;
+}
+
+.boxWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.challengerBox {
+  background-color: rgba(183, 17, 17, 0.41);
+  color: white;
+  font-family: planer;
+  padding: 5px;
+}
+
+.challengedBox {
+  background-color: rgba(44, 24, 154, 0.41);
+  color: white;
+  font-family: planer;
+  padding: 5px;
+  margin-top: 7px;
+}
+
+.separator {
+  border-top: 1px dashed #01c9cf;
+  width: 100%;
+  margin-top: 15px;
+}
+
+.tutorial {
+  color: white;
+  font-family: planer;
+  margin-top: 15px;
+  font-size: 12px;
+}
+
+.doneButton {
+  display: flex;
+  color: white;
+  font-family: neuropol;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  position: relative;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  height: 40px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.buttonBackground {
+  object-fit: contain;
+  z-index: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.waiting {
+  font-family: neuropol;
+  color: white;
+  margin-top: 10px;
+  font-size: 12px;
+  display: block;
+}
+
+.chat {
+  background-color: rgba(79, 79, 79, 0.35);
+  width: 100%;
+  height: 60px;
+  margin-top: 15px;
+  color: white;
+  font-family: planer;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  padding: 5px;
+}
+
+.inputWrapper {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.submit {
+  width: 15px;
+  object-fit: contain;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.badgeOverlay {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.badge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+}
+
+.inputContainer {
+  flex: 1;
+}
+
+.input {
+  font-size: 12px;
+}
+
+.messageName {
+  color: #00a69d;
+}
+
+.badgeContainer {
+  position: absolute;
+  display: flex;
+  top: 0;
+  left: 0;
+}

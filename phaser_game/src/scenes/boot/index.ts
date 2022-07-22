@@ -1,6 +1,5 @@
 import 'phaser'
 
-import { SCENES } from 'utils/constants'
 import targetImage from 'assets/target_cursor.png'
 import bulletImage from 'assets/bullet.png'
 import backgroundImage from 'assets/background.png'
@@ -11,13 +10,12 @@ import red1Atlas from 'assets/spritesheet_red_1.json'
 import explosion from 'assets/explosion_spritesheet.png'
 import explosionAtlas from 'assets/explosion_spritesheet.json'
 import backgroundMenu from 'assets/background_menu.png'
-
 import blue1 from 'assets/spritesheet_blue_1.png'
 import blue1Atlas from 'assets/spritesheet_blue_1.json'
 import shipSelectBackgroundImage from 'assets/ships-select-background.png'
-
-
 import logoImage from 'assets/logo.png'
+
+import { SCENES } from 'utils/constants'
 
 class Boot extends Phaser.Scene {
   constructor() {

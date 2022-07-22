@@ -1,0 +1,39 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connecting {
+  color: white;
+  font-family: neuropol;
+}
+
+.button {
+  width: 330px;
+  height: 100px;
+  margin-top: 40px;
+  cursor: pointer;
+  background: url(/src/assets/join_server.png);
+  background-size: contain;
+}
+
+.input {
+  width: 200px;
+  text-align: center;
+}
+
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  margin-top: 100px;
+  margin-bottom: auto;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.hide {
+  display: none;
+}

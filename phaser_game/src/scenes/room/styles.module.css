@@ -1,0 +1,118 @@
+.container {
+  background-image: url('/src/assets/background_room.png');
+  padding: 20px;
+}
+
+.topPanelsWrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.usersTabPanelWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+}
+
+.panelTitle {
+  width: 100px;
+  object-fit: contain;
+  margin-left: -0.3px;
+}
+
+.usersWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.users {
+  border: 1px solid #09aaa0;
+  border-radius: 5px;
+  width: 200px;
+  height: 250px;
+  margin-top: -1px;
+  border-top-left-radius: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 2px;
+  overflow-y: scroll;
+}
+
+.challengeButton {
+  object-fit: contain;
+  width: 100px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  flex: 1;
+}
+
+.messages {
+  border: 1px solid #09aaa0;
+  border-radius: 5px;
+  height: 250px;
+  margin-top: -1px;
+  border-top-left-radius: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 7px;
+  overflow-y: scroll;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  font-size: 12px;
+  font-family: planer;
+}
+
+.messageButton {
+  object-fit: contain;
+  width: 100px;
+  cursor: pointer;
+}
+
+.messageWrapper {
+  display: flex;
+  flex-direction: row;
+  height: 40px;
+  align-items: center;
+}
+
+.input {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.user {
+  background-color: rgba(11, 62, 73, 0.5);
+  color: #00a69d;
+  border-radius: 3px;
+  margin-bottom: 2px;
+  padding: 5px;
+  font-size: 12px;
+  font-family: planer;
+  cursor: pointer;
+}
+
+.userSelected {
+  background-color: rgba(11, 62, 73, 1);
+}
+
+.messageName {
+  color: #00a69d;
+}
+
+.challengeButton {
+  color: #29b5ff;
+  cursor: pointer;
+}

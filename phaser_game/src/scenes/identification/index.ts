@@ -3,11 +3,11 @@ import 'phaser'
 import { Commands } from 'interfaces/shared'
 import { SCENES } from 'utils/constants'
 
-import IdentificationDOMHandler from './dom'
 import IdentificationSocketHandler from './socket'
+import IdentificationUI from './ui'
 
 class Identification extends Phaser.Scene {
-  private DOMHandler?: IdentificationDOMHandler
+  private UI?: IdentificationUI
   private returnKey?: Phaser.Input.Keyboard.Key
   private socketHandler?: IdentificationSocketHandler
 
@@ -15,20 +15,12 @@ class Identification extends Phaser.Scene {
     super(SCENES.Identification)
   }
 
-  destroy(): void {
-    this.children.destroy()
-    this.socketHandler?.clearSocketListeners()
-    this.returnKey?.off('down')
-  }
-
-  setupButtonListener = (): void => {
-    const handleSubmit = (): void => {
-      this.DOMHandler?.hideFormContainer()
-      this.DOMHandler?.showLoadingContainer()
+  setupUI = (): void => {
+    const handleSubmit = (value: string): void => {
+      this.UI?.updateProps({ showLoading: true })
       this.socketHandler = new IdentificationSocketHandler(import.meta.env.VITE_SOCKET_SERVER)
 
-      const handleSocketOpen = (): void =>
-        this.socketHandler?.sendName(this.DOMHandler?.getNicknameInputValue() ?? '')
+      const handleSocketOpen = (): void => this.socketHandler?.sendName(value)
 
       const handleNameMessage = (message: string): void => {
         const { command } = JSON.parse(message)
@@ -49,18 +41,16 @@ class Identification extends Phaser.Scene {
         handleError
       )
     }
-
-    this.DOMHandler?.setSigninButtonOnClick(handleSubmit)
-    this.returnKey?.on('down', handleSubmit)
+    this.UI = new IdentificationUI(this, { defaultName: 'Guest', showLoading: false, handleSubmit })
+    this.returnKey?.on('down', () => this.UI?.submit())
   }
 
   init(): void {
-    this.DOMHandler = new IdentificationDOMHandler(this)
     this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
   }
 
   create(): void {
-    this.setupButtonListener()
+    this.setupUI()
 
     setTimeout(() => {
       window.scrollTo(0, 1)

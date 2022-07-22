@@ -2,16 +2,14 @@ import 'phaser'
 import { Socket } from 'socket.io-client'
 import { SCENES } from 'utils/constants'
 import BaseSpaceship from 'models/spaceships/base'
-// import red1 from 'assets/spritesheet_red_1.png'
-// import red1Atlas from 'assets/spritesheet_red_1.json'
-import ShipsSelectDOMHandler from './dom'
+import ShipsSelectUI from './ui'
 import SpaceshipSelectSocketHandler from './socket'
 
 class ShipsSelect extends Phaser.Scene {
   private elements: BaseSpaceship[] = []
   private challenger?: string
   private challenged?: string
-  private DOMHandler?: ShipsSelectDOMHandler
+  private UI?: ShipsSelectUI
   private socketHandler?: SpaceshipSelectSocketHandler
   private challengerName?: string
   private challengedName?: string
@@ -28,24 +26,19 @@ class ShipsSelect extends Phaser.Scene {
     challengerName: string
   }): void {
     this.socketHandler = new SpaceshipSelectSocketHandler(data.webSocketClient)
-    this.DOMHandler = new ShipsSelectDOMHandler(
-      this,
-      this.socketHandler.isChallenger(data.challenger)
-    )
+    this.UI = new ShipsSelectUI(this, {
+      isChallenger: this.socketHandler.isChallenger(data.challenger),
+      handleSubmit: () => {
+        this.socketHandler?.sendDone()
+        this.UI?.setIsWaitingOponent()
+      },
+      handleGiveUp: () => this.socketHandler?.sendGiveUp(),
+      timer: 15,
+    })
     this.challenged = data.challenged
     this.challenger = data.challenger
     this.challengerName = data.challengerName
     this.challengedName = data.challengedName
-  }
-
-  setupButtonListeners() {
-    this.DOMHandler?.setDoneButtonOnClick(() => {
-      this.DOMHandler?.showWaitingOponent()
-      this.socketHandler?.sendDone()
-    })
-    this.DOMHandler?.setGiveUpButtonOnClick(() => {
-      this.socketHandler?.sendGiveUp()
-    })
   }
 
   setupWebsocketListeners = (): void => {
@@ -79,7 +72,7 @@ class ShipsSelect extends Phaser.Scene {
   }
 
   create(): void {
-    this.setupButtonListeners()
+    // this.setupButtonListeners()
     this.setupWebsocketListeners()
   }
 

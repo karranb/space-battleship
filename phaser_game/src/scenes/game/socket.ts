@@ -20,7 +20,10 @@ class GameSocketHandler extends BaseSocketHandler {
   }
 
   public sendSetDestination(spaceship: number, x: number, y: number): void {
-    this.webSocketClient.emit(Commands.SET_SPACESHIP_DESTINATION, JSON.stringify({ spaceship, x, y }))
+    this.webSocketClient.emit(
+      Commands.SET_SPACESHIP_DESTINATION,
+      JSON.stringify({ spaceship, x, y })
+    )
   }
 
   public sendSetTarget(spaceship: number, x: number, y: number): void {
@@ -46,15 +49,13 @@ class GameSocketHandler extends BaseSocketHandler {
     handleCloseGame,
     handleRoundStarted,
     handleDisconnect,
-  }:
-  {
-    handleCloseGame: (value: string) => void,
-    handleRoundStarted: (value: string) => void,
-    handleCommandProcessed: (value: string) => void,
-    handlePrivateMessage: (value: string) => void,
-    handleSetPlayerReady: (value: string) => void,
+  }: {
+    handleCloseGame: (value: string) => void
+    handleRoundStarted: (value: string) => void
+    handleCommandProcessed: (value: string) => void
+    handlePrivateMessage: (value: string) => void
+    handleSetPlayerReady: (value: string) => void
     handleDisconnect: () => void
-    
   }): void {
     const socketMessageHandlers = {
       [Commands.COMMAND_PROCESSED]: handleCommandProcessed,
@@ -63,11 +64,7 @@ class GameSocketHandler extends BaseSocketHandler {
       [Commands.ROUND_STARTED]: handleRoundStarted,
       [Commands.CLOSE_GAME]: handleCloseGame,
     }
-    this.setSocketListeners(
-      socketMessageHandlers,
-      () => null,
-      handleDisconnect
-    )
+    this.setSocketListeners(socketMessageHandlers, () => null, handleDisconnect)
   }
 }
 

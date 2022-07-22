@@ -18,6 +18,8 @@
     "prettier": "prettier --write src/**/*.{js,jsx,ts,tsx,json,css,scss,md}"
   },
   "devDependencies": {
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "eslint": "^8.13.0",
@@ -34,8 +36,11 @@
     "@capacitor/core": "^3.6.0",
     "@capacitor/ios": "^3.6.0",
     "@capacitor/keyboard": "^1.2.3",
+    "classnames": "^2.3.1",
     "normalize.css": "^8.0.1",
     "phaser": "^3.55.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "socket.io-client": "^4.5.0",
     "vite-tsconfig-paths": "^3.4.1"
   }

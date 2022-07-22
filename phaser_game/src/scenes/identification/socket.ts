@@ -1,5 +1,6 @@
-import { Commands, VERSION } from 'interfaces/shared'
 import { io } from 'socket.io-client'
+
+import { Commands, VERSION } from 'interfaces/shared'
 import { BaseSocketHandler } from 'utils/socket'
 
 class IdentificationSocketHandler extends BaseSocketHandler {

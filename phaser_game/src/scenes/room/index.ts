@@ -1,13 +1,15 @@
 import 'phaser'
 import { Socket } from 'socket.io-client'
+
 import { SCENES } from 'utils/constants'
-import RoomDOMHandler from './dom'
+
 import RoomSocketHandler from './socket'
+import RoomUI from './ui'
 
 class Room extends Phaser.Scene {
-  private DOMHandler: RoomDOMHandler | undefined
-  private socketHandler: RoomSocketHandler | undefined
-  private returnKey: Phaser.Input.Keyboard.Key | undefined
+  private UI?: RoomUI
+  private socketHandler?: RoomSocketHandler
+  private returnKey?: Phaser.Input.Keyboard.Key
 
   constructor() {
     super(SCENES.Room)
@@ -15,67 +17,48 @@ class Room extends Phaser.Scene {
 
   init(data: { webSocketClient: Socket }): void {
     this.socketHandler = new RoomSocketHandler(data.webSocketClient)
-    this.DOMHandler = new RoomDOMHandler(this)
     this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
   }
 
-  destroyScene = (): void => {
-    // this.DOMHandler?.removeDOM()
-    // this.children.destroy()
-    // this.socketHandler?.destroy()
-    // this.returnKey?.off('down')
-    // this.scene.stop(SCENES.Room);
-    // this.scene.remove(SCENES.Room)
-  }
-
   setupWebsocketListeners = (): void => {
-    const handleChallengeRefuseClick = (id: string): void => {
-      this.socketHandler?.sendMessageRefuse(id)
-    }
-
-    const handleChallengeCancelClick = (id: string): void => {
-      this.socketHandler?.sendMessageCancel(id)
-    }
-
-    const handleChallengeAcceptClick = (id: string): void =>
-      this.socketHandler?.sendMessageAccept(id)
-
-    const handleGetUsersList = (value: string): void =>
-      JSON.parse(value).forEach((item: { id: string; name: string }) =>
-        this.DOMHandler?.addUserToUserList({ id: item.id, name: item.name })
+    const handleGetUsersList = (value: string): void => {
+      const users = JSON.parse(value).reduce(
+        (acc: Record<string, string>, { id, name }: { id: string; name: string }) => ({
+          ...acc,
+          [id]: name,
+        }),
+        {}
       )
+      this.UI?.updateUsers(users)
+    }
 
     const handleUserDisconnected = (value: string): void => {
-      const name = this.DOMHandler?.getUserNameFromList(value)
-      this.DOMHandler?.removeUserFromUserList(value)
-      this.DOMHandler?.addQuittedMessage(name ?? '')
+      this.UI?.addQuittedMessage(value)
+      this.UI?.removeUser(value)
     }
 
     const handleCloseChallenge = (value: string): void => {
       const { challengeId, reason } = JSON.parse(value)
       if (reason === 'TIMEOUT') {
-        this.DOMHandler?.setChallengeClosed(challengeId, ' - The challenge timed out')
+        this.UI?.setChallengeClosedMessage(challengeId, 'The challenge timed out')
         return
       }
-      const name = this.socketHandler?.isMe(reason)
-        ? 'You'
-        : this.DOMHandler?.getUserNameFromList(reason)
-      this.DOMHandler?.setChallengeClosed(
+      const name = this.socketHandler?.isMe(reason) ? 'You' : 'The opponent'
+      this.UI?.setChallengeClosedMessage(
         challengeId,
-        ` - ${name ?? 'The opponent'} canceled the challenge`
+        `${name ?? 'The opponent'} canceled the challenge`
       )
     }
 
     const handleErrorChallenge = (value: string): void => {
       const { message } = JSON.parse(value)
-      this.DOMHandler?.addMessage(message)
+      this.UI?.addMessage(message)
     }
 
     const handleAcceptChallenge = (message: string): void => {
       const { challenger, challenged } = JSON.parse(message)
-      this.destroyScene()
-      const challengerName = this.DOMHandler?.getUserNameFromList(challenger)
-      const challengedName = this.DOMHandler?.getUserNameFromList(challenged)
+      const challengerName = this.UI?.getUserName(challenger)
+      const challengedName = this.UI?.getUserName(challenged)
       this.scene.start(SCENES.ShipsSelect, {
         webSocketClient: this.socketHandler?.getWebSocketClient(),
         challenged,
@@ -88,29 +71,26 @@ class Room extends Phaser.Scene {
     const handleChallenge = (value: string): void => {
       const { challengeId, challengerId, challengedId } = JSON.parse(value)
       if (this.socketHandler?.isMe(challengedId)) {
-        this.DOMHandler?.addChallengedMessage(
-          challengerId,
-          challengeId,
-          handleChallengeAcceptClick,
-          handleChallengeRefuseClick
-        )
+        this.UI?.addChallengedMessage(challengedId, challengeId)
         return
       }
       if (this.socketHandler?.isMe(challengerId)) {
-        this.DOMHandler?.addChallengeSentText(challengedId, challengeId, handleChallengeCancelClick)
+        this.UI?.addChallengerMessage(challengedId, challengeId)
       }
     }
 
     const handleUserConnected = (value: string): void => {
       const item = JSON.parse(value)
-      this.DOMHandler?.addUserToUserList(item)
-      this.DOMHandler?.createUserJoinedMessage(item.name)
+      this.UI?.updateUsers({
+        ...this.UI.getUsers(),
+        [item.id]: item.name,
+      })
+      this.UI?.addJoinedMessage(item.name)
     }
 
     const handleRoomMessage = (value: string): void => {
       const { id, message } = JSON.parse(value)
-      const name = this.DOMHandler?.getUserNameFromList(id)
-      this.DOMHandler?.addUserMessage(name ?? '', message)
+      this.UI?.addUserMessage(id, message)
     }
 
     const handleDisconnect = () => {
@@ -131,26 +111,33 @@ class Room extends Phaser.Scene {
   }
 
   setupButtonListeners = (): void => {
-    const handleSubmitClick = (): void => {
-      this.socketHandler?.sendMessage(this.DOMHandler?.getMessageInputValue() ?? '')
-      this.DOMHandler?.resetMessageInputValue()
+    const handleSubmitMessage = (message?: string): void => {
+      this.socketHandler?.sendMessage(message ?? '')
     }
 
-    const handleRequestChallengeClick = (): void => {
-      const selectedValue = this.DOMHandler?.getSelectedUser()
+    const handleSubmitChallenge = (selectedValue?: string): void => {
       if (!selectedValue) {
-        this.DOMHandler?.addMessage('You need to select someone to challenge')
+        this.UI?.addErrorMessage('You need to select someone to challenge')
         return
       }
       if (this.socketHandler?.isMe(selectedValue)) {
-        this.DOMHandler?.addMessage("You can't challenge yourself, select someone else")
+        this.UI?.addErrorMessage("You can't challenge yourself, select someone else")
         return
       }
       this.socketHandler?.sendChallenge(selectedValue)
     }
-    this.DOMHandler?.setChallengeButtonOnClick(handleRequestChallengeClick)
-    this.DOMHandler?.setOnSubmitMessage(handleSubmitClick)
-    this.returnKey?.on('down', handleSubmitClick)
+
+    this.UI = new RoomUI(this, {
+      handleSubmitChallenge,
+      handleSubmitMessage,
+      handleRefuseChallengeClick: (id: string) => this.socketHandler?.sendMessageRefuse(id),
+      handleAcceptChallengeClick: (id: string) => this.socketHandler?.sendMessageAccept(id),
+      handleCloseChallengeClick: (id: string) => this.socketHandler?.sendMessageCancel(id),
+    })
+
+    this.returnKey?.on('down', () => {
+      this.UI?.sendMessage()
+    })
   }
 
   create(): void {

@@ -1,0 +1,200 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url('/src/assets/ships-select-background.png');
+}
+
+.title {
+  width: 280px;
+  object-fit: contain;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+}
+
+.timer {
+  font-family: neuropol;
+  color: white;
+  position: absolute;
+  right: 50px;
+  top: 22px;
+}
+
+.row {
+  background-color: rgba(0, 0, 0, 0.58);
+  width: 100%;
+  border: solid 3px #0a3138;
+  border-left: 0;
+  border-right: 0;
+  margin-top: 10px;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.shipSelect {
+  display: flex;
+  margin-left: 20px;
+}
+
+.leftArrow {
+  transform: rotate(180deg);
+  width: 25px;
+  object-fit: contain;
+}
+
+.rightArrow {
+  width: 25px;
+  object-fit: contain;
+}
+
+.frame {
+  background-image: url(/src/assets/ship_select_frame.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin: 0px 10px;
+}
+
+.spaceship {
+  width: 40px;
+  object-fit: contain;
+  margin: 10px 60px 0px 60px;
+}
+
+.shipDetail {
+  display: flex;
+  flex-direction: row;
+  color: white;
+  font-family: neuropol;
+  margin-left: 50px;
+}
+
+.keys {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.values {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  margin-left: 20px;
+}
+
+.levelWrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.level {
+  width: 18px;
+  height: 18px;
+}
+
+.armoryWrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.armoryTitle {
+  font-family: neuropol;
+  color: white;
+  text-align: center;
+}
+
+.armories {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.armory {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 15px 0 15px;
+  width: 100%;
+}
+
+.giveUpButton {
+  display: flex;
+  color: white;
+  font-family: neuropol;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  position: relative;
+  padding: 0 17px;
+  cursor: pointer;
+}
+
+.giveUpButtonImage {
+  object-fit: contain;
+  z-index: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.doneButtonImage {
+  object-fit: contain;
+  z-index: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.doneButton {
+  display: flex;
+  color: white;
+  font-family: neuropol;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  position: relative;
+  padding: 0 27px;
+  cursor: pointer;
+}
+
+.waitingOponent {
+  color: white;
+  font-family: neuropol;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  position: relative;
+  padding: 0 27px;
+  cursor: pointer;
+}
+
+.overlay {
+  position: absolute;
+  left: 0;
+  top: 59px;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 278px;
+}
+
+.dialog {
+  position: absolute;
+  color: white;
+  width: 300px;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 1);
+  border: 5px solid white;
+  border-radius: 5px 0px 5px 0px;
+  padding: 20px;
+  right: 50%;
+  font-family: 'planer';
+  bottom: 50%;
+  transform: translate(50%, 50%);
+}

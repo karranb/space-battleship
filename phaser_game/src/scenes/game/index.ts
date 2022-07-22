@@ -6,13 +6,13 @@ import Player from 'models/player'
 import SingleBullet from 'models/weapons/single-bullet'
 import BaseSpaceship from 'models/spaceships/base'
 
-import GameDOMHandler from './dom'
 import { Socket } from 'socket.io-client'
 import GameSocketHandler from './socket'
 import { Commands, MAX_ROUNDS } from 'interfaces/shared'
+import GameUI, { ResultTypes } from './ui'
 
 class Game extends Phaser.Scene {
-  gameHandler: GameDOMHandler | undefined
+  UI?: GameUI
   players: Player[] = []
   bullets: SingleBullet[] = []
   bulletColliders: Phaser.Physics.Arcade.Collider[] = []
@@ -34,7 +34,6 @@ class Game extends Phaser.Scene {
   }
 
   clear() {
-    this.gameHandler = undefined
     this.players = []
     this.bullets = []
     this.bulletColliders = []
@@ -61,18 +60,34 @@ class Game extends Phaser.Scene {
   }): void {
     this.socketHandler = new GameSocketHandler(data.webSocketClient)
     const isChallenger = this.socketHandler?.isMe(data.challenger)
-    this.gameHandler = new GameDOMHandler(
-      this,
-      isChallenger,
-      data.challengerName,
-      data.challengedName
-    )
     this.challenger = data.challenger
     this.challenged = data.challenged
     this.challengerName = data.challengerName
     this.challengedName = data.challengedName
     this.choices = data.choices
+
     this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+
+    this.returnKey?.on('down', () => {
+      this.UI?.sendMessage()
+    })
+
+    const handleSubmitReady = () => {
+      this.socketHandler?.sendPlayerReady()
+      this.UI?.setisWaitingOponent(true)
+      this.players.forEach(player => {
+        player.setIsEditable(false)
+      })
+    }
+
+    this.UI = new GameUI(this, {
+      isChallenger,
+      challengedName: data.challengedName,
+      challengerName: data.challengerName,
+      messages: [],
+      handleSubmitMessage: (message: string) => this.socketHandler?.sendPrivateMessage(message),
+      handleSubmitReady: () => handleSubmitReady(),
+    })
   }
 
   getPlayer(socketId: string): Player | undefined {
@@ -168,29 +183,16 @@ class Game extends Phaser.Scene {
 
     this.createTimer()
 
-    this.gameHandler?.setReadyOnClick(() => {
-      this.socketHandler?.sendPlayerReady()
-      this.gameHandler?.showWaitingOponent()
-      this.players.forEach(player => {
-        player.setIsEditable(false)
-      })
-    })
-
     const onSpaceshipClick: (player: Player) => (spaceship: BaseSpaceship) => void = (
       player: Player
     ) => {
       return player.createReachableArea
     }
 
-    const handleSubmitClick = (): void => {
-      this.socketHandler?.sendPrivateMessage(this.gameHandler?.getMessageInputValue() ?? '')
-      this.gameHandler?.resetMessageInputValue()
-    }
-
     const handlePrivateMessage = (value: string) => {
       const { id, message } = JSON.parse(value)
       const name = this.challenger === id ? this.challengerName : this.challengedName
-      this.gameHandler?.addUserMessage(name ?? '', message)
+      this.UI?.addMessage({ message: message, name })
     }
 
     const handleCommandProcessed = (value: string) => {
@@ -256,7 +258,7 @@ class Game extends Phaser.Scene {
       this.players.forEach(player => {
         player.setIsEditable(true)
       })
-      this.gameHandler?.showReadyButton()
+      this.UI?.setisWaitingOponent(false)
       this.createTimer()
     }
 
@@ -266,7 +268,7 @@ class Game extends Phaser.Scene {
         !this.socketHandler?.isMe(reason) &&
         [this.challenged, this.challenger].includes(reason)
       ) {
-        this.gameHandler?.showBadge('victory')
+        this.UI?.setBadge(ResultTypes.victory)
       }
 
       this.time.addEvent({
@@ -292,28 +294,23 @@ class Game extends Phaser.Scene {
       handleRoundStarted,
       handleDisconnect,
     })
-    this.gameHandler?.setOnSubmitMessage(handleSubmitClick)
-    this.returnKey?.on('down', handleSubmitClick)
 
     const onTargetClick: (
-      player: Player
-    ) => (
       spaceship: BaseSpaceship,
       x: number,
       y: number,
       targetSprite: Phaser.GameObjects.Sprite
-    ) => void =
-      (player: Player) =>
-      (spaceship: BaseSpaceship, x: number, y: number, targetSprite: Phaser.GameObjects.Sprite) => {
-        this.socketHandler?.sendSetTarget(spaceship.getId() ?? -1, x, y)
-      }
+    ) => void = (spaceship: BaseSpaceship, x: number, y: number) => {
+      this.socketHandler?.sendSetTarget(spaceship.getId() ?? -1, x, y)
+    }
 
-    const onReachableAreaClick: (
-      player: Player
-    ) => (spaceship: BaseSpaceship, x: number, y: number) => void =
-      (player: Player) => (spaceship: BaseSpaceship, x: number, y: number) => {
-        this.socketHandler?.sendSetDestination(spaceship.getId() ?? -1, x, y)
-      }
+    const onReachableAreaClick: (spaceship: BaseSpaceship, x: number, y: number) => void = (
+      spaceship: BaseSpaceship,
+      x: number,
+      y: number
+    ) => {
+      this.socketHandler?.sendSetDestination(spaceship.getId() ?? -1, x, y)
+    }
 
     this.players.push(
       new Player(
@@ -377,12 +374,12 @@ class Game extends Phaser.Scene {
     if (looser.length || this.rounds === MAX_ROUNDS) {
       if (looser.length === 1) {
         if (this.socketHandler?.isMe(looser[0].getSocketId())) {
-          this.gameHandler?.showBadge('defeat')
+          this.UI?.setBadge(ResultTypes.defeat)
         } else {
-          this.gameHandler?.showBadge('victory')
+          this.UI?.setBadge(ResultTypes.victory)
         }
       } else if (looser.length === 2 || this.rounds === MAX_ROUNDS) {
-        this.gameHandler?.showBadge('draw')
+        this.UI?.setBadge(ResultTypes.draw)
       }
       this.socketHandler?.sendClose()
     }

@@ -28,23 +28,19 @@ class Player {
     position: 'TOP' | 'BOTTOM',
     socketId: string,
     onTargetClick?: (
-      player: Player
-    ) => (
       spaceship: BaseSpaceship,
       x: number,
       y: number,
       targetSprite: Phaser.GameObjects.Sprite
     ) => void,
-    onReachableAreaClick?: (
-      player: Player
-    ) => (spaceship: BaseSpaceship, x: number, y: number) => void,
+    onReachableAreaClick?: (spaceship: BaseSpaceship, x: number, y: number) => void,
     onSpaceshipClick?: (player: Player) => (spaceship: BaseSpaceship) => void
   ) {
     // Todo: Make spaceship factory
     this.scene = scene
     this.spaceships = this.createSpaceships(position)
-    this.onReachableAreaClick = onReachableAreaClick?.(this)
-    this.onTargetClick = onTargetClick?.(this)
+    this.onReachableAreaClick = onReachableAreaClick
+    this.onTargetClick = onTargetClick
     this.onSpaceshipClick = onSpaceshipClick?.(this)
     this.socketId = socketId
     this.isMe = isMe
@@ -89,7 +85,7 @@ class Player {
   }
 
   setIsEditable(isEditable: boolean) {
-      this.isEditable = isEditable
+    this.isEditable = isEditable
   }
 
   handleSpaceshipClick(spaceship: BaseSpaceship): void {
