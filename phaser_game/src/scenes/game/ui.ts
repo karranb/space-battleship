@@ -48,13 +48,6 @@ class GameUI extends BaseUIHandler {
           : victoryBadge,
     })
   }
-
-  // submit() {
-  //   const input = document.querySelector('#input') as HTMLInputElement
-  //   const handleSubmit = this.props?.handleSubmit as (message: string) => void
-  //   handleSubmit(input.value)
-  //   input.value = ''
-  // }
 }
 
 export default GameUI

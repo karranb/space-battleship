@@ -12,12 +12,7 @@ class Player {
   private targetSprite?: Phaser.GameObjects.Sprite
   private isEditable = true
   private onReachableAreaClick?: (spaceship: BaseSpaceship, x: number, y: number) => void
-  private onTargetClick?: (
-    spaceship: BaseSpaceship,
-    x: number,
-    y: number,
-    targetSprite: Phaser.GameObjects.Sprite
-  ) => void
+  private onTargetClick?: (spaceship: BaseSpaceship, x: number, y: number) => void
   private onSpaceshipClick?: (spaceship: BaseSpaceship) => void
   private isMe: boolean
   private socketId: string
@@ -27,12 +22,7 @@ class Player {
     isMe: boolean,
     position: 'TOP' | 'BOTTOM',
     socketId: string,
-    onTargetClick?: (
-      spaceship: BaseSpaceship,
-      x: number,
-      y: number,
-      targetSprite: Phaser.GameObjects.Sprite
-    ) => void,
+    onTargetClick?: (spaceship: BaseSpaceship, x: number, y: number) => void,
     onReachableAreaClick?: (spaceship: BaseSpaceship, x: number, y: number) => void,
     onSpaceshipClick?: (player: Player) => (spaceship: BaseSpaceship) => void
   ) {
@@ -101,16 +91,21 @@ class Player {
   }
 
   handleReachableAreaClick(spaceship: BaseSpaceship, x: number, y: number): void {
-    this.reachableGraphic?.destroy()
+    this.onReachableAreaClick?.(spaceship, x, y)
+  }
 
+  destroyReachableArea() {
+    this.reachableGraphic?.destroy()
+  }
+
+  createTarget(spaceship: BaseSpaceship) {
     const targetSprite = this.scene.sys.game.device.os.desktop
       ? this.scene.add.sprite(0, 0, 'target').setInteractive()
       : this.scene.add.sprite(-50, -50, 'target').setInteractive()
     this.targetSprite = targetSprite
-    this.onReachableAreaClick?.(spaceship, x, y)
 
     this.scene.input.on('pointerdown', (pointer: Phaser.Input.Pointer) =>
-      this.handleTargetClick(spaceship, pointer, targetSprite)
+      this.handleTargetClick(spaceship, pointer)
     )
   }
 
@@ -123,16 +118,11 @@ class Player {
     spaceship?.setTarget(x, y, targetSprite)
   }
 
-  handleTargetClick(
-    spaceship: BaseSpaceship,
-    pointer: Phaser.Input.Pointer,
-    targetSprite: Phaser.GameObjects.Sprite
-  ): void {
-    if (!this.scene.sys.game.device.os.desktop) {
-      targetSprite.x = pointer.worldX
-      targetSprite.y = pointer.worldY
-    }
-    this.onTargetClick?.(spaceship, pointer.worldX, pointer.worldY, targetSprite)
+  handleTargetClick(spaceship: BaseSpaceship, pointer: Phaser.Input.Pointer): void {
+    this.onTargetClick?.(spaceship, pointer.worldX, pointer.worldY)
+  }
+
+  destroyTarget() {
     this.scene.input.off('pointerdown')
     this.targetSprite?.destroy()
     this.targetSprite = undefined
@@ -219,8 +209,8 @@ class Player {
   startRound(): void {
     this.spaceships.forEach(spaceship => spaceship.startRound())
     this.activeSpaceship = undefined
-    this.reachableGraphic?.destroy()
-    this.targetSprite?.destroy()
+    this.destroyReachableArea()
+    this.destroyTarget()
     this.isEditable = false
   }
 

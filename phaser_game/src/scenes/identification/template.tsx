@@ -27,6 +27,7 @@ export const IdentificationTemplate = ({
             inputClassName={styles.input}
             ref={inputRef}
             id="input"
+            autoComplete="off"
           />
           <div
             className={styles.button}

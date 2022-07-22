@@ -88,6 +88,7 @@ export const GameTemplate = ({
             inputClassName={styles.input}
             ref={inputRef}
             id="input"
+            autoComplete="off"
           />
           <img
             src={spaceshipArrowImage}

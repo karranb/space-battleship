@@ -225,12 +225,19 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       }
     }
 
+    validateCoordinates(x: number, y: number): void {
+      if (x < 10 || x > 605 || y < 10 || y > 385) {
+        throw new SocketError('Invalid coordintes')
+      }
+    }
+
     handleSetSpaceshipDestination(socket: Socket, value: string): void {
       const game = this.getGame(socket)
       const player = this.getPlayer(socket, game)
       this.validatePlayerPhase(player, PlayerPhase.READY_FOR_COMMANDS, 'You are already ready')
       this.validateChoicesAreSet(game)
       const { spaceship, x, y }: { spaceship: number; x: number; y: number } = JSON.parse(value)
+      this.validateCoordinates(x, y)
       const playerRound = getLastItem(game.rounds)?.[socket.id] ?? {}
       if (!playerRound[spaceship]) {
         playerRound[spaceship] = {}
@@ -246,6 +253,7 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       this.validateChoicesAreSet(game)
 
       const { spaceship, x, y }: { spaceship: number; x: number; y: number } = JSON.parse(value)
+      this.validateCoordinates(x, y)
       const playerRound = getLastItem(game.rounds)?.[socket.id] ?? {}
       if (!playerRound[spaceship]) {
         playerRound[spaceship] = {}

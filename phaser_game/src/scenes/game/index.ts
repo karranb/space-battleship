@@ -201,6 +201,7 @@ class Game extends Phaser.Scene {
         const player = this.getPlayer(this.socketHandler?.getWebSocketClient().id ?? '')
         const spaceship = player?.getSpaceships().find(sp => sp.getId() === spaceshipId)
         if (spaceship) {
+          player?.destroyTarget()
           const targetSprite = this.add.sprite(x, y, 'target')
           player?.setSpaceshipTarget(spaceship, x, y, targetSprite)
         }
@@ -212,6 +213,8 @@ class Game extends Phaser.Scene {
         const spaceship = player?.getSpaceships().find(sp => sp.getId() === spaceshipId)
         if (spaceship) {
           player?.setSpaceshipDestination(spaceship, x, y)
+          player?.destroyReachableArea()
+          player?.createTarget(spaceship)
         }
       }
 
@@ -299,7 +302,6 @@ class Game extends Phaser.Scene {
       spaceship: BaseSpaceship,
       x: number,
       y: number,
-      targetSprite: Phaser.GameObjects.Sprite
     ) => void = (spaceship: BaseSpaceship, x: number, y: number) => {
       this.socketHandler?.sendSetTarget(spaceship.getId() ?? -1, x, y)
     }
