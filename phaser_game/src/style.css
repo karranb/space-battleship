@@ -15,6 +15,23 @@ input {
   color: rgba(255, 255, 255, 0.7);
 }
 
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d6dee1;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+  height: 15px;
+ }
+
+
 @font-face {
   font-family: planer;
   src: url('assets/planer.ttf');

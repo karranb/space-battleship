@@ -48,8 +48,12 @@ class RoomSocketHandler extends BaseSocketHandler {
     handleAcceptChallenge,
     handleCloseChallenge,
     handleErrorChallenge,
-    handleDisconnect
+    handleDisconnect,
+    handleUserIsPlaying,
+    handleUserIsBackFromGame,
   }: {
+    handleUserIsBackFromGame: (value: string) => void
+    handleUserIsPlaying: (value: string) => void
     handleGetUsersList: (value: string) => void
     handleUserDisconnected: (value: string) => void
     handleUserConnected: (value: string) => void
@@ -69,6 +73,8 @@ class RoomSocketHandler extends BaseSocketHandler {
       [Commands.CHALLENGE_CONFIRM]: handleAcceptChallenge,
       [Commands.CHALLENGE_CLOSE]: handleCloseChallenge,
       [Commands.COMMAND_ERROR]: handleErrorChallenge,
+      [Commands.USER_IS_BACK_FROM_GAME]: handleUserIsBackFromGame,
+      [Commands.USER_IS_PLAYING]: handleUserIsPlaying,
     }
     this.setSocketListeners(
       socketMessageHandlers,

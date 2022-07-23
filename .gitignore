@@ -4,3 +4,5 @@ dist
 !.env.example
 coverage
 node_server/src/static/game
+key
+private_key.pepk

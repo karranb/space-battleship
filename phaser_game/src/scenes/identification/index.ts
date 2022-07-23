@@ -17,6 +17,7 @@ class Identification extends Phaser.Scene {
 
   setupUI = (): void => {
     const handleSubmit = (value: string): void => {
+      localStorage.setItem('username', value)
       this.UI?.updateProps({ showLoading: true })
       this.socketHandler = new IdentificationSocketHandler(import.meta.env.VITE_SOCKET_SERVER)
 
@@ -41,7 +42,8 @@ class Identification extends Phaser.Scene {
         handleError
       )
     }
-    this.UI = new IdentificationUI(this, { defaultName: 'Guest', showLoading: false, handleSubmit })
+    const defaultName = localStorage.getItem('username') ?? 'Guest'
+    this.UI = new IdentificationUI(this, { defaultName, showLoading: false, handleSubmit })
     this.returnKey?.on('down', () => this.UI?.submit())
   }
 
@@ -53,8 +55,8 @@ class Identification extends Phaser.Scene {
     this.setupUI()
 
     setTimeout(() => {
-      window.scrollTo(0, 1)
-    }, 1000)
+      window.scrollTo(0, 100)
+    }, 100)
   }
 }
 

@@ -82,6 +82,8 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
         },
         rounds: [],
       }
+      this.webSocket.broadcastMessage(Commands.USER_IS_PLAYING, challenger.id)
+      this.webSocket.broadcastMessage(Commands.USER_IS_PLAYING, challenged.id)
 
       game.roundTimer = this.setTimeout(() => {
         this.setPlayersChoices(game)
@@ -115,6 +117,14 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
     closeGame(socket: Socket): Game | null {
       const game = this.getGame(socket)
       const gameId = socket.data.game
+
+      if (game.challenger.socket.connected) {
+        this.webSocket.broadcastMessage(Commands.USER_IS_BACK_FROM_GAME, game.challenger.socket.id)
+      }
+      if (game.challenged.socket.connected) {
+        this.webSocket.broadcastMessage(Commands.USER_IS_BACK_FROM_GAME, game.challenged.socket.id)
+      }
+
       game.challenged.socket.data.game = undefined
       game.challenger.socket.data.game = undefined
       if (game.roundTimer) {

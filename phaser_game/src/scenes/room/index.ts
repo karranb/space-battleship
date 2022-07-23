@@ -23,9 +23,12 @@ class Room extends Phaser.Scene {
   setupWebsocketListeners = (): void => {
     const handleGetUsersList = (value: string): void => {
       const users = JSON.parse(value).reduce(
-        (acc: Record<string, string>, { id, name }: { id: string; name: string }) => ({
+        (
+          acc: Record<string, string>,
+          { id, name, isPlaying }: { id: string; name: string; isPlaying: boolean }
+        ) => ({
           ...acc,
-          [id]: name,
+          [id]: { name, isPlaying },
         }),
         {}
       )
@@ -52,7 +55,7 @@ class Room extends Phaser.Scene {
 
     const handleErrorChallenge = (value: string): void => {
       const { message } = JSON.parse(value)
-      this.UI?.addMessage(message)
+      this.UI?.addErrorMessage(message)
     }
 
     const handleAcceptChallenge = (message: string): void => {
@@ -71,7 +74,7 @@ class Room extends Phaser.Scene {
     const handleChallenge = (value: string): void => {
       const { challengeId, challengerId, challengedId } = JSON.parse(value)
       if (this.socketHandler?.isMe(challengedId)) {
-        this.UI?.addChallengedMessage(challengedId, challengeId)
+        this.UI?.addChallengedMessage(challengerId, challengeId)
         return
       }
       if (this.socketHandler?.isMe(challengerId)) {
@@ -83,7 +86,10 @@ class Room extends Phaser.Scene {
       const item = JSON.parse(value)
       this.UI?.updateUsers({
         ...this.UI.getUsers(),
-        [item.id]: item.name,
+        [item.id]: {
+          name: item.name,
+          isPlaying: item.isPlaying,
+        },
       })
       this.UI?.addJoinedMessage(item.name)
     }
@@ -97,6 +103,16 @@ class Room extends Phaser.Scene {
       this.scene.start(SCENES.Identification)
     }
 
+    const handleUserIsPlaying = (socketId: string) => {
+      this.UI?.updateUserIsPlaying(socketId, true)
+      this.UI?.addJoinedAGameMessage(socketId)
+    }
+
+    const handleUserIsBackFromGame = (socketId: string) => {
+      this.UI?.updateUserIsPlaying(socketId, false)
+      this.UI?.addBackFromGameMessage(socketId)
+    }
+
     this.socketHandler?.createRoomSocketHandler({
       handleGetUsersList,
       handleUserDisconnected,
@@ -107,6 +123,8 @@ class Room extends Phaser.Scene {
       handleCloseChallenge,
       handleErrorChallenge,
       handleDisconnect,
+      handleUserIsBackFromGame,
+      handleUserIsPlaying,
     })
   }
 

@@ -1,22 +1,19 @@
 todo:
 
 important minor changes
-    react for dom
     error scene
-    salvar nome de usuario
     about screen
     debounces on inputs
-    out of space checks
-    refactor armory / spaceships / game screen
     new deploy, including google play
 ----
 good to have improvements
+    i18n
+    refactor armory / spaceships / game screen
     show life
     show damage hit
     new spaceships
     new armory
     improve tutorial and other hints (tooltips, toasters)
-    i18n
 ----
 webrtc
     create room

@@ -18,6 +18,8 @@ export enum MessageType {
   CHALLENGER = 'CHALLENGER',
   CHALLENGED = 'CHALLENGED',
   ERROR = 'ERROR',
+  IS_PLAYING = 'IS_PLAYING',
+  IS_BACK_FROM_GAME = 'IS_BACK_FROM_GAME',
 }
 
 export type Message = {
@@ -30,7 +32,7 @@ export type Message = {
 }
 
 export type RoomTemplateProps = {
-  users: Record<string, string>
+  users: Record<string, { name: string; isPlaying: boolean }>
   messages: Message[]
   handleSubmitMessage: (message?: string) => void
   handleSubmitChallenge: (userId?: string) => void
@@ -57,13 +59,14 @@ export const RoomTemplate = ({
           <div className={styles.usersWrapper}>
             <img src={usersTab} className={styles.panelTitle} />
             <div className={styles.users}>
-              {Object.entries(users).map(([id, name]) => (
+              {Object.entries(users).map(([id, user]) => (
                 <div
                   key={id}
                   className={cx(styles.user, selectedUser === id && styles.userSelected)}
                   onClick={() => setSelectedUser(id)}
                 >
-                  {name}
+                  {user.name}
+                  {user.isPlaying ? ' - (in a game)' : null}
                 </div>
               ))}
             </div>
@@ -95,7 +98,7 @@ export const RoomTemplate = ({
                   message.message
                 ) : message.type === MessageType.CHALLENGED ? (
                   <>
-                    The user <span className={styles.messageName}>{message.name}:</span> challenged
+                    The user <span className={styles.messageName}>{message.name}</span> challenged
                     you -{' '}
                     {message.inactiveReason ? (
                       message.inactiveReason
@@ -134,6 +137,14 @@ export const RoomTemplate = ({
                         - {message.time}
                       </>
                     )}
+                  </>
+                ) : message.type === MessageType.IS_PLAYING ? (
+                  <>
+                    <span className={styles.messageName}>{message.name} entered a game</span>
+                  </>
+                ) : message.type === MessageType.IS_BACK_FROM_GAME ? (
+                  <>
+                    <span className={styles.messageName}>{message.name} is back from the game</span>
                   </>
                 ) : null}
               </span>
