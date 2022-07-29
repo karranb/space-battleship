@@ -39,6 +39,7 @@
     "@capacitor/keyboard": "^1.2.3",
     "antd": "^4.22.2",
     "classnames": "^2.3.1",
+    "i18next": "^21.8.14",
     "lodash": "^4.17.21",
     "normalize.css": "^8.0.1",
     "phaser": "^3.55.2",

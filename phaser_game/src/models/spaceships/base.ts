@@ -34,7 +34,8 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
   protected targetSprite?: Phaser.GameObjects.Sprite
   protected owner?: Player
   protected textures: { parent: string; moving: string; stopped: string }
-
+  protected hitTimer?: Phaser.Time.TimerEvent
+  protected progressBar?: Phaser.GameObjects.Graphics
   constructor({
     scene,
     x = 0,
@@ -67,6 +68,16 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     this.angle = angle
     this.setAngle(angle)
     this.setRotation(Phaser.Math.DegToRad(angle))
+  }
+
+  addProgressBar() {
+    this.progressBar = this.scene.add.graphics()
+    this.progressBar.fillStyle(0x01c9cf, 1)
+    this.progressBar.fillRect(this.x - 20, this.y + 25, 40 * (this.life / this.maxLife), 5)
+  }
+
+  destroyProgressBar() {
+    this.progressBar?.destroy()
   }
 
   setDestination(x: number, y: number): void {
@@ -130,12 +141,30 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     this.life -= damage
     if (this.life < 0) {
       this.destroy()
+    } else {
+      if (this.hitTimer) {
+        this.hitTimer.destroy()
+        this.setAlpha(1)
+      }
+      this.hitTimer = this.scene.time.addEvent({
+        delay: 50,
+        callback: () => {
+          if ((this.hitTimer?.getRepeatCount() ?? 0) > 5) {
+            this.alpha = this.alpha - 0.1
+          } else {
+            this.alpha = this.alpha + 0.1
+          }
+        },
+        repeat: 10,
+      })
     }
   }
 
   destroy(): void {
-    this.state = 'DESTROYED'   
-    this.scene?.addExplosion(this.x, this.y) 
+    this.state = 'DESTROYED'
+    this.scene?.addExplosion(this.x, this.y)
+    this.destroyProgressBar()
+    this.hitTimer?.destroy()
     super.destroy()
   }
 

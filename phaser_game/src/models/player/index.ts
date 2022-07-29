@@ -52,7 +52,9 @@ class Player {
 
   finishRound(): void {
     this.spaceships = this.spaceships.filter(spaceship => spaceship.state !== 'DESTROYED')
-    // this.isEditable = true
+    this.spaceships.forEach(spaceship => {
+      spaceship.addProgressBar()
+    })
   }
 
   createReachableArea(spaceship: BaseSpaceship): void {
@@ -130,7 +132,7 @@ class Player {
   }
 
   getSpaceships(): BaseSpaceship[] {
-    return this.spaceships
+    return this.spaceships.filter(spaceship => spaceship.state !== 'DESTROYED')
   }
 
   createSpaceship(
@@ -211,6 +213,9 @@ class Player {
     this.activeSpaceship = undefined
     this.destroyReachableArea()
     this.destroyTarget()
+    this.spaceships.forEach(spaceship => {
+      spaceship.destroyProgressBar()
+    })
     this.isEditable = false
   }
 

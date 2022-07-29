@@ -8,6 +8,7 @@ import messagesTab from 'assets/messages_tab.png'
 
 import { Container } from 'components/container'
 import { TextInput } from 'components/input'
+import i18next from 'i18n'
 
 import styles from './styles.module.css'
 import debounce from 'lodash/debounce'
@@ -178,7 +179,7 @@ export const RoomTemplate = ({
       </div>
       <div className={styles.messageWrapper}>
         <TextInput
-          placeholder="Enter your message"
+          placeholder={i18next.t('Enter your message')}
           autoComplete="off"
           ref={inputRef}
           className={styles.input}

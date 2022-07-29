@@ -50,6 +50,7 @@ class Identification extends Phaser.Scene {
     }
 
     this.returnKey?.on('down', () => this.UI?.submit())
+
     this.UI = new IdentificationUI(this, {
       defaultName,
       showLoading: false,

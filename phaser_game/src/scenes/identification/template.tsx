@@ -4,9 +4,11 @@ import 'antd/dist/antd.css'
 import { notification } from 'antd'
 
 import { Container } from 'components/container'
-import styles from './styles.module.css'
 import { TextInput } from 'components/input'
 import { ErrorTypes } from 'utils/constants'
+import i18next from 'i18n'
+
+import styles from './styles.module.css'
 
 export type IdentificationTemplateProps = {
   handleSubmit: (value: string) => void
@@ -27,16 +29,16 @@ export const IdentificationTemplate = ({
   useEffect(() => {
     if (error === ErrorTypes.disconnected) {
       notification.error({
-        message: 'Disconnect',
-        description: 'You disconnected from the server.',
+        message: `${i18next.t('Disconnected')}`,
+        description: `${i18next.t('You disconnected from the server.')}`,
         onClose: handleCloseMessage,
       })
     }
 
     if (error === ErrorTypes.not_able_to_connect) {
       notification.error({
-        message: 'Not able to connect',
-        description: 'You were not able to connect to the server.',
+        message: `${i18next.t('Not able to connect')}`,
+        description: `${'You were not able to connect to the server.'}`,
         onClose: handleCloseMessage,
       })
     }
@@ -46,7 +48,7 @@ export const IdentificationTemplate = ({
       <div>
         <div className={cx(showLoading && styles.hide, styles.formWrapper)}>
           <TextInput
-            labelText="Nickname:"
+            labelText={`${i18next.t('Nickname')}:`}
             defaultValue={defaultName}
             inputClassName={styles.input}
             ref={inputRef}
@@ -60,7 +62,7 @@ export const IdentificationTemplate = ({
         </div>
       </div>
       <div className={cx(!showLoading && styles.hide)}>
-        <p className={styles.connecting}>Connecting...</p>
+        <p className={styles.connecting}>{`${i18next.t('Connecting')}:...`}</p>
       </div>
     </Container>
   )
