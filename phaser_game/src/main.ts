@@ -17,11 +17,16 @@ class Game extends Phaser.Game {
     this.scene.add(SCENES.Room, Room)
     this.scene.add(SCENES.ShipsSelect, ShipsSelect)
     this.scene.add(SCENES.Game, GameScene)
-    
+
     this.scene.start(SCENES.Boot)
   }
 }
-// Create new instance of game
+
 window.onload = function (): void {
   new Game()
+  window.addEventListener('resize', function () {
+    const newHeight = window.innerHeight
+    const app = document.querySelector('#app') as HTMLDivElement
+    app.style.height = `${newHeight}px`
+  })
 }

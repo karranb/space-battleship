@@ -1,6 +1,6 @@
 import 'phaser'
 
-import { HEIGHT, SCENES, WIDTH } from 'utils/constants'
+import { ErrorTypes, HEIGHT, SCENES, WIDTH } from 'utils/constants'
 
 import Player from 'models/player'
 import SingleBullet from 'models/weapons/single-bullet'
@@ -10,6 +10,7 @@ import { Socket } from 'socket.io-client'
 import GameSocketHandler from './socket'
 import { Commands, MAX_ROUNDS } from 'interfaces/shared'
 import GameUI, { ResultTypes } from './ui'
+import debounce from 'lodash/debounce'
 
 class Game extends Phaser.Scene {
   UI?: GameUI
@@ -68,9 +69,16 @@ class Game extends Phaser.Scene {
 
     this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
 
-    this.returnKey?.on('down', () => {
-      this.UI?.sendMessage()
-    })
+    this.returnKey?.on(
+      'down',
+      debounce(
+        () => {
+          this.UI?.sendMessage()
+        },
+        300,
+        { leading: true, trailing: false }
+      )
+    )
 
     const handleSubmitReady = () => {
       this.socketHandler?.sendPlayerReady()
@@ -286,7 +294,7 @@ class Game extends Phaser.Scene {
     }
 
     const handleDisconnect = () => {
-      this.scene.start(SCENES.Identification)
+      this.scene.start(SCENES.Identification, { error: ErrorTypes.disconnected})
     }
 
     this.socketHandler?.createGameSocketHandler({
@@ -298,11 +306,11 @@ class Game extends Phaser.Scene {
       handleDisconnect,
     })
 
-    const onTargetClick: (
+    const onTargetClick: (spaceship: BaseSpaceship, x: number, y: number) => void = (
       spaceship: BaseSpaceship,
       x: number,
-      y: number,
-    ) => void = (spaceship: BaseSpaceship, x: number, y: number) => {
+      y: number
+    ) => {
       this.socketHandler?.sendSetTarget(spaceship.getId() ?? -1, x, y)
     }
 

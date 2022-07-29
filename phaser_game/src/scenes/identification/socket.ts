@@ -5,7 +5,11 @@ import { BaseSocketHandler } from 'utils/socket'
 
 class IdentificationSocketHandler extends BaseSocketHandler {
   public constructor(url: string) {
-    super(io(url))
+    super(
+      io(url, {
+        reconnection: false,
+      })
+    )
   }
 
   public sendName(name: string): void {
@@ -15,13 +19,13 @@ class IdentificationSocketHandler extends BaseSocketHandler {
   public createIdentificationSocketHandler(
     handleNameMessage: (name: string) => void,
     handleSocketOpen: () => void,
-    handleError: (message: string) => void
+    handleError: () => void
   ): void {
     const socketMessageHandlers = {
       [Commands.COMMAND_PROCESSED]: handleNameMessage,
       [Commands.COMMAND_ERROR]: handleError,
     }
-    this.setSocketListeners(socketMessageHandlers, handleSocketOpen, () => null)
+    this.setSocketListeners(socketMessageHandlers, handleSocketOpen, handleError)
   }
 }
 

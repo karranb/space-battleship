@@ -1,7 +1,8 @@
 import 'phaser'
 import { Socket } from 'socket.io-client'
 
-import { SCENES } from 'utils/constants'
+import { ErrorTypes, SCENES } from 'utils/constants'
+import debounce from 'lodash/debounce'
 
 import RoomSocketHandler from './socket'
 import RoomUI from './ui'
@@ -100,7 +101,7 @@ class Room extends Phaser.Scene {
     }
 
     const handleDisconnect = () => {
-      this.scene.start(SCENES.Identification)
+      this.scene.start(SCENES.Identification, { error: ErrorTypes.disconnected})
     }
 
     const handleUserIsPlaying = (socketId: string) => {
@@ -153,9 +154,16 @@ class Room extends Phaser.Scene {
       handleCloseChallengeClick: (id: string) => this.socketHandler?.sendMessageCancel(id),
     })
 
-    this.returnKey?.on('down', () => {
-      this.UI?.sendMessage()
-    })
+    this.returnKey?.on(
+      'down',
+      debounce(
+        () => {
+          this.UI?.sendMessage()
+        },
+        300,
+        { leading: true, trailing: false }
+      )
+    )
   }
 
   create(): void {

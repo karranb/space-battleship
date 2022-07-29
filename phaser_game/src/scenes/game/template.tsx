@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 
 import { TextInput } from 'components/input'
 import { HEIGHT, WIDTH } from 'utils/constants'
@@ -6,6 +6,7 @@ import buttonBackground from 'assets/button-background.png'
 import spaceshipArrowImage from 'assets/spaceship-select-arrow.png'
 
 import styles from './styles.module.css'
+import debounce from 'lodash/debounce'
 
 export type Message = {
   name?: string
@@ -36,6 +37,21 @@ export const GameTemplate = ({
   handleSubmitReady,
 }: GameTemplateProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const debounceSendMessageClick = useCallback(
+    debounce(
+      () => {
+        handleSubmitMessage?.(inputRef.current?.value ?? '')
+        if (inputRef.current) {
+          inputRef.current.value = ''
+        }
+      },
+      300,
+      { leading: true, trailing: false }
+    ),
+    []
+  )
+
   return (
     <>
       <div
@@ -93,12 +109,7 @@ export const GameTemplate = ({
           <img
             src={spaceshipArrowImage}
             className={styles.submit}
-            onClick={() => {
-              handleSubmitMessage?.(inputRef.current?.value ?? '')
-              if (inputRef.current) {
-                inputRef.current.value = ''
-              }
-            }}
+            onClick={debounceSendMessageClick}
           />
         </div>
       </div>

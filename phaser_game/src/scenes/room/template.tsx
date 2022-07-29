@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import cx from 'classnames'
 
 import sendButton from 'assets/send_button.png'
@@ -10,6 +10,7 @@ import { Container } from 'components/container'
 import { TextInput } from 'components/input'
 
 import styles from './styles.module.css'
+import debounce from 'lodash/debounce'
 
 export enum MessageType {
   USER = 'USER',
@@ -41,6 +42,9 @@ export type RoomTemplateProps = {
   handleCloseChallengeClick?: (challengeId: string) => void
 }
 
+const debounceOptions = { leading: true, trailing: false }
+const debounceTime = 300
+
 export const RoomTemplate = ({
   users = {},
   messages = [],
@@ -52,6 +56,26 @@ export const RoomTemplate = ({
 }: RoomTemplateProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [selectedUser, setSelectedUser] = useState<string | undefined>(undefined)
+
+  const debouncedChallengeClick = useCallback(
+    debounce(() => handleSubmitChallenge(selectedUser), debounceTime, debounceOptions),
+    [selectedUser]
+  )
+
+  const debounceSendMessageClick = useCallback(
+    debounce(
+      () => {
+        handleSubmitMessage(inputRef.current?.value)
+        if (inputRef.current) {
+          inputRef.current.value = ''
+        }
+      },
+      debounceTime,
+      debounceOptions
+    ),
+    []
+  )
+
   return (
     <Container className={styles.container}>
       <div className={styles.topPanelsWrapper}>
@@ -74,7 +98,7 @@ export const RoomTemplate = ({
           <img
             src={challengeButton}
             className={styles.challengeButton}
-            onClick={() => handleSubmitChallenge(selectedUser)}
+            onClick={debouncedChallengeClick}
           />
         </div>
         <div className={styles.rightColumn}>
@@ -160,16 +184,7 @@ export const RoomTemplate = ({
           className={styles.input}
           id="input"
         />
-        <img
-          src={sendButton}
-          className={styles.messageButton}
-          onClick={() => {
-            handleSubmitMessage(inputRef.current?.value)
-            if (inputRef.current) {
-              inputRef.current.value = ''
-            }
-          }}
-        />
+        <img src={sendButton} className={styles.messageButton} onClick={debounceSendMessageClick} />
       </div>
     </Container>
   )

@@ -2,8 +2,8 @@
   box-sizing: border-box;
 }
 
-html {
-  background-color: black;
+body {
+  background-color: black !important;
 }
 
 input {

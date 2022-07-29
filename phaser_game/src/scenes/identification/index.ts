@@ -1,7 +1,7 @@
 import 'phaser'
 
 import { Commands } from 'interfaces/shared'
-import { SCENES } from 'utils/constants'
+import { ErrorTypes, SCENES } from 'utils/constants'
 
 import IdentificationSocketHandler from './socket'
 import IdentificationUI from './ui'
@@ -15,7 +15,9 @@ class Identification extends Phaser.Scene {
     super(SCENES.Identification)
   }
 
-  setupUI = (): void => {
+  init(data: { error: ErrorTypes }): void {
+    this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+    const defaultName = localStorage.getItem('username') ?? 'Guest'
     const handleSubmit = (value: string): void => {
       localStorage.setItem('username', value)
       this.UI?.updateProps({ showLoading: true })
@@ -32,8 +34,8 @@ class Identification extends Phaser.Scene {
         }
       }
 
-      const handleError = (message: string) => {
-        console.error(message)
+      const handleError = () => {
+        this.UI?.updateProps({ showLoading: false, error: ErrorTypes.not_able_to_connect })
       }
 
       this.socketHandler.createIdentificationSocketHandler(
@@ -42,18 +44,22 @@ class Identification extends Phaser.Scene {
         handleError
       )
     }
-    const defaultName = localStorage.getItem('username') ?? 'Guest'
-    this.UI = new IdentificationUI(this, { defaultName, showLoading: false, handleSubmit })
-    this.returnKey?.on('down', () => this.UI?.submit())
-  }
 
-  init(): void {
-    this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+    const handleCloseMessage = () => {
+      this.UI?.updateProps({ error: undefined })
+    }
+
+    this.returnKey?.on('down', () => this.UI?.submit())
+    this.UI = new IdentificationUI(this, {
+      defaultName,
+      showLoading: false,
+      handleSubmit,
+      handleCloseMessage,
+      error: data?.error,
+    })
   }
 
   create(): void {
-    this.setupUI()
-
     setTimeout(() => {
       window.scrollTo(0, 100)
     }, 100)

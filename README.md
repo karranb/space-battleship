@@ -2,18 +2,16 @@ todo:
 
 important minor changes
     error scene
-    about screen
-    debounces on inputs
-    new deploy, including google play
 ----
 good to have improvements
     i18n
-    refactor armory / spaceships / game screen
+    improve tutorial and other hints (tooltips, toasters)
     show life
     show damage hit
+    refactor armory / spaceships / game screen
     new spaceships
     new armory
-    improve tutorial and other hints (tooltips, toasters)
+    about screen
 ----
 webrtc
     create room

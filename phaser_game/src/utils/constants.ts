@@ -3,8 +3,13 @@ export enum SCENES {
   Identification = 'Identification',
   Room = 'Room',
   ShipsSelect = 'ShipsSelect',
-  Game = 'Game'
+  Game = 'Game',
 }
 
 export const WIDTH = 844
 export const HEIGHT = 390
+
+export enum ErrorTypes {
+  disconnected = 'disconnected',
+  not_able_to_connect = 'not_able_to_connect',
+}

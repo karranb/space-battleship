@@ -28,7 +28,10 @@ class RoomSocketHandler extends BaseSocketHandler {
   }
 
   public sendMessage(value: string): void {
-    this.webSocketClient.emit(Commands.ROOM_MESSAGE, value)
+    const parsedValue = value.trim()
+    if (parsedValue) {
+      this.webSocketClient.emit(Commands.ROOM_MESSAGE, parsedValue)
+    }
   }
 
   public sendGetUsersList(): void {
@@ -76,11 +79,7 @@ class RoomSocketHandler extends BaseSocketHandler {
       [Commands.USER_IS_BACK_FROM_GAME]: handleUserIsBackFromGame,
       [Commands.USER_IS_PLAYING]: handleUserIsPlaying,
     }
-    this.setSocketListeners(
-      socketMessageHandlers,
-      () => null,
-      handleDisconnect
-    )
+    this.setSocketListeners(socketMessageHandlers, () => null, handleDisconnect)
   }
 }
 
