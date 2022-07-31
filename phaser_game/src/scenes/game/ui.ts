@@ -1,8 +1,5 @@
 import { GameTemplate, GameTemplateProps, Message } from './template'
 import BaseUIHandler from 'utils/ui'
-import victoryBadge from 'assets/victory_badge.png'
-import defeatBadge from 'assets/defeat_badge.png'
-import drawBadge from 'assets/draw_badge.png'
 
 export enum ResultTypes {
   victory = 'victory',
@@ -40,12 +37,7 @@ class GameUI extends BaseUIHandler {
 
   setBadge(result: ResultTypes) {
     this.updateProps({
-      badge:
-        result === ResultTypes.defeat
-          ? defeatBadge
-          : result === ResultTypes.draw
-          ? drawBadge
-          : victoryBadge,
+      badge: result,
     })
   }
 }

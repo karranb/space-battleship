@@ -6,6 +6,7 @@ import debounce from 'lodash/debounce'
 
 import RoomSocketHandler from './socket'
 import RoomUI from './ui'
+import i18next from 'i18n'
 
 class Room extends Phaser.Scene {
   private UI?: RoomUI
@@ -44,13 +45,13 @@ class Room extends Phaser.Scene {
     const handleCloseChallenge = (value: string): void => {
       const { challengeId, reason } = JSON.parse(value)
       if (reason === 'TIMEOUT') {
-        this.UI?.setChallengeClosedMessage(challengeId, 'The challenge timed out')
+        this.UI?.setChallengeClosedMessage(challengeId, i18next.t('The challenge timed out'))
         return
       }
-      const name = this.socketHandler?.isMe(reason) ? 'You' : 'The opponent'
+      const name = this.socketHandler?.isMe(reason) ? i18next.t('You') : i18next.t('The opponent')
       this.UI?.setChallengeClosedMessage(
         challengeId,
-        `${name ?? 'The opponent'} canceled the challenge`
+        `${name ?? i18next.t('The opponent')} ${i18next.t('canceled the challenge')}`
       )
     }
 
@@ -101,7 +102,7 @@ class Room extends Phaser.Scene {
     }
 
     const handleDisconnect = () => {
-      this.scene.start(SCENES.Identification, { error: ErrorTypes.disconnected})
+      this.scene.start(SCENES.Identification, { error: ErrorTypes.disconnected })
     }
 
     const handleUserIsPlaying = (socketId: string) => {
@@ -136,11 +137,11 @@ class Room extends Phaser.Scene {
 
     const handleSubmitChallenge = (selectedValue?: string): void => {
       if (!selectedValue) {
-        this.UI?.addErrorMessage('You need to select someone to challenge')
+        this.UI?.addErrorMessage(i18next.t('You need to select someone to challenge'))
         return
       }
       if (this.socketHandler?.isMe(selectedValue)) {
-        this.UI?.addErrorMessage("You can't challenge yourself, select someone else")
+        this.UI?.addErrorMessage(i18next.t("You can't challenge yourself, select someone else"))
         return
       }
       this.socketHandler?.sendChallenge(selectedValue)

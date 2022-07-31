@@ -1,18 +1,18 @@
 todo:
-
-good to have improvements
-    i18n
     about screen
+    move spaceships and add reachable area mask
     singleplayer game
-    refactor armory / spaceships / game screen
     new spaceships
+    flags
+    add quit button to game
+    refactor react components
+    refactor armory / spaceships / game screen
     new armory
 ----
 webrtc
     create room
     admin / kick / ban
     quick game
-    flags
 -----
 database to register players / game results / clans
 -----

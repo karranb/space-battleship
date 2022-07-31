@@ -1,10 +1,8 @@
 import React, { useCallback, useRef, useState } from 'react'
 import cx from 'classnames'
 
-import sendButton from 'assets/send_button.png'
-import challengeButton from 'assets/challenge_button.png'
-import usersTab from 'assets/users_tab.png'
-import messagesTab from 'assets/messages_tab.png'
+import buttonBackground from 'assets/button-background.png'
+import tab from 'assets/tab.png'
 
 import { Container } from 'components/container'
 import { TextInput } from 'components/input'
@@ -82,7 +80,10 @@ export const RoomTemplate = ({
       <div className={styles.topPanelsWrapper}>
         <div className={styles.leftColumn}>
           <div className={styles.usersWrapper}>
-            <img src={usersTab} className={styles.panelTitle} />
+            <div className={styles.tabContainer}>
+              <span className={styles.tabText}>{`${i18next.t('Users')}`}</span>
+              <img src={tab} className={styles.tab} />
+            </div>
             <div className={styles.users}>
               {Object.entries(users).map(([id, user]) => (
                 <div
@@ -91,29 +92,34 @@ export const RoomTemplate = ({
                   onClick={() => setSelectedUser(id)}
                 >
                   {user.name}
-                  {user.isPlaying ? ' - (in a game)' : null}
+                  {user.isPlaying ? ` - (${i18next.t('in a game')})` : null}
                 </div>
               ))}
             </div>
           </div>
-          <img
-            src={challengeButton}
-            className={styles.challengeButton}
-            onClick={debouncedChallengeClick}
-          />
+          <div className={styles.sendChallengeButton} onClick={debouncedChallengeClick}>
+            <>{i18next.t('CHALLENGE')}</>
+            <img src={buttonBackground} className={styles.buttonImage} />
+          </div>
         </div>
         <div className={styles.rightColumn}>
-          <img src={messagesTab} className={styles.panelTitle} />
+          <div className={styles.tabContainer}>
+            <span className={styles.tabText}>{`${i18next.t('Messages')}`}</span>
+            <img src={tab} className={styles.tab} />
+          </div>
+
           <div className={styles.messages} id="messages">
             {messages.map((message, i) => (
               <span className={styles.message} key={`message-${i}`}>
                 {message.type === MessageType.JOINED ? (
                   <>
-                    <span className={styles.messageName}>{message.name}</span> joined =)
+                    <span className={styles.messageName}>{message.name}</span>{' '}
+                    {i18next.t('joined =)')}
                   </>
                 ) : message.type === MessageType.QUITTED ? (
                   <>
-                    <span className={styles.messageName}>{message.name}</span> quited =(
+                    <span className={styles.messageName}>{message.name}</span>{' '}
+                    {i18next.t('quited =(')}
                   </>
                 ) : message.type === MessageType.USER ? (
                   <>
@@ -123,8 +129,9 @@ export const RoomTemplate = ({
                   message.message
                 ) : message.type === MessageType.CHALLENGED ? (
                   <>
-                    The user <span className={styles.messageName}>{message.name}</span> challenged
-                    you -{' '}
+                    {i18next.t('The user')}{' '}
+                    <span className={styles.messageName}>{message.name}</span>
+                    {i18next.t('challenged you')} -{' '}
                     {message.inactiveReason ? (
                       message.inactiveReason
                     ) : (
@@ -133,14 +140,14 @@ export const RoomTemplate = ({
                           className={styles.challengeButton}
                           onClick={() => handleAcceptChallengeClick?.(message.id ?? '')}
                         >
-                          Accept
+                          <>{i18next.t('Accept')}</>
                         </span>{' '}
                         |{' '}
                         <span
                           className={styles.challengeButton}
                           onClick={() => handleRefuseChallengeClick?.(message.id ?? '')}
                         >
-                          Refuse
+                          <>{i18next.t('Refuse')}</>
                         </span>{' '}
                         - {message.time}
                       </>
@@ -148,7 +155,8 @@ export const RoomTemplate = ({
                   </>
                 ) : message.type === MessageType.CHALLENGER ? (
                   <>
-                    You challenged <span className={styles.messageName}>{message.name}:</span> -{' '}
+                    {i18next.t('You challenged')}{' '}
+                    <span className={styles.messageName}>{message.name}:</span> -{' '}
                     {message.inactiveReason ? (
                       message.inactiveReason
                     ) : (
@@ -157,7 +165,7 @@ export const RoomTemplate = ({
                           className={styles.challengeButton}
                           onClick={() => handleCloseChallengeClick?.(message.id ?? '')}
                         >
-                          Cancel
+                          <>{i18next.t('Cancel')}</>
                         </span>{' '}
                         - {message.time}
                       </>
@@ -165,11 +173,19 @@ export const RoomTemplate = ({
                   </>
                 ) : message.type === MessageType.IS_PLAYING ? (
                   <>
-                    <span className={styles.messageName}>{message.name} entered a game</span>
+                    <span className={styles.messageName}>
+                      <>
+                        {message.name} {i18next.t('entered a game')}
+                      </>
+                    </span>
                   </>
                 ) : message.type === MessageType.IS_BACK_FROM_GAME ? (
                   <>
-                    <span className={styles.messageName}>{message.name} is back from the game</span>
+                    <span className={styles.messageName}>
+                      <>
+                        {message.name} {i18next.t('is back from the game')}
+                      </>
+                    </span>
                   </>
                 ) : null}
               </span>
@@ -185,7 +201,10 @@ export const RoomTemplate = ({
           className={styles.input}
           id="input"
         />
-        <img src={sendButton} className={styles.messageButton} onClick={debounceSendMessageClick} />
+        <div className={styles.messageButton} onClick={debounceSendMessageClick}>
+          <>{i18next.t('SEND')}</>
+          <img src={buttonBackground} className={styles.buttonImage} />
+        </div>
       </div>
     </Container>
   )

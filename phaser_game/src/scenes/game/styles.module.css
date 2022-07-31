@@ -37,13 +37,13 @@
 .separator {
   border-top: 1px dashed #01c9cf;
   width: 100%;
-  margin-top: 15px;
+  margin-top: 5px;
 }
 
 .tutorial {
   color: white;
   font-family: planer;
-  margin-top: 15px;
+  margin-top: 5px;
   font-size: 12px;
 }
 
@@ -140,4 +140,22 @@
   display: flex;
   top: 0;
   left: 0;
+}
+
+.victoryBadgeText {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-family: 'neuropol';
+}
+.notVictoryBadgeText {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-family: 'neuropol';
+  z-index: 2;
 }

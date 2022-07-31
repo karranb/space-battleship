@@ -7,6 +7,11 @@ import spaceshipArrowImage from 'assets/spaceship-select-arrow.png'
 
 import styles from './styles.module.css'
 import debounce from 'lodash/debounce'
+import i18next from 'i18n'
+import { ResultTypes } from './ui'
+
+import victoryBadge from 'assets/victory_badge2.png'
+import notVictoryBadge from 'assets/not_victory_badge.png'
 
 export type Message = {
   name?: string
@@ -19,7 +24,7 @@ export type GameTemplateProps = {
   isChallenger: boolean
   messages: Message[]
   isWaitingOponent?: boolean
-  badge?: string
+  badge?: ResultTypes
   handleSubmitMessage?: (message: string) => void
   handleSubmitReady?: () => void
 }
@@ -52,6 +57,15 @@ export const GameTemplate = ({
     []
   )
 
+  const isNotVictoryBadge = badge ? [ResultTypes.defeat, ResultTypes.draw].includes(badge) : false
+
+  const badgeText =
+    badge === ResultTypes.victory
+      ? i18next.t('VICTORY')
+      : badge === ResultTypes.defeat
+      ? i18next.t('DEFEAT')
+      : i18next.t('DRAW')
+
   return (
     <>
       <div
@@ -60,34 +74,36 @@ export const GameTemplate = ({
       >
         <div className={styles.boxWrapper}>
           <div className={styles.challengerBox}>
-            <span>{isChallenger ? 'You' : challengerName}</span>
+            <span>{isChallenger ? <>{i18next.t('You')}</> : challengerName}</span>
           </div>
 
           <div className={styles.challengedBox}>
-            <span>{isChallenger ? challengedName : 'You'}</span>
+            <span>{isChallenger ? challengedName : <>{i18next.t('You')}</>}</span>
           </div>
         </div>
 
         <div className={styles.separator} />
 
-        <span className={styles.tutorial}>
-          1. Click on one of your spaceships
+        <p className={styles.tutorial}>
+          <>1. {i18next.t('Click on one of your spaceships')}</>
           <br />
-          2. Select a destination inside the reachable area
+          <>2. {i18next.t('Select a destination inside the reachable area')}</>
           <br />
-          3. Click on a place to shoot
+          <>3. {i18next.t('Click on a place to shoot')}</>
           <br />
-          4. Repeat steps 1-3 to the other spaceships
+          <>4. {i18next.t('Repeat steps 1-3 to the other spaceships')}</>
           <br />
-          5. Press Done
-        </span>
+          <>5. {i18next.t('Press Done')}</>
+        </p>
         {!isWaitingOponent ? (
           <div className={styles.doneButton} onClick={() => handleSubmitReady?.()}>
-            DONE
+            <>{i18next.t('DONE')}</>
             <img src={buttonBackground} className={styles.buttonBackground} />
           </div>
         ) : (
-          <span className={styles.waiting}>WAITING OPONENT</span>
+          <span className={styles.waiting}>
+            <>{i18next.t('WAITING OPONENT')}</>
+          </span>
         )}
 
         <div className={styles.separator} />
@@ -118,7 +134,12 @@ export const GameTemplate = ({
           className={styles.badgeContainer}
           style={{ width: `${WIDTH}px`, height: `${HEIGHT}px` }}
         >
-          <img src={badge} className={styles.badge} />
+          <span
+            className={isNotVictoryBadge ? styles.notVictoryBadgeText : styles.victoryBadgeText}
+          >
+            {badgeText}
+          </span>
+          <img src={isNotVictoryBadge ? notVictoryBadge : victoryBadge} className={styles.badge} />
         </div>
       )}
     </>

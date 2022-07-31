@@ -2,7 +2,8 @@ import React from 'react'
 
 import { Container } from 'components/container'
 import styles from './styles.module.css'
-import titleImage from 'assets/ships-select-title.png'
+// import titleImage from 'assets/ships-select-title.png'
+import titleBackground from 'assets/title-bg.png'
 import spaceshipArrowImage from 'assets/spaceship-select-arrow.png'
 import blue1Image from 'assets/blue-1.png'
 import red1Image from 'assets/red-1.png'
@@ -10,6 +11,7 @@ import levelOnImage from 'assets/level-on.png'
 import levelOffImage from 'assets/level-off.png'
 import armoryItem1Image from 'assets/armory-item-1.png'
 import buttonBackground from 'assets/button-background.png'
+import i18next from 'i18n'
 
 export type ShipsSelectTemplateProps = {
   handleSubmit: () => void
@@ -29,7 +31,10 @@ export const ShipsSelectTemplate = ({
   return (
     <Container className={styles.container}>
       <>
-        <img src={titleImage} className={styles.title} />
+        <div className={styles.titleContainer}>
+          <span>{`${i18next.t('Spaceship & Armory')}`}</span>
+          <img src={titleBackground} className={styles.titleBackground} />
+        </div>
         <span className={styles.timer} id="timer">
           {timer}
         </span>
@@ -47,12 +52,18 @@ export const ShipsSelectTemplate = ({
                 </div>
                 <div className={styles.shipDetail}>
                   <div className={styles.keys}>
-                    <span>Name:</span>
-                    <span>Speed:</span>
-                    <span>Shield:</span>
+                    <span>
+                      <>{i18next.t('Name')}:</>
+                    </span>
+                    <span>
+                      <>{i18next.t('Speed')}:</>
+                    </span>
+                    <span>
+                      <>{i18next.t('Shield')}:</>
+                    </span>
                   </div>
                   <div className={styles.values}>
-                    <span>Spaceship 1</span>
+                    <span>XF-43</span>
                     <div className={styles.levelWrapper}>
                       <img src={levelOnImage} className={styles.level} />
                       <img src={levelOnImage} className={styles.level} />
@@ -70,7 +81,9 @@ export const ShipsSelectTemplate = ({
                   </div>
                 </div>
                 <div className={styles.armoryWrapper}>
-                  <span className={styles.armoryTitle}>ARMORY</span>
+                  <span className={styles.armoryTitle}>
+                    <>{i18next.t('ARMORY')}</>
+                  </span>
                   <div className={styles.armories}>
                     <img src={armoryItem1Image} className={styles.armory} />
                   </div>
@@ -81,23 +94,29 @@ export const ShipsSelectTemplate = ({
 
         <div className={styles.overlay}>
           <div className={styles.dialog}>
-            There's no other spaceship/armory option available now, please press done to continue
+            <>
+              {i18next.t(
+                `There's no other spaceship/armory option available now, please press done to continue`
+              )}
+            </>
           </div>
         </div>
 
         <div className={styles.footer}>
           <div className={styles.giveUpButton} id="giveUpButton" onClick={handleGiveUp}>
-            GIVE UP
+            <>{i18next.t('GIVE UP')}</>
             <img className={styles.giveUpButtonImage} src={buttonBackground} />
           </div>
 
           {!waitingOponent ? (
             <div className={styles.doneButton} id="doneButton" onClick={handleSubmit}>
-              DONE
+              <>{i18next.t('DONE')}</>
               <img src={buttonBackground} className={styles.doneButtonImage} />
             </div>
           ) : (
-            <span className={styles.waitingOponent}>WAITING OPONENT</span>
+            <span className={styles.waitingOponent}>
+              <>{i18next.t('WAITING OPONENT')}</>
+            </span>
           )}
         </div>
       </>

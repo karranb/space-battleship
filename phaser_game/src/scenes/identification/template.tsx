@@ -7,6 +7,7 @@ import { Container } from 'components/container'
 import { TextInput } from 'components/input'
 import { ErrorTypes } from 'utils/constants'
 import i18next from 'i18n'
+import mainMenuButton from 'assets/main-menu-button.png'
 
 import styles from './styles.module.css'
 
@@ -38,7 +39,9 @@ export const IdentificationTemplate = ({
     if (error === ErrorTypes.not_able_to_connect) {
       notification.error({
         message: `${i18next.t('Not able to connect')}`,
-        description: `${'You were not able to connect to the server.'}`,
+        description: `${i18next.t(
+          'You were not able to connect to the server. Check your connection and try to update the game'
+        )}`,
         onClose: handleCloseMessage,
       })
     }
@@ -56,9 +59,12 @@ export const IdentificationTemplate = ({
             autoComplete="off"
           />
           <div
-            className={styles.button}
+            className={styles.joinButton}
             onClick={() => handleSubmit(inputRef.current?.value ?? '')}
-          ></div>
+          >
+            <span className={styles.joinButtonText}>{`${i18next.t('JOIN SERVER')}`}</span>
+            <img src={mainMenuButton} className={styles.joinButtonImage} />
+          </div>
         </div>
       </div>
       <div className={cx(!showLoading && styles.hide)}>
