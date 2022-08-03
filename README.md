@@ -1,12 +1,12 @@
 todo:
-    about screen
-    move spaceships and add reachable area mask
+        new domain
+    improve store data
     singleplayer game
-    new spaceships
-    flags
     add quit button to game
+    flags
     refactor react components
     refactor armory / spaceships / game screen
+    new spaceships
     new armory
 ----
 webrtc
@@ -19,4 +19,4 @@ database to register players / game results / clans
 campaign mode using AI
 -----
 
-ws://44.207.7.52:8000
+http://44.207.7.52:8000

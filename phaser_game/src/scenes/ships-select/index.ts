@@ -72,7 +72,6 @@ class ShipsSelect extends Phaser.Scene {
   }
 
   create(): void {
-    // this.setupButtonListeners()
     this.setupWebsocketListeners()
   }
 

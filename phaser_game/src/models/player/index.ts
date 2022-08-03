@@ -1,7 +1,6 @@
 import BaseSpaceship from 'models/spaceships/base'
 import Fasty from 'models/spaceships/fasty'
 import Game from 'scenes/game'
-import { HEIGHT } from 'utils/constants'
 
 class Player {
   scene: Game
@@ -66,6 +65,14 @@ class Player {
         alpha: 0.2,
       },
     })
+
+    const shape = this.scene.make.graphics({})
+    shape.fillStyle(0xffffff)
+    shape.beginPath()
+    shape.fillRect(10, 10, 595, 375)
+    const mask = shape.createGeometryMask()
+    this.reachableGraphic.setMask(mask)
+
     const circle = new Phaser.Geom.Circle(spaceship.x, spaceship.y, 100)
     this.reachableGraphic.fillCircleShape(circle)
     this.reachableGraphic.setInteractive(circle, Phaser.Geom.Circle.Contains)
@@ -165,45 +172,25 @@ class Player {
     const angle = position === 'TOP' ? 120 : -60
     const size = 50
     const center = size / 2
-    const width = 600
-    const height = HEIGHT
     return Array(3)
       .fill(null)
       .map((_, i) => {
         if (position === 'TOP') {
           if (i === 0) {
-            return this.createSpaceship(75 + center, 65 + center, angle, i, 'spaceship1-red')
+            return this.createSpaceship(78 + center, 8 + center, angle, i, 'spaceship1-red')
           }
           if (i === 1) {
-            return this.createSpaceship(10 + center, 90 + center, angle, i, 'spaceship1-red')
+            return this.createSpaceship(75 + center, 75 + center, angle, i, 'spaceship1-red')
           }
-          return this.createSpaceship(90 + center, center, angle, i, 'spaceship1-red')
+          return this.createSpaceship(28 + center, 121 + center, angle, i, 'spaceship1-red')
         } else {
           if (i === 0) {
-            return this.createSpaceship(
-              width - (75 + center),
-              height - (65 + center),
-              angle,
-              i,
-              'spaceship1-blue'
-            )
+            return this.createSpaceship(480 + center, 329 + center, angle, i, 'spaceship1-blue')
           }
           if (i === 1) {
-            return this.createSpaceship(
-              width - (10 + center),
-              height - (90 + center),
-              angle,
-              i,
-              'spaceship1-blue'
-            )
+            return this.createSpaceship(483 + center, 263 + center, angle, i, 'spaceship1-blue')
           }
-          return this.createSpaceship(
-            width - (90 + center),
-            height - center,
-            angle,
-            i,
-            'spaceship1-blue'
-          )
+          return this.createSpaceship(530 + center, 216 + center, angle, i, 'spaceship1-blue')
         }
       })
   }

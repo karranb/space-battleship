@@ -130,7 +130,7 @@ export const RoomTemplate = ({
                 ) : message.type === MessageType.CHALLENGED ? (
                   <>
                     {i18next.t('The user')}{' '}
-                    <span className={styles.messageName}>{message.name}</span>
+                    <span className={styles.messageName}>{`${message.name} `}</span>
                     {i18next.t('challenged you')} -{' '}
                     {message.inactiveReason ? (
                       message.inactiveReason
