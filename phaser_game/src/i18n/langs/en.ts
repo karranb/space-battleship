@@ -56,4 +56,10 @@ export default {
     'Click where you want your spaceship to shoot at',
   ['Repeat the process with the other spaceships and press DONE']:
     'Repeat the process with the other spaceships and press DONE',
+  ['Game developed by Karran.']: 'Game developed by Karran.',
+  ['Suggestions / Bugs can be sent to karranrb@gmail.com']:
+    'Suggestions / Bugs can be sent to karranrb@gmail.com',
+  ABOUT: 'ABOUT',
+  ['Enemy gave up']: 'Enemy gave up',
+  ['Your enemy gave up.']: 'Your enemy gave up.',
 }

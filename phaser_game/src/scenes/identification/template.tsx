@@ -17,6 +17,7 @@ export type IdentificationTemplateProps = {
   error?: ErrorTypes
   handleCloseMessage?: () => void
   handleVersusComputerClick: () => void
+  handleAboutClick: () => void
 }
 
 export const IdentificationTemplate = ({
@@ -24,6 +25,7 @@ export const IdentificationTemplate = ({
   showLoading = false,
   handleSubmit,
   handleCloseMessage,
+  handleAboutClick,
   error,
   handleVersusComputerClick,
 }: IdentificationTemplateProps) => {
@@ -67,7 +69,10 @@ export const IdentificationTemplate = ({
           <img src={mainMenuButton} className={styles.joinButtonImage} />
         </div>
         <div className={styles.versusComputer} onClick={() => handleVersusComputerClick()}>
-          {`${i18next.t('VERSUS COMPUTER')}`}
+          {`${i18next.t('VERSUS IA / TUTORIAL')}`}
+        </div>
+        <div className={styles.versusComputer} onClick={() => handleAboutClick()}>
+          {`${i18next.t('ABOUT')}`}
         </div>
       </div>
       <div className={cx(!showLoading && styles.hide)}>

@@ -4,6 +4,7 @@ export enum SCENES {
   Room = 'Room',
   ShipsSelect = 'ShipsSelect',
   Game = 'Game',
+  About = 'About',
 }
 
 export const WIDTH = 844

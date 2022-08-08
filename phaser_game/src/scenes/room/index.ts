@@ -12,14 +12,15 @@ class Room extends Phaser.Scene {
   private UI?: RoomUI
   private socketHandler?: RoomSocketHandler
   private returnKey?: Phaser.Input.Keyboard.Key
-
+  private reason?: string
   constructor() {
     super(SCENES.Room)
   }
 
-  init(data: { webSocketClient: Socket }): void {
+  init(data: { webSocketClient: Socket; reason?: string }): void {
     this.socketHandler = new RoomSocketHandler(data.webSocketClient)
     this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
+    this.reason = data.reason
   }
 
   setupWebsocketListeners = (): void => {
@@ -153,6 +154,10 @@ class Room extends Phaser.Scene {
       handleRefuseChallengeClick: (id: string) => this.socketHandler?.sendMessageRefuse(id),
       handleAcceptChallengeClick: (id: string) => this.socketHandler?.sendMessageAccept(id),
       handleCloseChallengeClick: (id: string) => this.socketHandler?.sendMessageCancel(id),
+      handleCloseMessage: () => {
+        this.UI?.updateProps({ reason: undefined })
+      },
+      reason: this.reason,
     })
 
     this.returnKey?.on(

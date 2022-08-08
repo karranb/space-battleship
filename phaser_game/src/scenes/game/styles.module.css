@@ -47,6 +47,22 @@
   font-size: 12px;
 }
 
+.giveUpButton {
+  display: flex;
+  color: white;
+  font-family: neuropol;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 50%;
+  margin-left: auto;
+  /* margin-right: auto; */
+  height: 40px;
+  /* margin-top: 10px; */
+  cursor: pointer;
+  font-size: 10px;
+}
+
 .doneButton {
   display: flex;
   color: white;

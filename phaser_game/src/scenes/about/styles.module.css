@@ -2,6 +2,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
+  font-family: planer; 
 }
 
 .connecting {
@@ -16,6 +18,13 @@
   cursor: pointer;
   background: url(/src/assets/join_server.png);
   background-size: contain;
+}
+
+.buttonImage {
+  object-fit: contain;
+  z-index: 0;
+  position: absolute;
+  width: 100%;
 }
 
 .input {

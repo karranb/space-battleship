@@ -164,8 +164,8 @@ export const GameTemplate = ({
         className={styles.rightPanel}
         style={{ left: `${WIDTH - domWidth}px`, width: `${domWidth}px`, height: `${HEIGHT}px` }}
       >
-        <div className={styles.doneButton} onClick={() => handleGiveUpClick?.()}>
-          <>{i18next.t('GIVE UP')}</>
+        <div className={styles.giveUpButton} onClick={() => handleGiveUpClick?.()}>
+          <>X{' - '}{i18next.t('GIVE UP')}</>
           <img src={buttonBackground} className={styles.buttonBackground} />
         </div>
         <div className={styles.boxWrapper}>

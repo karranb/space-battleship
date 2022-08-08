@@ -1,8 +1,6 @@
 todo:
         new domain
     improve store data
-    singleplayer game
-    add quit button to game
     flags
     refactor react components
     refactor armory / spaceships / game screen

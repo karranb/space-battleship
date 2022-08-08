@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import cx from 'classnames'
 
 import buttonBackground from 'assets/button-background.png'
@@ -10,6 +10,7 @@ import i18next from 'i18n'
 
 import styles from './styles.module.css'
 import debounce from 'lodash/debounce'
+import { notification } from 'antd'
 
 export enum MessageType {
   USER = 'USER',
@@ -39,6 +40,8 @@ export type RoomTemplateProps = {
   handleRefuseChallengeClick?: (challengeId: string) => void
   handleAcceptChallengeClick?: (challengeId: string) => void
   handleCloseChallengeClick?: (challengeId: string) => void
+  handleCloseMessage: () => void
+  reason?: string
 }
 
 const debounceOptions = { leading: true, trailing: false }
@@ -52,6 +55,8 @@ export const RoomTemplate = ({
   handleRefuseChallengeClick,
   handleAcceptChallengeClick,
   handleCloseChallengeClick,
+  reason,
+  handleCloseMessage,
 }: RoomTemplateProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const [selectedUser, setSelectedUser] = useState<string | undefined>(undefined)
@@ -74,6 +79,16 @@ export const RoomTemplate = ({
     ),
     []
   )
+
+  useEffect(() => {
+    if (reason === 'ENEMY_GAVE_UP') {
+      notification.info({
+        message: `${i18next.t('Enemy gave up')}`,
+        description: `${i18next.t('Your enemy gave up.')}`,
+        onClose: handleCloseMessage,
+      })
+    }
+  }, [reason])
 
   return (
     <Container className={styles.container}>

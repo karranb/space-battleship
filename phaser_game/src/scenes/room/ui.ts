@@ -12,6 +12,8 @@ class RoomUI extends BaseUIHandler {
       | 'handleRefuseChallengeClick'
       | 'handleAcceptChallengeClick'
       | 'handleCloseChallengeClick'
+      | 'handleCloseMessage'
+      | 'reason'
     >
   ) {
     super(scene)

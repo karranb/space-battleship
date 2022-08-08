@@ -56,4 +56,10 @@ export default {
   ['Click where you want your spaceship to shoot at']: 'Clique aonde deseja atirar com sua nave',
   ['Repeat the process with the other spaceships and press DONE']:
     'Repita o processo com as outras naves e clique em PRONTO',
+  ['Game developed by Karran.']: 'Jogo desenvolvido por Karran.',
+  ['Suggestions / Bugs can be sent to karranrb@gmail.com']:
+    'Sugestões / Bugs podem ser enviados para karranrb@gmail.com',
+  ABOUT: 'SOBRE',
+  ['Enemy gave up']: 'Inimigo desistiu',
+  ['Your enemy gave up.']: 'Seu inimigo desistiu',
 }

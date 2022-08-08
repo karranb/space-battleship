@@ -72,9 +72,12 @@ class ShipsSelect extends Phaser.Scene {
   }
 
   setupWebsocketListeners = (): void => {
-    const handleCloseGame = () => {
+    const handleCloseGame = (message: string) => {
+      const { user } = JSON.parse(message)
       this.scene.start(SCENES.Room, {
         webSocketClient: this.socketHandler?.getWebSocketClient(),
+        reason:
+          user === this.socketHandler?.getWebSocketClient().id ? undefined : 'ENEMY_GAVE_UP',
       })
     }
 
