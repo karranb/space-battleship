@@ -91,6 +91,12 @@ class Game extends Phaser.Scene {
       const handleSubmitReady = () => {
         this.socketHandler?.sendPlayerReady()
         this.UI?.setisWaitingOponent(true)
+        this.UI?.updateProps({
+          spaceshipClickTooltip: undefined,
+          reachableAreaTooltip: undefined,
+          targetTooltip: undefined,
+          repeatTooltip: undefined,
+        })
         this.players.forEach(player => {
           player.setIsEditable(false)
         })
@@ -104,6 +110,13 @@ class Game extends Phaser.Scene {
         handleSubmitMessage: (message: string) => this.socketHandler?.sendPrivateMessage(message),
         handleSubmitReady: () => handleSubmitReady(),
         handleGiveUpClick: () => {
+          this.UI?.updateProps({
+            spaceshipClickTooltip: undefined,
+            reachableAreaTooltip: undefined,
+            targetTooltip: undefined,
+            repeatTooltip: undefined,
+            badge: ResultTypes.defeat,
+          })
           this.time.addEvent({
             delay: 3000,
             callback: () => {
@@ -113,11 +126,16 @@ class Game extends Phaser.Scene {
               })
             },
           })
-          this.UI?.setBadge(ResultTypes.defeat)
           this.socketHandler?.sendGiveUp()
         },
         socketHandler: this.socketHandler,
+        spaceshipClickTooltip: localStorage.getItem('tutorialDone')
+          ? undefined
+          : this.isChallenger
+          ? { x: 140, y: 85, placement: 'right' }
+          : { x: WIDTH - 140 - 220, y: HEIGHT - 100, placement: 'left' },
       })
+      localStorage.setItem('tutorialDone', 'done')
     } else {
       this.isChallenger = data.isChallenger
       this.challengerName = data.challengerName
@@ -444,9 +462,11 @@ class Game extends Phaser.Scene {
     }
 
     const handleCloseGame = (message: string) => {
-      const { reason } = JSON.parse(message)
-      if (reason === GAME_ENDED) {
-        return
+      if (message) {
+        const { reason } = JSON.parse(message)
+        if (reason === GAME_ENDED) {
+          return
+        }
       }
       this.time.addEvent({
         delay: 3000,
@@ -457,7 +477,9 @@ class Game extends Phaser.Scene {
           })
         },
       })
-      this.UI?.setBadge(ResultTypes.victory)
+      if (!this.UI?.getProps()?.badge) {
+        this.UI?.setBadge(ResultTypes.victory)
+      }
     }
 
     const handleDisconnect = () => {

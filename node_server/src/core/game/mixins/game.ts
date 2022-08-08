@@ -213,7 +213,7 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
 
     handleCloseGame(socket: Socket, message: string): void {
       const game = this.closeGame(socket)
-      const parsedMessage = JSON.parse(message)
+      const parsedMessage = message ? JSON.parse(message) : {}
       if (game) {
         const message = JSON.stringify({ ...parsedMessage, user: socket.id })
         this.sendMessage(game.challenger.socket, Commands.CLOSE_GAME, message)
