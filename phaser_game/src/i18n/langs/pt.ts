@@ -49,4 +49,11 @@ export default {
   DEFEAT: 'DERROTA',
   DRAW: 'EMPATE',
   ['Spaceship & Armory']: 'Espaçonaves & Armamento',
+  ['VERSUS COMPUTER']: 'VERSUS O COMPUTADOR',
+  Enemy: 'Inimigo',
+  ['Click where you want to move the spaceship to']:
+    'Clique no lugar para o qual deseja mover sua nave',
+  ['Click where you want your spaceship to shoot at']: 'Clique aonde deseja atirar com sua nave',
+  ['Repeat the process with the other spaceships and press DONE']:
+    'Repita o processo com as outras naves e clique em PRONTO',
 }

@@ -35,9 +35,11 @@ export const ShipsSelectTemplate = ({
           <span>{`${i18next.t('Spaceship & Armory')}`}</span>
           <img src={titleBackground} className={styles.titleBackground} />
         </div>
-        <span className={styles.timer} id="timer">
-          {timer}
-        </span>
+        {!!timer && (
+          <span className={styles.timer} id="timer">
+            {timer}
+          </span>
+        )}
         {Array(3)
           .fill(null)
           .map((_, i) => (

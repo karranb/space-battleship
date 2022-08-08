@@ -8,7 +8,6 @@ import { TextInput } from 'components/input'
 import { ErrorTypes } from 'utils/constants'
 import i18next from 'i18n'
 import mainMenuButton from 'assets/main-menu-button.png'
-
 import styles from './styles.module.css'
 
 export type IdentificationTemplateProps = {
@@ -17,6 +16,7 @@ export type IdentificationTemplateProps = {
   showLoading?: boolean
   error?: ErrorTypes
   handleCloseMessage?: () => void
+  handleVersusComputerClick: () => void
 }
 
 export const IdentificationTemplate = ({
@@ -25,6 +25,7 @@ export const IdentificationTemplate = ({
   handleSubmit,
   handleCloseMessage,
   error,
+  handleVersusComputerClick,
 }: IdentificationTemplateProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
@@ -48,23 +49,25 @@ export const IdentificationTemplate = ({
   }, [error])
   return (
     <Container className={styles.container}>
-      <div>
-        <div className={cx(showLoading && styles.hide, styles.formWrapper)}>
-          <TextInput
-            labelText={`${i18next.t('Nickname')}:`}
-            defaultValue={defaultName}
-            inputClassName={styles.input}
-            ref={inputRef}
-            id="input"
-            autoComplete="off"
-          />
-          <div
-            className={styles.joinButton}
-            onClick={() => handleSubmit(inputRef.current?.value ?? '')}
-          >
-            <span className={styles.joinButtonText}>{`${i18next.t('JOIN SERVER')}`}</span>
-            <img src={mainMenuButton} className={styles.joinButtonImage} />
-          </div>
+      <div className={cx(showLoading && styles.hide, styles.formWrapper)}>
+        <TextInput
+          labelText={`${i18next.t('Nickname')}:`}
+          defaultValue={defaultName}
+          inputClassName={styles.input}
+          ref={inputRef}
+          id="input"
+          autoComplete="off"
+        />
+
+        <div
+          className={styles.joinButton}
+          onClick={() => handleSubmit(inputRef.current?.value ?? '')}
+        >
+          <span className={styles.joinButtonText}>{`${i18next.t('JOIN SERVER')}`}</span>
+          <img src={mainMenuButton} className={styles.joinButtonImage} />
+        </div>
+        <div className={styles.versusComputer} onClick={() => handleVersusComputerClick()}>
+          {`${i18next.t('VERSUS COMPUTER')}`}
         </div>
       </div>
       <div className={cx(!showLoading && styles.hide)}>

@@ -4,6 +4,9 @@ import { SCENES } from 'utils/constants'
 import BaseSpaceship from 'models/spaceships/base'
 import ShipsSelectUI from './ui'
 import SpaceshipSelectSocketHandler from './socket'
+import { getRandomItem } from 'utils/array'
+import { SpaceshipsTypes, WeaponTypes } from 'interfaces/shared'
+import i18next from 'i18next'
 
 class ShipsSelect extends Phaser.Scene {
   private elements: BaseSpaceship[] = []
@@ -19,22 +22,49 @@ class ShipsSelect extends Phaser.Scene {
   }
 
   init(data: {
-    webSocketClient: Socket
+    webSocketClient?: Socket
     challenger: string
     challenged: string
     challengedName: string
     challengerName: string
   }): void {
-    this.socketHandler = new SpaceshipSelectSocketHandler(data.webSocketClient)
-    this.UI = new ShipsSelectUI(this, {
-      isChallenger: this.socketHandler.isChallenger(data.challenger),
-      handleSubmit: () => {
-        this.socketHandler?.sendDone()
-        this.UI?.setIsWaitingOponent()
-      },
-      handleGiveUp: () => this.socketHandler?.sendGiveUp(),
-      timer: 15,
-    })
+    if (data.webSocketClient) {
+      this.socketHandler = new SpaceshipSelectSocketHandler(data.webSocketClient)
+      this.UI = new ShipsSelectUI(this, {
+        isChallenger: this.socketHandler.isChallenger(data.challenger),
+        handleSubmit: () => {
+          this.socketHandler?.sendDone()
+          this.UI?.setIsWaitingOponent()
+        },
+        handleGiveUp: () => this.socketHandler?.sendGiveUp(),
+        timer: 15,
+      })
+    } else {
+      const isChallenger = getRandomItem([true, false])
+      this.UI = new ShipsSelectUI(this, {
+        isChallenger,
+        handleSubmit: () =>
+          this.scene.start(SCENES.Game, {
+            isChallenger,
+            challengerName: isChallenger ? i18next.t('You') : i18next.t('Enemy'),
+            challengedName: isChallenger ? i18next.t('Enemy') : i18next.t('You'),
+            choices: Array(3)
+              .fill(null)
+              .reduce(
+                (acc, _, index) => ({
+                  ...acc,
+                  [index]: {
+                    spaceship: getRandomItem(Object.values(SpaceshipsTypes)),
+                    weapon: getRandomItem(Object.values(WeaponTypes)),
+                  },
+                }),
+                {}
+              ),
+          }),
+        handleGiveUp: () => this.scene.start(SCENES.Identification),
+        timer: 0,
+      })
+    }
     this.challenged = data.challenged
     this.challenger = data.challenger
     this.challengerName = data.challengerName

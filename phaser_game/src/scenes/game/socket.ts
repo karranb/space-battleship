@@ -11,8 +11,8 @@ class GameSocketHandler extends BaseSocketHandler {
     this.webSocketClient.off()
   }
 
-  public sendClose(reason?: string): void {
-    this.webSocketClient.emit(Commands.CLOSE_GAME, reason)
+  public sendClose(message: string): void {
+    this.webSocketClient.emit(Commands.CLOSE_GAME, message)
   }
 
   public sendPlayerReady(): void {
@@ -36,6 +36,10 @@ class GameSocketHandler extends BaseSocketHandler {
 
   public sendPrivateMessage(value: string): void {
     this.webSocketClient.emit(Commands.PRIVATE_MESSAGE, value)
+  }
+
+  public sendGiveUp(): void {
+    this.webSocketClient.emit(Commands.CLOSE_GAME)
   }
 
   public isMe(id: string): boolean {

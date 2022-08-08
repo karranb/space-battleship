@@ -211,10 +211,11 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       this.sendMessage(game.challenger.socket, Commands.PRIVATE_MESSAGE, socketMessage)
     }
 
-    handleCloseGame(socket: Socket, reason: string): void {
+    handleCloseGame(socket: Socket, message: string): void {
       const game = this.closeGame(socket)
+      const parsedMessage = JSON.parse(message)
       if (game) {
-        const message = JSON.stringify({ reason })
+        const message = JSON.stringify({ ...parsedMessage, user: socket.id })
         this.sendMessage(game.challenger.socket, Commands.CLOSE_GAME, message)
         this.sendMessage(game.challenged.socket, Commands.CLOSE_GAME, message)
       }

@@ -11,6 +11,7 @@ todo:
 ----
 webrtc
     create room
+    password
     admin / kick / ban
     quick game
 -----

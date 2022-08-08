@@ -13,11 +13,11 @@ class ShipsSelectUI extends BaseUIHandler {
       loop: true,
       callback: () => {
         const timerSpan = document.querySelector('#timer') as HTMLSpanElement
-        if (timerSpan && Number(timerSpan.innerText) <= 0) {
+        if (timerSpan && Number(timerSpan?.innerText) <= 0) {
           timer.destroy()
           return
         }
-        this.updateProps({ timer: Number(timerSpan.innerText) - 1 })
+        this.updateProps({ timer: Number(timerSpan?.innerText) - 1 })
       },
     })
   }
@@ -25,13 +25,6 @@ class ShipsSelectUI extends BaseUIHandler {
   setIsWaitingOponent() {
     this.updateProps({ waitingOponent: true })
   }
-
-  // submit() {
-  //   const input = document.querySelector('#input') as HTMLInputElement
-  //   const handleSubmit = this.props?.handleSubmit as (message: string) => void
-  //   handleSubmit(input.value)
-  //   input.value = ''
-  // }
 }
 
 export default ShipsSelectUI

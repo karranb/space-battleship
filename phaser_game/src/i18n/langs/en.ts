@@ -48,4 +48,12 @@ export default {
   DEFEAT: 'DEFEAT',
   DRAW: 'DRAW',
   ['Spaceship & Armory']: 'Spaceship & Armory',
+  ['VERSUS COMPUTER']: 'VERSUS COMPUTER',
+  Enemy: 'Enemy',
+  ['Click where you want to move the spaceship to']:
+    'Click where you want to move the spaceship to',
+  ['Click where you want your spaceship to shoot at']:
+    'Click where you want your spaceship to shoot at',
+  ['Repeat the process with the other spaceships and press DONE']:
+    'Repeat the process with the other spaceships and press DONE',
 }

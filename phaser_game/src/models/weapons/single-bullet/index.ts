@@ -1,7 +1,7 @@
 import BaseSpaceship from 'models/spaceships/base'
 import { HEIGHT, WIDTH } from 'utils/constants'
 
-class SingleBullet extends Phaser.GameObjects.Sprite {
+class SingleBullet extends Phaser.Physics.Arcade.Sprite {
   declare body: Phaser.Physics.Arcade.Body
 
   private destination: Phaser.Math.Vector2
@@ -23,6 +23,7 @@ class SingleBullet extends Phaser.GameObjects.Sprite {
     this.scene.physics.add.existing(this)
     this.setDisplaySize(50, 50)
     this.body.setSize(40, 40)
+    this.setCircle(10, 40, 40)
     const angle = Phaser.Math.Angle.Between(this.destination.x, this.destination.y, this.x, this.y)
     this.setRotation(angle)
     this.scene.physics.moveToObject(this, this.destination, 150)
@@ -46,7 +47,7 @@ class SingleBullet extends Phaser.GameObjects.Sprite {
   }
 
   update(): void {
-    if (this.x < 0 || this.x > WIDTH || this.y < 0 || this.y > HEIGHT) {
+    if (this.x < 0 || this.x > WIDTH  - 220 || this.y < 0 || this.y > HEIGHT) {
       this.destroy()
     }
   }

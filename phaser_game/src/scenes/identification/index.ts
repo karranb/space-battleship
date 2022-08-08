@@ -49,6 +49,8 @@ class Identification extends Phaser.Scene {
       this.UI?.updateProps({ error: undefined })
     }
 
+    const handleVersusComputerClick = () => this.scene.start(SCENES.ShipsSelect)
+
     this.returnKey?.on('down', () => this.UI?.submit())
 
     this.UI = new IdentificationUI(this, {
@@ -57,6 +59,7 @@ class Identification extends Phaser.Scene {
       handleSubmit,
       handleCloseMessage,
       error: data?.error,
+      handleVersusComputerClick,
     })
   }
 

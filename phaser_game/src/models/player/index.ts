@@ -12,7 +12,7 @@ class Player {
   private isEditable = true
   private onReachableAreaClick?: (spaceship: BaseSpaceship, x: number, y: number) => void
   private onTargetClick?: (spaceship: BaseSpaceship, x: number, y: number) => void
-  private onSpaceshipClick?: (spaceship: BaseSpaceship) => void
+  private onSpaceshipClick?: (player: Player, spaceship: BaseSpaceship) => void
   private isMe: boolean
   private socketId: string
 
@@ -23,14 +23,14 @@ class Player {
     socketId: string,
     onTargetClick?: (spaceship: BaseSpaceship, x: number, y: number) => void,
     onReachableAreaClick?: (spaceship: BaseSpaceship, x: number, y: number) => void,
-    onSpaceshipClick?: (player: Player) => (spaceship: BaseSpaceship) => void
+    onSpaceshipClick?: (player: Player, spaceship: BaseSpaceship) => void
   ) {
     // Todo: Make spaceship factory
     this.scene = scene
     this.spaceships = this.createSpaceships(position)
     this.onReachableAreaClick = onReachableAreaClick
     this.onTargetClick = onTargetClick
-    this.onSpaceshipClick = onSpaceshipClick?.(this)
+    this.onSpaceshipClick = onSpaceshipClick
     this.socketId = socketId
     this.isMe = isMe
     if (isMe) {
@@ -92,7 +92,7 @@ class Player {
       return
     }
     this.activeSpaceship = spaceship
-    this.onSpaceshipClick?.(spaceship)
+    this.onSpaceshipClick?.(this, spaceship)
   }
 
   setSpaceshipDestination(spaceship: BaseSpaceship, x: number, y: number): void {
