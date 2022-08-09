@@ -1,5 +1,5 @@
 todo:
-        new domain
+        domain
     improve store data
     flags
     refactor react components

@@ -8,6 +8,7 @@ class IdentificationSocketHandler extends BaseSocketHandler {
     super(
       io(url, {
         reconnection: false,
+        secure: true,
       })
     )
   }

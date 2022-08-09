@@ -5,4 +5,5 @@ dist
 coverage
 node_server/src/static/game
 key
-private_key.pepk
+*.pepk
+*.pem
