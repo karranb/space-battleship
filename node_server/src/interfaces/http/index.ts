@@ -18,7 +18,7 @@ const getOptions = () => {
   }
 }
 const server = http.createServer(getOptions(), app)
-const port = 8443
+const port = 8000
 server.listen(port, () => {
   process.stdout.write(`Server started on port ${port} :)`)
 })
