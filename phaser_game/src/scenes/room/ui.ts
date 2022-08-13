@@ -110,7 +110,7 @@ class RoomUI extends BaseUIHandler {
         const message = (this.props?.messages as Message[]).find(
           message => message.id === challengeId
         )
-        if (!message || message.inactiveReason || !message.time) {
+        if (!message || message.inactiveReason || !message.time || message.time === 1) {
           timer.destroy()
           return
         }

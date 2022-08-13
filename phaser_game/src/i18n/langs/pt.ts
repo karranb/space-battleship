@@ -62,4 +62,6 @@ export default {
   ABOUT: 'SOBRE',
   ['Enemy gave up']: 'Inimigo desistiu',
   ['Your enemy gave up.']: 'Seu inimigo desistiu',
+  TRAIN: 'TREINAR',
+  MULTIPLAYER: 'MULTIJOGADOR',
 }

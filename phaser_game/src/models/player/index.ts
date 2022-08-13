@@ -33,7 +33,7 @@ class Player {
   ) {
     // Todo: Make spaceship factory
     this.scene = scene
-    
+
     this.onReachableAreaClick = onReachableAreaClick
     this.onTargetClick = onTargetClick
     this.onSpaceshipClick = onSpaceshipClick
@@ -169,18 +169,6 @@ class Player {
       })
     }
 
-    if (type === SpaceshipsTypes.REGULAR) {
-      return new Regular({
-        scene: this.scene,
-        x,
-        y,
-        angle,
-        owner: this,
-        id,
-        color,
-      })
-    }
-
     if (type === SpaceshipsTypes.SLOW) {
       return new Slow({
         scene: this.scene,
@@ -193,7 +181,15 @@ class Player {
       })
     }
 
-    throw new Error('invalid spaceship')
+    return new Regular({
+      scene: this.scene,
+      x,
+      y,
+      angle,
+      owner: this,
+      id,
+      color,
+    })
   }
 
   createSpaceships(position: 'TOP' | 'BOTTOM'): BaseSpaceship[] {

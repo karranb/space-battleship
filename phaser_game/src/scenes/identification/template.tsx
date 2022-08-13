@@ -65,11 +65,11 @@ export const IdentificationTemplate = ({
           className={styles.joinButton}
           onClick={() => handleSubmit(inputRef.current?.value ?? '')}
         >
-          <span className={styles.joinButtonText}>{`${i18next.t('JOIN SERVER')}`}</span>
+          <span className={styles.joinButtonText}>{`${i18next.t('MULTIPLAYER')}`}</span>
           <img src={mainMenuButton} className={styles.joinButtonImage} />
         </div>
         <div className={styles.versusComputer} onClick={() => handleVersusComputerClick()}>
-          {`${i18next.t('VERSUS IA / TUTORIAL')}`}
+          {`${i18next.t('TRAIN')}`}
         </div>
         <div className={styles.versusComputer} onClick={() => handleAboutClick()}>
           {`${i18next.t('ABOUT')}`}
