@@ -156,6 +156,7 @@
   display: flex;
   top: 0;
   left: 0;
+  z-index: 2;
 }
 
 .victoryBadgeText {
@@ -166,6 +167,7 @@
   color: white;
   font-family: 'neuropol';
 }
+
 .notVictoryBadgeText {
   position: absolute;
   left: 50%;

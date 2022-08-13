@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io'
-import { Commands, User, VERSION } from 'interfaces/shared'
+import { Commands, User } from 'interfaces/shared'
 import { SpaceshipBattleMixin } from '../types'
 import { SocketError } from 'utils/errors'
 
@@ -25,9 +25,9 @@ function roomMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       if (!parsedName) {
         throw new SocketError('Empty name is not allowed')
       }
-
-      if (version !== VERSION) {
-        throw new SocketError('Wrong version')
+      const supportedVersions = process.env.SUPPORTED_VERSIONS?.split(',') ?? []
+      if (!supportedVersions.includes(version)) {
+        throw new SocketError('Version not supported')
       }
 
       socket.data.name = parsedName

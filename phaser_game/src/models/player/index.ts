@@ -1,6 +1,10 @@
-import BaseSpaceship from 'models/spaceships/base'
-import Fasty from 'models/spaceships/fasty'
-import Game from 'scenes/game'
+import { SpaceshipsTypes } from 'interfaces/shared'
+import BaseSpaceship, { SpaceshipColors } from 'models/spaceships/base'
+import Fast from 'models/spaceships/fast'
+import Regular from 'models/spaceships/regular'
+import Slow from 'models/spaceships/slow'
+import Game, { PlayerChoices } from 'scenes/game'
+import { getRandomItem } from 'utils/array'
 
 class Player {
   scene: Game
@@ -15,23 +19,27 @@ class Player {
   private onSpaceshipClick?: (player: Player, spaceship: BaseSpaceship) => void
   private isMe: boolean
   private socketId: string
+  private choices?: PlayerChoices
 
   constructor(
     scene: Game,
     isMe: boolean,
     position: 'TOP' | 'BOTTOM',
     socketId: string,
+    choices?: PlayerChoices,
     onTargetClick?: (spaceship: BaseSpaceship, x: number, y: number) => void,
     onReachableAreaClick?: (spaceship: BaseSpaceship, x: number, y: number) => void,
     onSpaceshipClick?: (player: Player, spaceship: BaseSpaceship) => void
   ) {
     // Todo: Make spaceship factory
     this.scene = scene
-    this.spaceships = this.createSpaceships(position)
+    
     this.onReachableAreaClick = onReachableAreaClick
     this.onTargetClick = onTargetClick
     this.onSpaceshipClick = onSpaceshipClick
     this.socketId = socketId
+    this.choices = choices
+    this.spaceships = this.createSpaceships(position)
     this.isMe = isMe
     if (isMe) {
       this.spaceships.forEach(spaceship => {
@@ -72,8 +80,7 @@ class Player {
     shape.fillRect(10, 10, 595, 375)
     const mask = shape.createGeometryMask()
     this.reachableGraphic.setMask(mask)
-
-    const circle = new Phaser.Geom.Circle(spaceship.x, spaceship.y, 100)
+    const circle = new Phaser.Geom.Circle(spaceship.x, spaceship.y, spaceship.getReach())
     this.reachableGraphic.fillCircleShape(circle)
     this.reachableGraphic.setInteractive(circle, Phaser.Geom.Circle.Contains)
     this.reachableGraphic.on(
@@ -147,24 +154,45 @@ class Player {
     y: number,
     angle: number,
     id: number,
-    texturePrefix: string,
-    type: 'FASTY' = 'FASTY'
+    color: SpaceshipColors,
+    type: SpaceshipsTypes
   ): BaseSpaceship {
-    if (type === 'FASTY') {
-      return new Fasty({
+    if (type === SpaceshipsTypes.FAST) {
+      return new Fast({
         scene: this.scene,
         x,
         y,
         angle,
-        textures: {
-          stopped: texturePrefix + '-stopped',
-          parent: texturePrefix,
-          moving: texturePrefix + '-moving',
-        },
         owner: this,
         id,
+        color,
       })
     }
+
+    if (type === SpaceshipsTypes.REGULAR) {
+      return new Regular({
+        scene: this.scene,
+        x,
+        y,
+        angle,
+        owner: this,
+        id,
+        color,
+      })
+    }
+
+    if (type === SpaceshipsTypes.SLOW) {
+      return new Slow({
+        scene: this.scene,
+        x,
+        y,
+        angle,
+        owner: this,
+        id,
+        color,
+      })
+    }
+
     throw new Error('invalid spaceship')
   }
 
@@ -177,20 +205,62 @@ class Player {
       .map((_, i) => {
         if (position === 'TOP') {
           if (i === 0) {
-            return this.createSpaceship(78 + center, 8 + center, angle, i, 'spaceship1-red')
+            return this.createSpaceship(
+              78 + center,
+              8 + center,
+              angle,
+              i,
+              SpaceshipColors.RED,
+              this.choices?.[i]?.spaceship ?? getRandomItem(Object.values(SpaceshipsTypes))
+            )
           }
           if (i === 1) {
-            return this.createSpaceship(75 + center, 75 + center, angle, i, 'spaceship1-red')
+            return this.createSpaceship(
+              75 + center,
+              75 + center,
+              angle,
+              i,
+              SpaceshipColors.RED,
+              this.choices?.[i]?.spaceship ?? getRandomItem(Object.values(SpaceshipsTypes))
+            )
           }
-          return this.createSpaceship(28 + center, 121 + center, angle, i, 'spaceship1-red')
+          return this.createSpaceship(
+            28 + center,
+            121 + center,
+            angle,
+            i,
+            SpaceshipColors.RED,
+            this.choices?.[2]?.spaceship ?? getRandomItem(Object.values(SpaceshipsTypes))
+          )
         } else {
           if (i === 0) {
-            return this.createSpaceship(480 + center, 329 + center, angle, i, 'spaceship1-blue')
+            return this.createSpaceship(
+              480 + center,
+              329 + center,
+              angle,
+              i,
+              SpaceshipColors.BLUE,
+              this.choices?.[i]?.spaceship ?? getRandomItem(Object.values(SpaceshipsTypes))
+            )
           }
           if (i === 1) {
-            return this.createSpaceship(483 + center, 263 + center, angle, i, 'spaceship1-blue')
+            return this.createSpaceship(
+              483 + center,
+              263 + center,
+              angle,
+              i,
+              SpaceshipColors.BLUE,
+              this.choices?.[i]?.spaceship ?? getRandomItem(Object.values(SpaceshipsTypes))
+            )
           }
-          return this.createSpaceship(530 + center, 216 + center, angle, i, 'spaceship1-blue')
+          return this.createSpaceship(
+            530 + center,
+            216 + center,
+            angle,
+            i,
+            SpaceshipColors.BLUE,
+            this.choices?.[2]?.spaceship ?? getRandomItem(Object.values(SpaceshipsTypes))
+          )
         }
       })
   }

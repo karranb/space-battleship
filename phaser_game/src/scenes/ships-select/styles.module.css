@@ -60,11 +60,19 @@
   transform: rotate(180deg);
   width: 25px;
   object-fit: contain;
+  cursor: pointer;
 }
 
 .rightArrow {
   width: 25px;
   object-fit: contain;
+  cursor: pointer;
+}
+
+.disabledArrow {
+  opacity: 0.7;
+  cursor: auto;
+  pointer-events: none;
 }
 
 .frame {

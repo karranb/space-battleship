@@ -1,14 +1,15 @@
 todo:
-        domain
     improve store data
+    start to share game
     flags
     refactor react components
     refactor armory / spaceships / game screen
-    new spaceships
     new armory
+    improve IA
 ----
 webrtc
     create room
+    share room
     password
     admin / kick / ban
     quick game

@@ -1,54 +1,76 @@
+import { SpaceshipsTypes } from 'interfaces/shared'
 import Player from 'models/player'
 import SingleBullet from 'models/weapons/single-bullet'
 import Game from 'scenes/game'
+
+export enum SpaceshipColors {
+  RED = 'red',
+  BLUE = 'blue',
+}
 
 export type BaseSpaceshipProps = {
   x: number
   y: number
   life: number
   maxLife: number
-  speed: number
+  reach: number
   scene: Game
   angle: number
   id?: number
   state?: 'MOVING' | 'STOPPED' | 'DESTROYED'
+  spaceshipName?: SpaceshipsTypes
   owner?: Player
-  textures: { parent: string; moving: string; stopped: string }
+  color: SpaceshipColors
 }
 
 abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
   x: number
   y: number
   scene: Game
-  angle: number
   state = 'STOPPED'
 
   declare body: Phaser.Physics.Arcade.Body
   protected id?: number
   protected life: number
   protected maxLife: number
-  protected speed: number
+  protected reach: number
   protected destination?: Phaser.Math.Vector2
   protected target?: Phaser.Math.Vector2
   protected pathGraphic?: Phaser.GameObjects.Graphics
   protected targetSprite?: Phaser.GameObjects.Sprite
   protected owner?: Player
-  protected textures: { parent: string; moving: string; stopped: string }
+  protected textures: { moving: string; stopped: string }
   protected hitTimer?: Phaser.Time.TimerEvent
   protected progressBar?: Phaser.GameObjects.Graphics
+  protected color?: SpaceshipColors
+  protected spaceshipName?: SpaceshipsTypes
+  // protected width?: number
+  // protected height?: number
+
   constructor({
     scene,
     x = 0,
     y = 0,
     life,
     maxLife,
-    speed,
+    reach,
     angle,
-    textures,
     owner,
     id,
-  }: BaseSpaceshipProps) {
-    super(scene, x, y, textures.parent)
+    color,
+    spaceshipName,
+  }: // width,
+  // height,
+  BaseSpaceshipProps) {
+    const texturePrefix = `${spaceshipName}-${color}`
+    const textures = {
+      stopped: `${texturePrefix}-stopped`,
+      moving: `${texturePrefix}-moving`,
+    }
+    super(scene, x, y, textures.stopped)
+    this.textures = textures
+
+    this.spaceshipName = spaceshipName
     this.textures = textures
     this.play(textures.stopped)
     this.id = id
@@ -56,18 +78,26 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     this.scene.add.existing(this)
     this.scene.physics.add.existing(this)
     this.body.debugBodyColor = 0xffffff
-    this.setDisplaySize(36.8, 50)
-    this.setOrigin(0.5, 0.45)
-    this.setCircle(80, -5, 5)
     this.x = x
     this.y = y
     this.life = life
     this.maxLife = maxLife
-    this.speed = speed
+    this.reach = reach
     this.owner = owner
-    this.angle = angle
-    this.setAngle(angle)
     this.setRotation(Phaser.Math.DegToRad(angle))
+    this.color = color
+  }
+
+  getDisplayWidth() {
+    return this.displayWidth
+  }
+
+  getDisplayHeight() {
+    return this.displayHeight
+  }
+
+  getReach() {
+    return this.reach
   }
 
   addProgressBar() {
@@ -139,7 +169,7 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
 
   setDamage(damage: number): void {
     this.life -= damage
-    if (this.life < 0) {
+    if (this.life <= 0) {
       this.destroy()
     } else {
       if (this.hitTimer) {

@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io-client'
-import { Commands, SpaceshipsTypes, WeaponTypes } from 'interfaces/shared'
+import { Commands } from 'interfaces/shared'
 import { BaseSocketHandler } from 'utils/socket'
 
 class SpaceshipSelectocketHandler extends BaseSocketHandler {
@@ -15,24 +15,8 @@ class SpaceshipSelectocketHandler extends BaseSocketHandler {
     this.webSocketClient.emit(Commands.CLOSE_GAME)
   }
 
-  public sendDone(): void {
-    this.webSocketClient.emit(
-      Commands.SET_CHOICES,
-      JSON.stringify({
-        0: {
-          spaceship: SpaceshipsTypes.SPACESHIP1,
-          weapon: WeaponTypes.SINGLE_BULLET,
-        },
-        1: {
-          spaceship: SpaceshipsTypes.SPACESHIP1,
-          weapon: WeaponTypes.SINGLE_BULLET,
-        },
-        2: {
-          spaceship: SpaceshipsTypes.SPACESHIP1,
-          weapon: WeaponTypes.SINGLE_BULLET,
-        },
-      })
-    )
+  public sendDone(choices: Record<string, unknown>): void {
+    this.webSocketClient.emit(Commands.SET_CHOICES, JSON.stringify(choices))
   }
 
   public isChallenger(id: string): boolean {
@@ -42,7 +26,7 @@ class SpaceshipSelectocketHandler extends BaseSocketHandler {
   public createShipSelectSocketHandler({
     handleCloseGame,
     handleSetChoices,
-    handleDisconnect
+    handleDisconnect,
   }: {
     handleCloseGame: (value: string) => void
     handleSetChoices: (value: string) => void
@@ -52,11 +36,7 @@ class SpaceshipSelectocketHandler extends BaseSocketHandler {
       [Commands.CLOSE_GAME]: handleCloseGame,
       [Commands.SET_CHOICES]: handleSetChoices,
     }
-    this.setSocketListeners(
-      socketMessageHandlers,
-      () => null,
-      handleDisconnect
-    )
+    this.setSocketListeners(socketMessageHandlers, () => null, handleDisconnect)
   }
 }
 

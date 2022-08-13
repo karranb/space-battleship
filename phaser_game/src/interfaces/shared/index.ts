@@ -37,9 +37,9 @@ export type User = {
 }
 
 export enum SpaceshipsTypes {
-  SPACESHIP1 = 'SPACESHIP1',
-  SPACESHIP2 = 'SPACESHIP2',
-  SPACESHIP3 = 'SPACESHIP3',
+  FAST = 'fast',
+  REGULAR = 'regular',
+  SLOW = 'slow',
 }
 
 export enum WeaponTypes {
@@ -56,4 +56,4 @@ export const CHOICE_SECONDS_LIMIT = 15
 
 export const CHALLENGE_SECONDS_LIMIT = 15
 
-export const VERSION = '0.0.1'
+export const VERSION = '0.0.2'

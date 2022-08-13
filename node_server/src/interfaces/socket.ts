@@ -1,7 +1,6 @@
 import { Server, Socket } from 'socket.io'
 import http from 'http'
 import { Commands } from 'interfaces/shared'
-import { Request, Response } from 'express'
 
 type MessageListener = (value: string) => void
 

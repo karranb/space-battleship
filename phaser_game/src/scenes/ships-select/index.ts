@@ -28,39 +28,91 @@ class ShipsSelect extends Phaser.Scene {
     challengedName: string
     challengerName: string
   }): void {
+    const spaceships = {
+      '0': 1,
+      '1': 1,
+      '2': 1,
+    }
+
+    const onSpaceshipChange = (index: string, value: number) => {
+      if (this.UI) {
+        const currentSpaceships = this.UI.getProps()?.spaceships as Record<string, number>
+        this.UI.updateProps({
+          spaceships: { ...currentSpaceships, [index]: value },
+        })
+      }
+    }
     if (data.webSocketClient) {
       this.socketHandler = new SpaceshipSelectSocketHandler(data.webSocketClient)
       this.UI = new ShipsSelectUI(this, {
         isChallenger: this.socketHandler.isChallenger(data.challenger),
         handleSubmit: () => {
-          this.socketHandler?.sendDone()
-          this.UI?.setIsWaitingOponent()
-        },
-        handleGiveUp: () => this.socketHandler?.sendGiveUp(),
-        timer: 15,
-      })
-    } else {
-      const isChallenger = getRandomItem([true, false])
-      this.UI = new ShipsSelectUI(this, {
-        isChallenger,
-        handleSubmit: () =>
-          this.scene.start(SCENES.Game, {
-            isChallenger,
-            challengerName: isChallenger ? i18next.t('You') : i18next.t('Enemy'),
-            challengedName: isChallenger ? i18next.t('Enemy') : i18next.t('You'),
-            choices: Array(3)
+          const choices = this.UI?.getProps()?.spaceships as Record<string, number>
+          this.socketHandler?.sendDone(
+            Array(3)
               .fill(null)
               .reduce(
                 (acc, _, index) => ({
                   ...acc,
                   [index]: {
-                    spaceship: getRandomItem(Object.values(SpaceshipsTypes)),
+                    spaceship: Object.values(SpaceshipsTypes)[choices[index]],
                     weapon: getRandomItem(Object.values(WeaponTypes)),
                   },
                 }),
                 {}
-              ),
-          }),
+              )
+          )
+          this.UI?.setIsWaitingOponent()
+        },
+        handleGiveUp: () => this.socketHandler?.sendGiveUp(),
+        timer: 15,
+        spaceships,
+        onSpaceshipChange,
+      })
+    } else {
+      const isChallenger = getRandomItem([true, false])
+      this.UI = new ShipsSelectUI(this, {
+        spaceships,
+        onSpaceshipChange,
+        isChallenger,
+        handleSubmit: () => {
+          const choices = this.UI?.getProps()?.spaceships as Record<string, number>
+          const myChoices = Array(3)
+            .fill(null)
+            .reduce(
+              (acc, _, index) => ({
+                ...acc,
+                [index]: {
+                  spaceship: Object.values(SpaceshipsTypes)[choices[index]],
+                  weapon: getRandomItem(Object.values(WeaponTypes)),
+                },
+              }),
+              {}
+            )
+          const enemyChoices = Array(3)
+            .fill(null)
+            .reduce(
+              (acc, _, index) => ({
+                ...acc,
+                [index]: {
+                  spaceship: getRandomItem(Object.values(SpaceshipsTypes)),
+                  weapon: getRandomItem(Object.values(WeaponTypes)),
+                },
+              }),
+              {}
+            )
+          this.scene.start(SCENES.Game, {
+            spaceships,
+            isChallenger,
+            challengerName: isChallenger ? i18next.t('You') : i18next.t('Enemy'),
+            challengedName: isChallenger ? i18next.t('Enemy') : i18next.t('You'),
+            choices: {
+              challenger: isChallenger ? myChoices : enemyChoices,
+              challenged: isChallenger ? enemyChoices : myChoices,
+            },
+          })
+        },
+
         handleGiveUp: () => this.scene.start(SCENES.Identification),
         timer: 0,
       })
@@ -76,8 +128,7 @@ class ShipsSelect extends Phaser.Scene {
       const { user } = JSON.parse(message)
       this.scene.start(SCENES.Room, {
         webSocketClient: this.socketHandler?.getWebSocketClient(),
-        reason:
-          user === this.socketHandler?.getWebSocketClient().id ? undefined : 'ENEMY_GAVE_UP',
+        reason: user === this.socketHandler?.getWebSocketClient().id ? undefined : 'ENEMY_GAVE_UP',
       })
     }
 

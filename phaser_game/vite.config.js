@@ -13,6 +13,7 @@ export default defineConfig({
         short_name: 'SpaceBattleShip',
         description: 'Multiplayer Space BattleShip game',
         theme_color: '#ffffff',
+        orientation: 'landscape',
         icons: [
           {
             src: 'pwa-192x192.png',

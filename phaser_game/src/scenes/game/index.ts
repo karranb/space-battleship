@@ -8,7 +8,7 @@ import BaseSpaceship from 'models/spaceships/base'
 
 import { Socket } from 'socket.io-client'
 import GameSocketHandler from './socket'
-import { Commands, MAX_ROUNDS } from 'interfaces/shared'
+import { Commands, MAX_ROUNDS, SpaceshipsTypes, WeaponTypes } from 'interfaces/shared'
 import GameUI, { ResultTypes } from './ui'
 import debounce from 'lodash/debounce'
 import { getRandomItem } from 'utils/array'
@@ -16,6 +16,13 @@ import { randomNumber } from 'utils/number'
 import { polygonIntersects } from 'utils/collision'
 
 const GAME_ENDED = 'GAME_ENDED'
+
+export type SpaceshipChoice = {
+  spaceship: SpaceshipsTypes
+  weapon: WeaponTypes
+}
+export type PlayerChoices = Record<'0' | '1' | '2', SpaceshipChoice>
+export type Choices = { challenger: PlayerChoices; challenged: PlayerChoices }
 
 class Game extends Phaser.Scene {
   UI?: GameUI
@@ -28,7 +35,7 @@ class Game extends Phaser.Scene {
   rounds = 0
   challenger?: string
   challenged?: string
-  choices?: unknown
+  choices?: Choices
   socketHandler?: GameSocketHandler
   challengedName?: string
   challengerName?: string
@@ -63,7 +70,7 @@ class Game extends Phaser.Scene {
     challenged?: string
     challengerName: string
     challengedName: string
-    choices: unknown
+    choices: Choices
     isChallenger?: boolean
   }): void {
     if (data.webSocketClient && data.challenged && data.challenger) {
@@ -184,31 +191,36 @@ class Game extends Phaser.Scene {
     const polygons: {
       x: number
       y: number
-    }[][] = []
+    }[][] = spaceships.map(spaceship => [
+      { x: spaceship.x + 15, y: spaceship.y + 15 },
+      { x: spaceship.x - 15, y: spaceship.y - 15 },
+      { x: spaceship.x - 15, y: spaceship.y + 15 },
+      { x: spaceship.x + 15, y: spaceship.y - 15 },
+    ])
     spaceships.forEach((spaceship, index) => {
       const enemySpaceship = getRandomItem(enemySpaceships)
-      const spaceshipHeigh = 50
-      const spaceshipWidth = 36.8
-      const reachableAreaRadius = 100
-      const reachX = reachableAreaRadius - spaceshipWidth / 2
-      const reachY = reachableAreaRadius - spaceshipHeigh / 2
+      const enemyReachX = enemySpaceship.getReach() - enemySpaceship.getDisplayWidth() / 2
+      const enemyReachY = enemySpaceship.getReach() - enemySpaceship.getDisplayHeight() / 2
+      const spaceshipReachX = spaceship.getReach() - spaceship.getDisplayWidth() / 2
+      const spaceshipReachY = spaceship.getReach() - spaceship.getDisplayHeight() / 2
       const aimX = randomNumber(
-        Math.max(enemySpaceship.x - reachX, 10),
-        Math.min(enemySpaceship.x + reachY, 605)
+        Math.max(enemySpaceship.x - enemyReachX, 10),
+        Math.min(enemySpaceship.x + enemyReachX, 605)
       )
+
       const aimY = randomNumber(
-        Math.max(enemySpaceship.y - reachX, 10),
-        Math.min(enemySpaceship.y + reachY, 385)
+        Math.max(enemySpaceship.y - enemyReachX, 10),
+        Math.min(enemySpaceship.y + enemyReachY, 385)
       )
 
       for (let i = 0; i < 50; i++) {
         const destinationX = randomNumber(
-          Math.max(spaceship.x - reachX, 10),
-          Math.min(spaceship.x + reachY, 605)
+          Math.max(spaceship.x - spaceshipReachX, 10),
+          Math.min(spaceship.x + spaceshipReachX, 605)
         )
         const destinationY = randomNumber(
-          Math.max(spaceship.y - reachX, 10),
-          Math.min(spaceship.y + reachY, 385)
+          Math.max(spaceship.y - spaceshipReachY, 10),
+          Math.min(spaceship.y + spaceshipReachY, 385)
         )
 
         const angle = Phaser.Math.Angle.Between(
@@ -217,8 +229,8 @@ class Game extends Phaser.Scene {
           destinationX,
           destinationY
         )
-        const vx = (spaceshipWidth / 2) * Math.cos(Phaser.Math.RadToDeg(angle))
-        const vy = (spaceshipHeigh / 2) * Math.sin(Phaser.Math.RadToDeg(angle))
+        const vx = (spaceship.getDisplayWidth() / 2) * Math.cos(Phaser.Math.RadToDeg(angle))
+        const vy = (spaceship.getDisplayHeight() / 2) * Math.sin(Phaser.Math.RadToDeg(angle))
 
         const points = [
           { x: spaceship.x + vx, y: spaceship.y + vy },
@@ -230,12 +242,12 @@ class Game extends Phaser.Scene {
           { x: destinationX + vx, y: destinationY - vy },
           { x: destinationX - vx, y: destinationY + vy },
         ]
-        if (!polygons.some(polygon => polygonIntersects(points, polygon))) {
-          polygons.push(points)
+        if (!polygons.some((polygon, y) => y !== index && polygonIntersects(points, polygon))) {
+          polygons[index] = points
           player.setSpaceshipDestination(spaceship, destinationX, destinationY)
-          const fakeSpaceship = this.add.graphics()
-          fakeSpaceship.fillStyle(index === 0 ? 0xffffff : index === 1 ? 0x111666 : 0xaaa213)
-          fakeSpaceship.beginPath()
+          // const fakeSpaceship = this.add.graphics()
+          // fakeSpaceship.fillStyle(index === 0 ? 0xffffff : index === 1 ? 0x111666 : 0xaaa213)
+          // fakeSpaceship.beginPath()
           // fakeSpaceship.fillPoint(points[0].x, points[0].y, 4)
           // fakeSpaceship.fillPoint(points[1].x, points[1].y, 4)
           // fakeSpaceship.fillPoint(points[2].x, points[2].y, 4)
@@ -322,31 +334,82 @@ class Game extends Phaser.Scene {
     })
   }
 
+  createAnimations() {
+    this.anims.create({
+      key: `${SpaceshipsTypes.FAST}-red-moving`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.FAST}-red`).slice(0, -1),
+      frameRate: 20,
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.FAST}-red-stopped`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.FAST}-red`).slice(-1),
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.FAST}-blue-moving`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.FAST}-blue`).slice(0, -1),
+      frameRate: 20,
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.FAST}-blue-stopped`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.FAST}-blue`).slice(-1),
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.REGULAR}-red-moving`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.REGULAR}-red`).slice(0, -1),
+      frameRate: 20,
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.REGULAR}-red-stopped`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.REGULAR}-red`).slice(-1),
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.REGULAR}-blue-moving`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.REGULAR}-blue`).slice(0, -1),
+      frameRate: 20,
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.REGULAR}-blue-stopped`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.REGULAR}-blue`).slice(-1),
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.SLOW}-red-moving`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.SLOW}-red`).slice(0, -1),
+      frameRate: 20,
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.SLOW}-red-stopped`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.SLOW}-red`).slice(-1),
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.SLOW}-blue-moving`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.SLOW}-blue`).slice(0, -1),
+      frameRate: 20,
+      repeat: -1,
+    })
+
+    this.anims.create({
+      key: `${SpaceshipsTypes.SLOW}-blue-stopped`,
+      frames: this.anims.generateFrameNames(`${SpaceshipsTypes.SLOW}-blue`).slice(-1),
+    })
+  }
+
   create(): void {
-    this.anims.create({
-      key: 'spaceship1-red-moving',
-      frames: this.anims.generateFrameNames('spaceship1-red').slice(0, -1),
-      frameRate: 20,
-      repeat: -1,
-    })
-
-    this.anims.create({
-      key: 'spaceship1-red-stopped',
-      frames: this.anims.generateFrameNames('spaceship1-red').slice(-1),
-    })
-
-    this.anims.create({
-      key: 'spaceship1-blue-moving',
-      frames: this.anims.generateFrameNames('spaceship1-blue').slice(0, -1),
-      frameRate: 20,
-      repeat: -1,
-    })
-
-    this.anims.create({
-      key: 'spaceship1-blue-stopped',
-      frames: this.anims.generateFrameNames('spaceship1-blue').slice(-1),
-    })
-
+    this.createAnimations()
     const background = this.add.image(WIDTH / 2, HEIGHT / 2, 'shipSelectBackgroundImage')
     background.setScale(0.5)
     if (this.socketHandler) {
@@ -545,6 +608,7 @@ class Game extends Phaser.Scene {
         this.isChallenger ?? true,
         'TOP',
         this.challenger ?? '',
+        this.choices?.challenger,
         onTargetClick,
         onReachableAreaClick,
         onSpaceshipClick
@@ -556,6 +620,7 @@ class Game extends Phaser.Scene {
         !this.isChallenger,
         'BOTTOM',
         this.challenged ?? '',
+        this.choices?.challenged,
         onTargetClick,
         onReachableAreaClick,
         onSpaceshipClick
