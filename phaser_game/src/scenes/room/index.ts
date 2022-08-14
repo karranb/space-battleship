@@ -13,14 +13,17 @@ class Room extends Phaser.Scene {
   private socketHandler?: RoomSocketHandler
   private returnKey?: Phaser.Input.Keyboard.Key
   private reason?: string
+  private countryCode?: string
+
   constructor() {
     super(SCENES.Room)
   }
 
-  init(data: { webSocketClient: Socket; reason?: string }): void {
+  init(data: { webSocketClient: Socket; reason?: string; countryCode?: string }): void {
     this.socketHandler = new RoomSocketHandler(data.webSocketClient)
     this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
     this.reason = data.reason
+    this.countryCode = data.countryCode ?? localStorage.getItem('countryCode') ?? ''
   }
 
   setupWebsocketListeners = (): void => {
@@ -28,10 +31,15 @@ class Room extends Phaser.Scene {
       const users = JSON.parse(value).reduce(
         (
           acc: Record<string, string>,
-          { id, name, isPlaying }: { id: string; name: string; isPlaying: boolean }
+          {
+            id,
+            name,
+            isPlaying,
+            countryCode,
+          }: { id: string; name: string; isPlaying: boolean; countryCode: string }
         ) => ({
           ...acc,
-          [id]: { name, isPlaying },
+          [id]: { name, isPlaying, countryCode },
         }),
         {}
       )
@@ -92,6 +100,7 @@ class Room extends Phaser.Scene {
         [item.id]: {
           name: item.name,
           isPlaying: item.isPlaying,
+          countryCode: item.countryCode,
         },
       })
       this.UI?.addJoinedMessage(item.name)
@@ -116,6 +125,11 @@ class Room extends Phaser.Scene {
       this.UI?.addBackFromGameMessage(socketId)
     }
 
+    const handleUpdateCountryCode = (value: string) => {
+      const { id, countryCode } = JSON.parse(value)
+      this.UI?.updateUserCountryCode(id, countryCode)
+    }
+
     this.socketHandler?.createRoomSocketHandler({
       handleGetUsersList,
       handleUserDisconnected,
@@ -124,6 +138,7 @@ class Room extends Phaser.Scene {
       handleChallenge,
       handleAcceptChallenge,
       handleCloseChallenge,
+      handleUpdateCountryCode,
       handleErrorChallenge,
       handleDisconnect,
       handleUserIsBackFromGame,
@@ -151,6 +166,15 @@ class Room extends Phaser.Scene {
     this.UI = new RoomUI(this, {
       handleSubmitChallenge,
       handleSubmitMessage,
+      handleGoBack: () => {
+        this.socketHandler?.close()
+        this.scene.start(SCENES.Identification)
+      },
+      handleUpdateFlag: (countryCode: string) => {
+        this.socketHandler?.sendUpdateFlag(countryCode)
+        localStorage.setItem('countryCode', countryCode)
+        this.UI?.updateProps({ countryCode })
+      },
       handleRefuseChallengeClick: (id: string) => this.socketHandler?.sendMessageRefuse(id),
       handleAcceptChallengeClick: (id: string) => this.socketHandler?.sendMessageAccept(id),
       handleCloseChallengeClick: (id: string) => this.socketHandler?.sendMessageCancel(id),
@@ -158,6 +182,7 @@ class Room extends Phaser.Scene {
         this.UI?.updateProps({ reason: undefined })
       },
       reason: this.reason,
+      countryCode: this.countryCode ?? '',
     })
 
     this.returnKey?.on(

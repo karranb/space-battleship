@@ -14,6 +14,9 @@ class RoomUI extends BaseUIHandler {
       | 'handleCloseChallengeClick'
       | 'handleCloseMessage'
       | 'reason'
+      | 'countryCode'
+      | 'handleUpdateFlag'
+      | 'handleGoBack'
     >
   ) {
     super(scene)
@@ -32,6 +35,12 @@ class RoomUI extends BaseUIHandler {
   updateUserIsPlaying(userId: string, isPlaying: boolean) {
     const newUsers = { ...((this.props?.users as Record<string, { isPlaying: boolean }>) ?? {}) }
     newUsers[userId] = { ...newUsers[userId], isPlaying }
+    this.updateProps({ users: newUsers })
+  }
+
+  updateUserCountryCode(userId: string, countryCode: string) {
+    const newUsers = { ...((this.props?.users as Record<string, { countryCode: string }>) ?? {}) }
+    newUsers[userId] = { ...newUsers[userId], countryCode }
     this.updateProps({ users: newUsers })
   }
 

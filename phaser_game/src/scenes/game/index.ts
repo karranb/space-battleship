@@ -229,8 +229,12 @@ class Game extends Phaser.Scene {
           destinationX,
           destinationY
         )
-        const vx = (spaceship.getDisplayWidth() / 2) * Math.cos(Phaser.Math.RadToDeg(angle))
-        const vy = (spaceship.getDisplayHeight() / 2) * Math.sin(Phaser.Math.RadToDeg(angle))
+
+
+
+
+        const vx = (spaceship.getDisplayWidth() / 2) * Math.sin(Phaser.Math.RadToDeg(angle))
+        const vy = (spaceship.getDisplayHeight() / 2) * Math.cos(Phaser.Math.RadToDeg(angle))
 
         const points = [
           { x: spaceship.x + vx, y: spaceship.y + vy },

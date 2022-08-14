@@ -64,4 +64,7 @@ export default {
   ['Your enemy gave up.']: 'Seu inimigo desistiu',
   TRAIN: 'TREINAR',
   MULTIPLAYER: 'MULTIJOGADOR',
+  SETTINGS: 'CONFIGURAÇÕES',
+  ['CHANGE FLAG']: 'MUDAR BANDEIRA',
+  ['BACK TO MAIN MENU']: 'VOLTAR PARA O MENU PRINCIPAL',
 }

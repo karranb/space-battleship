@@ -62,4 +62,7 @@ export default {
   ABOUT: 'ABOUT',
   ['Enemy gave up']: 'Enemy gave up',
   ['Your enemy gave up.']: 'Your enemy gave up.',
+  SETTINGS: 'SETTINGS',
+  ['CHANGE FLAG']: 'CHANGE FLAG',
+  ['BACK TO MAIN MENU']: 'BACK TO MAIN MENU',
 }

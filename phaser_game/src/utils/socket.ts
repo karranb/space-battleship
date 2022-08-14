@@ -26,6 +26,11 @@ export class BaseSocketHandler {
     this.webSocketClient.emit(command, value)
   }
 
+  public close() {
+    this.clearSocketListeners()
+    this.webSocketClient.close()
+  }
+
   protected setSocketListeners(
     handleIndex: SocketHandlerIndex,
     openHandler: SocketSceneOpenHandler,

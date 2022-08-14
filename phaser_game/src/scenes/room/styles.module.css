@@ -75,6 +75,54 @@
   font-family: planer;
 }
 
+.flag {
+  margin-right: 5px;
+  width: 20px;
+}
+
+.dropdownContent {
+  margin-left: 10px;
+}
+
+.modalButton {
+  cursor: pointer;
+}
+
+.dropdown {
+  cursor: pointer;
+  margin-top: 50px;
+  margin-bottom: 20px;
+}
+
+.dropdownItemsWrapper {
+  display: flex;
+  align-items: center;
+}
+
+.dropdownLabel {
+  margin-left: 10px;
+}
+
+.modalTitle {
+  position: absolute;
+  left: 27px;
+  top: 0;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu {
+  font-size: 10px;
+  max-height: 250px;
+  overflow: auto;
+}
+
+.closeIcon {
+  color: '#b2f1e8';
+}
+
 .messageButton {
   display: flex;
   color: white;
@@ -121,6 +169,15 @@
   font-size: 12px;
   font-family: planer;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.menu {
+  color: #01a79e;
+  position: absolute;
+  right: 50px;
+  top: 20px;
 }
 
 .userSelected {

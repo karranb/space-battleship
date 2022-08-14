@@ -2,7 +2,7 @@ import 'phaser'
 
 import { Commands } from 'interfaces/shared'
 import { ErrorTypes, SCENES } from 'utils/constants'
-
+import axios from 'axios'
 import IdentificationSocketHandler from './socket'
 import IdentificationUI from './ui'
 
@@ -15,26 +15,46 @@ class Identification extends Phaser.Scene {
     super(SCENES.Identification)
   }
 
-  init(data: { error: ErrorTypes }): void {
+  async getCountryCode() {
+    const storageCountryCode = localStorage.getItem('countryCode')
+    if (storageCountryCode) {
+      return storageCountryCode
+    }
+
+    return axios
+      .get('http://ip-api.com/json')
+      .then(response => {
+        const code = response.data.countryCode
+        localStorage.setItem('countryCode', code)
+        return code
+      })
+      .catch(() => '')
+  }
+
+  async init(data: { error: ErrorTypes }): Promise<void> {
     this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
     const defaultName = localStorage.getItem('username') ?? 'Guest'
+    const countryCode = await this.getCountryCode()
     const handleSubmit = (value: string): void => {
       localStorage.setItem('username', value)
       this.UI?.updateProps({ showLoading: true })
       this.socketHandler = new IdentificationSocketHandler(import.meta.env.VITE_SOCKET_SERVER)
 
-      const handleSocketOpen = (): void => this.socketHandler?.sendName(value)
+      const handleSocketOpen = (): void => this.socketHandler?.sendName(value, countryCode)
 
       const handleNameMessage = (message: string): void => {
         const { command } = JSON.parse(message)
         if (command === Commands.NAME) {
           this.scene.start(SCENES.Room, {
             webSocketClient: this.socketHandler?.getWebSocketClient(),
+            countryCode,
           })
         }
       }
 
-      const handleError = () => {
+      const handleError = (...props: any[]) => {
+        // eslint-disable-next-line no-console
+        console.error('error', props)
         this.UI?.updateProps({ showLoading: false, error: ErrorTypes.not_able_to_connect })
       }
 

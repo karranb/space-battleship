@@ -6,7 +6,12 @@ import { SocketError } from 'utils/errors'
 function roomMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
   return class extends Base {
     getUserData(socket: Socket): User {
-      return { id: socket.id, name: socket.data.name, isPlaying: !!socket.data.game }
+      return {
+        id: socket.id,
+        name: socket.data.name,
+        isPlaying: !!socket.data.game,
+        countryCode: socket.data.countryCode,
+      }
     }
 
     validateIsSignedIn(socket: Socket) {
@@ -19,7 +24,7 @@ function roomMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       if (socket.data.name) {
         throw new SocketError('Name is already set')
       }
-      const { name, version } = JSON.parse(message)
+      const { name, version, countryCode } = JSON.parse(message)
 
       const parsedName = name.trim()
       if (!parsedName) {
@@ -31,9 +36,20 @@ function roomMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       }
 
       socket.data.name = parsedName
+      socket.data.countryCode = countryCode
       this.sendProcessedMessage(socket, Commands.NAME)
       this.webSocket.broadcastMessage(
         Commands.NEW_USER_SET,
+        JSON.stringify(this.getUserData(socket))
+      )
+      this.handleGetUsersList(socket)
+    }
+
+    handleSetCountryCode(socket: Socket, countryCode: string): void {
+      socket.data.countryCode = countryCode
+      this.sendProcessedMessage(socket, Commands.SET_COUNTRY_CODE)
+      this.webSocket.broadcastMessage(
+        Commands.USER_COUNTRY_CODE_SET,
         JSON.stringify(this.getUserData(socket))
       )
       this.handleGetUsersList(socket)
@@ -65,6 +81,10 @@ function roomMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
         {
           command: Commands.NAME,
           callback: this.handleSetUserName,
+        },
+        {
+          command: Commands.SET_COUNTRY_CODE,
+          callback: this.handleSetCountryCode,
         },
         { command: Commands.GET_USERS_LIST, callback: this.handleGetUsersList },
         { command: Commands.ROOM_MESSAGE, callback: this.handleRoomMessage },

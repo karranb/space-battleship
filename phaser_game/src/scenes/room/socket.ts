@@ -38,6 +38,10 @@ class RoomSocketHandler extends BaseSocketHandler {
     this.webSocketClient.emit(Commands.GET_USERS_LIST)
   }
 
+  public sendUpdateFlag(countryCode: string): void {
+    this.webSocketClient.emit(Commands.SET_COUNTRY_CODE, countryCode)
+  }
+
   public isMe(id: string): boolean {
     return this.webSocketClient.id === id
   }
@@ -54,6 +58,7 @@ class RoomSocketHandler extends BaseSocketHandler {
     handleDisconnect,
     handleUserIsPlaying,
     handleUserIsBackFromGame,
+    handleUpdateCountryCode,
   }: {
     handleUserIsBackFromGame: (value: string) => void
     handleUserIsPlaying: (value: string) => void
@@ -66,6 +71,7 @@ class RoomSocketHandler extends BaseSocketHandler {
     handleCloseChallenge: (value: string) => void
     handleErrorChallenge: (value: string) => void
     handleDisconnect: () => void
+    handleUpdateCountryCode: (countryCode: string) => void
   }): void {
     const socketMessageHandlers = {
       [Commands.GET_USERS_LIST]: handleGetUsersList,
@@ -78,6 +84,7 @@ class RoomSocketHandler extends BaseSocketHandler {
       [Commands.COMMAND_ERROR]: handleErrorChallenge,
       [Commands.USER_IS_BACK_FROM_GAME]: handleUserIsBackFromGame,
       [Commands.USER_IS_PLAYING]: handleUserIsPlaying,
+      [Commands.USER_COUNTRY_CODE_SET]: handleUpdateCountryCode,
     }
     this.setSocketListeners(socketMessageHandlers, () => null, handleDisconnect)
   }

@@ -13,8 +13,8 @@ class IdentificationSocketHandler extends BaseSocketHandler {
     )
   }
 
-  public sendName(name: string): void {
-    this.send(Commands.NAME, JSON.stringify({ name, version: VERSION }))
+  public sendName(name: string, countryCode: string): void {
+    this.send(Commands.NAME, JSON.stringify({ name, version: VERSION, countryCode }))
   }
 
   public createIdentificationSocketHandler(

@@ -1,11 +1,10 @@
 todo:
     improve store data
     start to share game
-    flags
     refactor react components
     refactor armory / spaceships / game screen
     new armory
-    improve IA
+    improve IA (try to predict hits)
 ----
 webrtc
     create room
