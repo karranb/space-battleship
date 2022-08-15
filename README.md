@@ -3,8 +3,9 @@ todo:
     start to share game
     refactor react components
     refactor armory / spaceships / game screen
-    new armory
     improve IA (try to predict hits)
+----
+new armory
 ----
 webrtc
     create room

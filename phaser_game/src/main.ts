@@ -25,20 +25,26 @@ class Game extends Phaser.Game {
   }
 }
 
-const startFlexibleUpdate = async () => {
+const startUpdate = async () => {
   const result = await AppUpdate.getAppUpdateInfo()
   if (result.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE) {
     return
   }
-  if (result.flexibleUpdateAllowed) {
-    await AppUpdate.startFlexibleUpdate()
+  if (result.immediateUpdateAllowed) {
+    try {
+      await AppUpdate.performImmediateUpdate()
+      return
+    } catch (err) {
+      null
+    }
   }
+  AppUpdate.openAppStore()
 }
 
 window.onload = async function (): Promise<void> {
   new Game()
   try {
-    await startFlexibleUpdate()
+    await startUpdate()
   } catch (err) {
     // eslint-disable-next-line no-console
     console.info('No update needed')
