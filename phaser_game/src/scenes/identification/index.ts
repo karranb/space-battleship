@@ -22,9 +22,9 @@ class Identification extends Phaser.Scene {
     }
 
     return axios
-      .get('http://ip-api.com/json')
+      .get('https://ipapi.co/json/')
       .then(response => {
-        const code = response.data.countryCode
+        const code = response.data.country_code
         localStorage.setItem('countryCode', code)
         return code
       })

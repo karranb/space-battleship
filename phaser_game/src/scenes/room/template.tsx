@@ -152,9 +152,12 @@ export const RoomTemplate = ({
           <div className={styles.dropdownContentWrapper}>
             <span className={styles.dropdownLabel}>{`${i18next.t('CHANGE FLAG')}`}:</span>
             {country ? (
-              <img width="15px" src={country.image} className={styles.dropdownContent} />
+              <>
+                <img width="15px" src={country.image} className={styles.dropdownContent} />
+                <span className={styles.dropdownContent}>{country.name}</span>
+              </>
             ) : null}
-            <span className={styles.dropdownContent}>{country.name}</span>
+
             <DownOutlined className={styles.dropdownContent} />
           </div>
         </Dropdown>
