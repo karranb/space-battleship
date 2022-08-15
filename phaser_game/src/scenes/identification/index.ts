@@ -16,15 +16,15 @@ class Identification extends Phaser.Scene {
   }
 
   async getCountryCode() {
-    const storageCountryCode = localStorage.getItem('countryCode')
-    if (storageCountryCode) {
-      return storageCountryCode
-    }
+    // const storageCountryCode = localStorage.getItem('countryCode')
+    // if (storageCountryCode) {
+    //   return storageCountryCode
+    // }
 
     return axios
-      .get('https://ipapi.co/json/')
+      .get('https://server.spacesbattleship.com/country')
       .then(response => {
-        const code = response.data.country_code
+        const code = response.data
         localStorage.setItem('countryCode', code)
         return code
       })

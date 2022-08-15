@@ -2,8 +2,11 @@ import { routes } from 'core/routes'
 import express from 'express'
 import http from 'http'
 import fs from 'fs'
+import cors from 'cors'
 
 const app = express()
+app.use(cors())
+
 app.use('/game', express.static(__dirname + '/../../static/game'))
 app.use('/assets', express.static(__dirname + '/../../static/game/assets'))
 routes(app)
