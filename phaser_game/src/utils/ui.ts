@@ -1,3 +1,4 @@
+import lodashDebounce from 'lodash/debounce'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
@@ -34,5 +35,8 @@ abstract class BaseUIHandler {
     return this.props
   }
 }
+
+export const debounce = (fn: () => void, timeout = 300) =>
+  lodashDebounce(() => fn(), timeout, { leading: true, trailing: false })
 
 export default BaseUIHandler

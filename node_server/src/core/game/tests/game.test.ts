@@ -49,41 +49,32 @@ describe('Game logic', () => {
 
   it('Can set destination', async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
-    clientSocketChallenger.on(Commands.COMMAND_PROCESSED, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_PROCESSED, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_SPACESHIP_DESTINATION)
       done()
     })
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 1, x: 50, y: 50 })
   })
 
   it("Can't set destination if no choices are set", async done => {
     await createGame(port, clientSocketChallenger, clientSocketChallenged)
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_SPACESHIP_DESTINATION)
       done()
     })
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 1, x: 50, y: 50 })
   })
 
   it("Can't set destination if ready", async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
     clientSocketChallenger.on(Commands.COMMAND_PROCESSED, () => {
-      clientSocketChallenger.emit(
-        Commands.SET_SPACESHIP_DESTINATION,
-        JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-      )
+      clientSocketChallenger.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 1, x: 50, y: 50 })
     })
 
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_SPACESHIP_DESTINATION)
       done()
     })
@@ -93,16 +84,13 @@ describe('Game logic', () => {
   it("Can't set destination if not in game", async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketWithName.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_SPACESHIP_DESTINATION)
       done()
     })
 
-    clientSocketWithName.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketWithName.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 1, x: 50, y: 50 })
   })
 
   /**
@@ -111,41 +99,32 @@ describe('Game logic', () => {
 
   it('Can set target', async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
-    clientSocketChallenger.on(Commands.COMMAND_PROCESSED, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_PROCESSED, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_SPACESHIP_TARGET)
       done()
     })
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 1, x: 50, y: 50 })
   })
 
   it("Can't set target if choices are not set", async done => {
     await createGame(port, clientSocketChallenger, clientSocketChallenged)
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_SPACESHIP_TARGET)
       done()
     })
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 1, x: 50, y: 50 })
   })
 
   it("Can't set target if ready", async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
     clientSocketChallenger.on(Commands.COMMAND_PROCESSED, () => {
-      clientSocketChallenger.emit(
-        Commands.SET_SPACESHIP_TARGET,
-        JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-      )
+      clientSocketChallenger.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 1, x: 50, y: 50 })
     })
 
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_SPACESHIP_TARGET)
       done()
     })
@@ -155,16 +134,13 @@ describe('Game logic', () => {
   it("Can't set target if not in game", async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketWithName.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_SPACESHIP_TARGET)
       done()
     })
 
-    clientSocketWithName.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketWithName.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 1, x: 50, y: 50 })
   })
 
   /**
@@ -174,8 +150,8 @@ describe('Game logic', () => {
   it('Can set ready', async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.on(Commands.COMMAND_PROCESSED, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_PROCESSED, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_PLAYER_READY)
       done()
     })
@@ -185,8 +161,8 @@ describe('Game logic', () => {
   it("Can't set ready if choise is not set", async done => {
     await createGame(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_PLAYER_READY)
       done()
     })
@@ -196,8 +172,8 @@ describe('Game logic', () => {
   it("Can't set ready twice", async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_PLAYER_READY)
       done()
     })
@@ -209,8 +185,8 @@ describe('Game logic', () => {
   it("Can't set ready if not in game", async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketWithName.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toEqual(Commands.SET_PLAYER_READY)
       done()
     })
@@ -220,30 +196,18 @@ describe('Game logic', () => {
   it('Round finishes when both ready', async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 1, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenged.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 2, x: 2, y: 2 })
-    )
+    clientSocketChallenged.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 2, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 1, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenged.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 2, x: 2, y: 2 })
-    )
+    clientSocketChallenged.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 2, x: 50, y: 50 })
 
     clientSocketChallenger.on(Commands.SET_PLAYER_READY, value => {
-      expect(JSON.parse(value)).toStrictEqual({
-        [clientSocketChallenged.id]: { 2: { target: { x: 2, y: 2 }, destination: { x: 2, y: 2 } } },
-        [clientSocketChallenger.id]: { 1: { target: { x: 1, y: 1 }, destination: { x: 1, y: 1 } } },
+      expect(value).toStrictEqual({
+        [clientSocketChallenged.id]: { 2: { target: { x: 50, y: 50 }, destination: { x: 50, y: 50 } } },
+        [clientSocketChallenger.id]: { 1: { target: { x: 50, y: 50 }, destination: { x: 50, y: 50 } } },
       })
       done()
     })
@@ -260,30 +224,18 @@ describe('Game logic', () => {
 
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 1, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenged.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 2, x: 2, y: 2 })
-    )
+    clientSocketChallenged.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 2, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 1, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenged.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 2, x: 2, y: 2 })
-    )
+    clientSocketChallenged.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 2, x: 50, y: 50 })
 
     clientSocketChallenger.on(Commands.SET_PLAYER_READY, value => {
-      expect(JSON.parse(value)).toStrictEqual({
-        [clientSocketChallenged.id]: { 2: { target: { x: 2, y: 2 }, destination: { x: 2, y: 2 } } },
-        [clientSocketChallenger.id]: { 1: { target: { x: 1, y: 1 }, destination: { x: 1, y: 1 } } },
+      expect(value).toStrictEqual({
+        [clientSocketChallenged.id]: { 2: { target: { x: 50, y: 50 }, destination: { x: 50, y: 50 } } },
+        [clientSocketChallenger.id]: { 1: { target: { x: 50, y: 50 }, destination: { x: 50, y: 50 } } },
       })
       done()
     })
@@ -296,30 +248,18 @@ describe('Game logic', () => {
 
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 1, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenged.emit(
-      Commands.SET_SPACESHIP_TARGET,
-      JSON.stringify({ spaceship: 2, x: 2, y: 2 })
-    )
+    clientSocketChallenged.emit(Commands.SET_SPACESHIP_TARGET, { spaceship: 2, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenger.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 1, x: 1, y: 1 })
-    )
+    clientSocketChallenger.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 1, x: 50, y: 50 })
     await timeout(10)
-    clientSocketChallenged.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship: 2, x: 2, y: 2 })
-    )
+    clientSocketChallenged.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship: 2, x: 50, y: 50 })
 
     clientSocketChallenger.on(Commands.SET_PLAYER_READY, value => {
-      expect(JSON.parse(value)).toStrictEqual({
-        [clientSocketChallenged.id]: { 2: { target: { x: 2, y: 2 }, destination: { x: 2, y: 2 } } },
-        [clientSocketChallenger.id]: { 1: { target: { x: 1, y: 1 }, destination: { x: 1, y: 1 } } },
+      expect(value).toStrictEqual({
+        [clientSocketChallenged.id]: { 2: { target: { x: 50, y: 50 }, destination: { x: 50, y: 50 } } },
+        [clientSocketChallenger.id]: { 1: { target: { x: 50, y: 50 }, destination: { x: 50, y: 50 } } },
       })
       done()
     })
@@ -369,7 +309,7 @@ describe('Game logic', () => {
     clientSocketChallenger.emit(Commands.ROUND_STARTED)
 
     clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toEqual(Commands.ROUND_STARTED)
       done()
     })
@@ -381,7 +321,7 @@ describe('Game logic', () => {
     clientSocketWithName.emit(Commands.ROUND_STARTED)
 
     clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toEqual(Commands.ROUND_STARTED)
       done()
     })
@@ -402,7 +342,7 @@ describe('Game logic', () => {
     }
 
     clientSocketChallenger.on(Commands.CLOSE_GAME, value => {
-      expect(value).toEqual('draw')
+      expect(value).toEqual({reason: 'draw'})
       done()
     })
   })
@@ -423,7 +363,7 @@ describe('Game logic', () => {
     clientSocketWithName.emit(Commands.CLOSE_GAME)
 
     clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toEqual(Commands.CLOSE_GAME)
       done()
     })
@@ -435,7 +375,7 @@ describe('Game logic', () => {
     clientSocketChallenger.emit(Commands.PRIVATE_MESSAGE, mockedMessage)
 
     clientSocketChallenged.on(Commands.PRIVATE_MESSAGE, value => {
-      const { id, message } = JSON.parse(value)
+      const { id, message } = value
       expect(id).toEqual(clientSocketChallenger.id)
       expect(message).toEqual(mockedMessage)
       done()
@@ -448,7 +388,7 @@ describe('Game logic', () => {
     clientSocketWithName.emit(Commands.PRIVATE_MESSAGE, 'wow')
 
     clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toEqual(Commands.PRIVATE_MESSAGE)
       done()
     })
@@ -461,10 +401,10 @@ describe('Game logic', () => {
   it('Can make choices', async done => {
     await createGame(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.emit(Commands.SET_CHOICES, JSON.stringify(getRandomChoices()))
+    clientSocketChallenger.emit(Commands.SET_CHOICES, getRandomChoices())
 
     clientSocketChallenger.on(Commands.COMMAND_PROCESSED, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toEqual(Commands.SET_CHOICES)
       done()
     })
@@ -473,11 +413,11 @@ describe('Game logic', () => {
   it("Can't make choices twices", async done => {
     await createGame(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.emit(Commands.SET_CHOICES, JSON.stringify(getRandomChoices()))
-    clientSocketChallenger.emit(Commands.SET_CHOICES, JSON.stringify(getRandomChoices()))
+    clientSocketChallenger.emit(Commands.SET_CHOICES, getRandomChoices())
+    clientSocketChallenger.emit(Commands.SET_CHOICES, getRandomChoices())
 
     clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toEqual(Commands.SET_CHOICES)
       done()
     })
@@ -486,10 +426,10 @@ describe('Game logic', () => {
   it("Can't make choices if game started", async done => {
     await createGameWithChoices(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.emit(Commands.SET_CHOICES, JSON.stringify(getRandomChoices()))
+    clientSocketChallenger.emit(Commands.SET_CHOICES, getRandomChoices())
 
     clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toEqual(Commands.SET_CHOICES)
       done()
     })
@@ -498,9 +438,9 @@ describe('Game logic', () => {
   it('If both make choices the round starts', async done => {
     await createGame(port, clientSocketChallenger, clientSocketChallenged)
 
-    clientSocketChallenger.emit(Commands.SET_CHOICES, JSON.stringify(getRandomChoices()))
+    clientSocketChallenger.emit(Commands.SET_CHOICES, getRandomChoices())
     await timeout(10)
-    clientSocketChallenged.emit(Commands.SET_CHOICES, JSON.stringify(getRandomChoices()))
+    clientSocketChallenged.emit(Commands.SET_CHOICES, getRandomChoices())
 
     clientSocketChallenger.on(Commands.ROUND_STARTED, () => {
       done()

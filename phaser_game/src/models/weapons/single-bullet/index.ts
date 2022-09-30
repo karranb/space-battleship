@@ -29,6 +29,10 @@ class SingleBullet extends Phaser.Physics.Arcade.Sprite {
     this.scene.physics.moveToObject(this, this.destination, 150)
   }
 
+  getDestination() {
+    return this.destination
+  }
+
   getIsDestroyed(): boolean {
     return this.destroyed
   }
@@ -47,7 +51,7 @@ class SingleBullet extends Phaser.Physics.Arcade.Sprite {
   }
 
   update(): void {
-    if (this.x < 0 || this.x > WIDTH  - 220 || this.y < 0 || this.y > HEIGHT) {
+    if (this.x < 0 || this.x > WIDTH - 220 || this.y < 0 || this.y > HEIGHT) {
       this.destroy()
     }
   }

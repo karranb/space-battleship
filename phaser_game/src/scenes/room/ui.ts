@@ -1,34 +1,20 @@
-import { Message, MessageType, RoomTemplate, RoomTemplateProps } from './template'
+import { CHALLENGE_SECONDS_LIMIT, User, UsersIndex } from 'interfaces/shared'
 import BaseUIHandler from 'utils/ui'
-import { CHALLENGE_SECONDS_LIMIT } from 'interfaces/shared'
+
+import { Message, MessageType, RoomTemplate, RoomTemplateProps } from './template'
 
 class RoomUI extends BaseUIHandler {
-  public constructor(
-    scene: Phaser.Scene,
-    props: Pick<
-      RoomTemplateProps,
-      | 'handleSubmitMessage'
-      | 'handleSubmitChallenge'
-      | 'handleRefuseChallengeClick'
-      | 'handleAcceptChallengeClick'
-      | 'handleCloseChallengeClick'
-      | 'handleCloseMessage'
-      | 'reason'
-      | 'countryCode'
-      | 'handleUpdateFlag'
-      | 'handleGoBack'
-    >
-  ) {
+  public constructor(scene: Phaser.Scene, props: Partial<RoomTemplateProps>) {
     super(scene)
     const newProps = { ...props, users: [], messages: [] }
     this.createTemplate(RoomTemplate as React.FC, newProps)
   }
 
-  getUsers(): Record<string, string> {
-    return (this.props?.users ?? {}) as Record<string, string>
+  getUsers(): UsersIndex {
+    return (this.props?.users ?? {}) as UsersIndex
   }
 
-  updateUsers(users: Record<string, string>) {
+  updateUsers(users: UsersIndex) {
     this.updateProps({ ...this.props, users: users })
   }
 
@@ -46,13 +32,13 @@ class RoomUI extends BaseUIHandler {
 
   removeUser(value: string) {
     const users = Object.entries(this.getUsers()).reduce(
-      (acc: Record<string, string>, [id, name]: string[]) => {
+      (acc: UsersIndex, [id, data]: [string, Omit<User, 'id'>]) => {
         if (id === value) {
           return acc
         }
-        return { ...acc, [id]: name }
+        return { ...acc, [id]: data }
       },
-      {}
+      {} as UsersIndex
     )
     this.updateUsers(users)
   }

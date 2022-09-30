@@ -1,5 +1,6 @@
-import { IdentificationTemplate, IdentificationTemplateProps } from './template'
 import BaseUIHandler from 'utils/ui'
+
+import { IdentificationTemplate, IdentificationTemplateProps } from './template'
 
 class IdentificationUI extends BaseUIHandler {
   public constructor(scene: Phaser.Scene, props: IdentificationTemplateProps) {

@@ -1,4 +1,5 @@
 import { SpaceshipsTypes } from 'interfaces/shared'
+
 import BaseSpaceship, { BaseSpaceshipProps } from './base'
 
 class Regular extends BaseSpaceship {
@@ -33,6 +34,11 @@ class Regular extends BaseSpaceship {
     super.update()
     return this
   }
+
+  getClass() {
+    return Regular
+  }
+
 }
 
 export default Regular

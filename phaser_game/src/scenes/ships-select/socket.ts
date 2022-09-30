@@ -1,4 +1,5 @@
 import { Socket } from 'socket.io-client'
+
 import { Commands } from 'interfaces/shared'
 import { BaseSocketHandler } from 'utils/socket'
 
@@ -16,11 +17,11 @@ class SpaceshipSelectocketHandler extends BaseSocketHandler {
   }
 
   public sendDone(choices: Record<string, unknown>): void {
-    this.webSocketClient.emit(Commands.SET_CHOICES, JSON.stringify(choices))
+    this.webSocketClient.emit(Commands.SET_CHOICES, choices)
   }
 
-  public isChallenger(id: string): boolean {
-    return this.webSocketClient.id === id
+  public isChallenger(challengerId?: string): boolean {
+    return this.webSocketClient.id === challengerId
   }
 
   public createShipSelectSocketHandler({

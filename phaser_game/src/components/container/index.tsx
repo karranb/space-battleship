@@ -1,7 +1,8 @@
-import React from 'react'
 import cx from 'classnames'
+import React from 'react'
 
 import { HEIGHT, WIDTH } from 'utils/constants'
+
 import styles from './styles.module.css'
 
 type ContainerProps = {

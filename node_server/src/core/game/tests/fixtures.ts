@@ -14,7 +14,7 @@ export const createClient = (port: number): Promise<ClientSocket> => {
 export const createClientWithName = async (port: number, name?: string): Promise<ClientSocket> => {
   const socket = await createClient(port)
   return new Promise(resolve => {
-    socket.emit(Commands.NAME, name ?? 'name')
+    socket.emit(Commands.NAME, { name: name ?? 'name', countryCode: 'BR', version: undefined })
     socket.on(Commands.NEW_USER_SET, () => {
       resolve(socket)
     })
@@ -30,7 +30,7 @@ export const createChallenge = async (
   const challenged = challengedArg ?? (await createClientWithName(port))
   return new Promise(resolve => {
     challenged.on(Commands.CHALLENGE, value => {
-      resolve(JSON.parse(value).challengeId)
+      resolve(value.challengeId)
     })
     challenger.emit(Commands.CHALLENGE, challenged.id)
   })
@@ -59,9 +59,9 @@ export const createGameWithChoices = async (
 ): Promise<boolean> => {
   const [challenger, challenged] = await createGame(port, challengerArg, challengedArg)
 
-  challenger.emit(Commands.SET_CHOICES, JSON.stringify(getRandomChoices()))
+  challenger.emit(Commands.SET_CHOICES, getRandomChoices())
 
-  challenged.emit(Commands.SET_CHOICES, JSON.stringify(getRandomChoices()))
+  challenged.emit(Commands.SET_CHOICES, getRandomChoices())
   return new Promise(resolve => {
     challenger.on(Commands.ROUND_STARTED, () => {
       resolve(true)

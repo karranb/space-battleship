@@ -100,10 +100,7 @@
   text-decoration: underline;
   cursor: pointer;
   text-shadow: 6px 0px 5px #1db4be, 0px 3px 5px #1db4be, -3px -3px 5px #1db4be;
-  /* margin-left: auto; */
-  /* margin-right: 20px; */
   margin-top: auto;
   margin-top: 20px;
-  /* margin-bottom: 20px; */
   font-size: 12px;
 }

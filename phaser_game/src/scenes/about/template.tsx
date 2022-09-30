@@ -1,11 +1,11 @@
-import React from 'react'
 import 'antd/dist/antd.css'
-
-import { Container } from 'components/container'
-import i18next from 'i18n'
-import styles from './styles.module.css'
+import React from 'react'
 
 import buttonBackground from 'assets/button-background.png'
+import { Container } from 'components/container'
+import i18next from 'i18n'
+
+import styles from './styles.module.css'
 
 export type AboutTemplateProps = {
   handleBackClick: () => void

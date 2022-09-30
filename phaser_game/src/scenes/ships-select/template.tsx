@@ -1,23 +1,22 @@
-import React from 'react'
 import cx from 'classnames'
-import { Container } from 'components/container'
-import styles from './styles.module.css'
-// import titleImage from 'assets/ships-select-title.png'
-import titleBackground from 'assets/title-bg.png'
-import spaceshipArrowImage from 'assets/spaceship-select-arrow.png'
-import blue2Image from 'assets/blue-1.png'
-import red2Image from 'assets/red-1.png'
-import blue3Image from 'assets/blue-2.png'
-import red3Image from 'assets/red-2.png'
-import blue1Image from 'assets/blue-3.png'
-import red1Image from 'assets/red-3.png'
+import React from 'react'
 
-
-import levelOnImage from 'assets/level-on.png'
-import levelOffImage from 'assets/level-off.png'
 import armoryItem1Image from 'assets/armory-item-1.png'
+import blue2Image from 'assets/blue-1.png'
+import blue3Image from 'assets/blue-2.png'
+import blue1Image from 'assets/blue-3.png'
 import buttonBackground from 'assets/button-background.png'
+import levelOffImage from 'assets/level-off.png'
+import levelOnImage from 'assets/level-on.png'
+import red2Image from 'assets/red-1.png'
+import red3Image from 'assets/red-2.png'
+import red1Image from 'assets/red-3.png'
+import spaceshipArrowImage from 'assets/spaceship-select-arrow.png'
+import titleBackground from 'assets/title-bg.png'
+import { Container } from 'components/container'
 import i18next from 'i18n'
+
+import styles from './styles.module.css'
 
 export type ShipsSelectTemplateProps = {
   handleSubmit: () => void
@@ -53,25 +52,30 @@ export const ShipsSelectTemplate = ({
         {Array(3)
           .fill(null)
           .map((_, i) => {
-            const spaceship = spaceships[i] === 0 ? {
-              name: 'Fast',
-              speed: 5,
-              shield: 1,
-              redImage: red1Image,
-              blueImage: blue1Image,
-            } : spaceships[i] === 1 ? {
-              name: 'Regular',
-              speed: 3,
-              shield: 3,
-              redImage: red2Image,
-              blueImage: blue2Image,
-            } : {
-              name: 'Slow',
-              speed: 1,
-              shield: 5,
-              redImage: red3Image,
-              blueImage: blue3Image,
-            } 
+            const spaceship =
+              spaceships[i] === 0
+                ? {
+                    name: 'Fast',
+                    speed: 5,
+                    shield: 1,
+                    redImage: red1Image,
+                    blueImage: blue1Image,
+                  }
+                : spaceships[i] === 1
+                ? {
+                    name: 'Regular',
+                    speed: 3,
+                    shield: 3,
+                    redImage: red2Image,
+                    blueImage: blue2Image,
+                  }
+                : {
+                    name: 'Slow',
+                    speed: 1,
+                    shield: 5,
+                    redImage: red3Image,
+                    blueImage: blue3Image,
+                  }
             return (
               <React.Fragment key={`row-${i}`}>
                 <div className={styles.row}>
@@ -108,20 +112,44 @@ export const ShipsSelectTemplate = ({
                     <div className={styles.values}>
                       <span>{spaceship.name}</span>
                       <div className={styles.levelWrapper}>
-                        {Array(spaceship.speed).fill(null).map((_, j) => (
-                          <img key={`speed-on-${j}`}src={levelOnImage} className={styles.level} />
-                        ))}
-                        {Array(5-spaceship.speed).fill(null).map((_, j) => (
-                          <img key={`speed-off-${j}`}src={levelOffImage} className={styles.level} />
-                        ))}
+                        {Array(spaceship.speed)
+                          .fill(null)
+                          .map((_, j) => (
+                            <img
+                              key={`speed-on-${j}`}
+                              src={levelOnImage}
+                              className={styles.level}
+                            />
+                          ))}
+                        {Array(5 - spaceship.speed)
+                          .fill(null)
+                          .map((_, j) => (
+                            <img
+                              key={`speed-off-${j}`}
+                              src={levelOffImage}
+                              className={styles.level}
+                            />
+                          ))}
                       </div>
                       <div className={styles.levelWrapper}>
-                        {Array(spaceship.shield).fill(null).map((_, j) => (
-                          <img key={`shield-on-${j}`}src={levelOnImage} className={styles.level} />
-                        ))}
-                        {Array(5-spaceship.shield).fill(null).map((_, j) => (
-                          <img key={`shield-off-${j}`}src={levelOffImage} className={styles.level} />
-                        ))}
+                        {Array(spaceship.shield)
+                          .fill(null)
+                          .map((_, j) => (
+                            <img
+                              key={`shield-on-${j}`}
+                              src={levelOnImage}
+                              className={styles.level}
+                            />
+                          ))}
+                        {Array(5 - spaceship.shield)
+                          .fill(null)
+                          .map((_, j) => (
+                            <img
+                              key={`shield-off-${j}`}
+                              src={levelOffImage}
+                              className={styles.level}
+                            />
+                          ))}
                       </div>
                     </div>
                   </div>
@@ -137,16 +165,6 @@ export const ShipsSelectTemplate = ({
               </React.Fragment>
             )
           })}
-
-        {/* <div className={styles.overlay}>
-          <div className={styles.dialog}>
-            <>
-              {i18next.t(
-                `There's no other spaceship/armory option available now, please press done to continue`
-              )}
-            </>
-          </div>
-        </div> */}
 
         <div className={styles.footer}>
           <div className={styles.giveUpButton} id="giveUpButton" onClick={handleGiveUp}>

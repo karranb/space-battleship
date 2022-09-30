@@ -19,12 +19,12 @@ class WebSocket {
     })
   }
 
-  sendMessage(ws: Socket, command: Commands, message?: string): WebSocket {
+  sendMessage(ws: Socket, command: Commands, message?: unknown): WebSocket {
     ws.emit(command, message)
     return this
   }
 
-  broadcastMessage(command: Commands, message?: string): WebSocket {
+  broadcastMessage(command: Commands, message?: string | Record<string, unknown>): WebSocket {
     this.wss.emit(command, message)
     return this
   }

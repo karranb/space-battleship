@@ -7,7 +7,7 @@ import {
   ROUND_ANIMATION_SECONDS_LIMIT,
   ROUND_SECONDS_LIMIT,
 } from 'interfaces/shared'
-import { Game, Player, PlayerPhase, SpaceshipBattleMixin } from '../types'
+import { Game, Player, PlayerChoice, PlayerPhase, SpaceshipBattleMixin } from '../types'
 import { getLastItem } from 'utils/array'
 import { SocketError } from 'utils/errors'
 import { getRandomChoices } from 'utils/game'
@@ -26,23 +26,16 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
         ROUND_ANIMATION_SECONDS_LIMIT * 1000
       )
       const lastRound = getLastItem(game.rounds)
-      this.sendMessage(game.challenged.socket, Commands.SET_PLAYER_READY, JSON.stringify(lastRound))
-      this.sendMessage(game.challenger.socket, Commands.SET_PLAYER_READY, JSON.stringify(lastRound))
+      this.sendMessage(game.challenged.socket, Commands.SET_PLAYER_READY, lastRound)
+      this.sendMessage(game.challenger.socket, Commands.SET_PLAYER_READY, lastRound)
     }
 
     startRound(game: Game): void {
+      const drawReason = 'draw'
       if (game.rounds.length === MAX_ROUNDS) {
         this.closeGame(game.challenger.socket)
-        this.sendMessage(
-          game.challenged.socket,
-          Commands.CLOSE_GAME,
-          JSON.stringify({ reason: 'draw' })
-        )
-        this.sendMessage(
-          game.challenger.socket,
-          Commands.CLOSE_GAME,
-          JSON.stringify({ reason: 'draw' })
-        )
+        this.sendMessage(game.challenged.socket, Commands.CLOSE_GAME, { reason: drawReason })
+        this.sendMessage(game.challenger.socket, Commands.CLOSE_GAME, { reason: drawReason })
         return
       }
 
@@ -159,16 +152,16 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
           player.choices = getRandomChoices()
         }
       })
-      const message = JSON.stringify({
+      const message = {
         challenged: game.challenged.choices,
         challenger: game.challenger.choices,
-      })
+      }
       players.forEach(player => {
         this.sendMessage(player.socket, Commands.SET_CHOICES, message)
       })
     }
 
-    handlePlayerChoices(socket: Socket, message: string): void {
+    handlePlayerChoices(socket: Socket, message: unknown): void {
       const game = this.getGame(socket)
       const player = this.getPlayer(socket, game)
       this.validatePlayerPhase(player, PlayerPhase.READY_FOR_COMMANDS, 'Invalid phase')
@@ -176,7 +169,7 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
         throw new SocketError('Choices are already set')
       }
 
-      player.choices = JSON.parse(message)
+      player.choices = message as Record<string, PlayerChoice>
       player.phase = PlayerPhase.WAITING_OPONENT
       this.sendProcessedMessage(socket, Commands.SET_CHOICES)
       if (
@@ -192,7 +185,7 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       try {
         const game = this.closeGame(socket)
         if (game) {
-          const message = JSON.stringify({ reason: socket.id })
+          const message = { reason: socket.id }
           this.sendMessage(game.challenged.socket, Commands.CLOSE_GAME, message)
           this.sendMessage(game.challenger.socket, Commands.CLOSE_GAME, message)
         }
@@ -204,18 +197,18 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       }
     }
 
-    handlePrivateMessage(socket: Socket, message: string): void {
+    handlePrivateMessage(socket: Socket, message: unknown): void {
       const game = this.getGame(socket)
-      const socketMessage = JSON.stringify({ id: socket.id, message })
+      const socketMessage = { id: socket.id, message: message as string }
       this.sendMessage(game.challenged.socket, Commands.PRIVATE_MESSAGE, socketMessage)
       this.sendMessage(game.challenger.socket, Commands.PRIVATE_MESSAGE, socketMessage)
     }
 
-    handleCloseGame(socket: Socket, message: string): void {
+    handleCloseGame(socket: Socket, message: unknown): void {
       const game = this.closeGame(socket)
-      const parsedMessage = message ? JSON.parse(message) : {}
+      const parsedMessage = message ? (message as Record<string, unknown>) : {}
       if (game) {
-        const message = JSON.stringify({ ...parsedMessage, user: socket.id })
+        const message = { ...parsedMessage, user: socket.id }
         this.sendMessage(game.challenger.socket, Commands.CLOSE_GAME, message)
         this.sendMessage(game.challenged.socket, Commands.CLOSE_GAME, message)
       }
@@ -242,12 +235,12 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       }
     }
 
-    handleSetSpaceshipDestination(socket: Socket, value: string): void {
+    handleSetSpaceshipDestination(socket: Socket, value: unknown): void {
       const game = this.getGame(socket)
       const player = this.getPlayer(socket, game)
       this.validatePlayerPhase(player, PlayerPhase.READY_FOR_COMMANDS, 'You are already ready')
       this.validateChoicesAreSet(game)
-      const { spaceship, x, y }: { spaceship: number; x: number; y: number } = JSON.parse(value)
+      const { spaceship, x, y } = value as { spaceship: number; x: number; y: number }
       this.validateCoordinates(x, y)
       const playerRound = getLastItem(game.rounds)?.[socket.id] ?? {}
       if (!playerRound[spaceship]) {
@@ -257,13 +250,13 @@ function gameMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       this.sendProcessedMessage(socket, Commands.SET_SPACESHIP_DESTINATION, { spaceship, x, y })
     }
 
-    handleSetSpaceshipTarget(socket: Socket, value: string): void {
+    handleSetSpaceshipTarget(socket: Socket, value: unknown): void {
       const game = this.getGame(socket)
       const player = this.getPlayer(socket, game)
       this.validatePlayerPhase(player, PlayerPhase.READY_FOR_COMMANDS, 'You are already ready')
       this.validateChoicesAreSet(game)
 
-      const { spaceship, x, y }: { spaceship: number; x: number; y: number } = JSON.parse(value)
+      const { spaceship, x, y } = value as { spaceship: number; x: number; y: number }
       this.validateCoordinates(x, y)
       const playerRound = getLastItem(game.rounds)?.[socket.id] ?? {}
       if (!playerRound[spaceship]) {

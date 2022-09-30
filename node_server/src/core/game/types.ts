@@ -52,5 +52,5 @@ export type SpaceshipBattleMixin = GConstructor<SpaceshipBattleBase>
 
 export type SocketListener = {
   command: Commands
-  callback: (socket: Socket, value: string) => void
+  callback: (socket: Socket, value: unknown) => void
 }

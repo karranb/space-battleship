@@ -2,5 +2,18 @@
   "extends": "../.eslintrc",
   "parserOptions": {
     "project": "./tsconfig.json"
+  },
+  "plugins": ["simple-import-sort"],
+  "rules": {
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          ["^\\u0000", "^@?\\w"],
+          ["assets", "components","config", "i18n", "interfaces", "models", "scenes", "utils"]
+        ]
+      }
+    ],
+    "simple-import-sort/exports": "error"
   }
 }

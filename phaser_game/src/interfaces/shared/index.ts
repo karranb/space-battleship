@@ -36,6 +36,13 @@ export type User = {
   name: string
   id: string
   isPlaying: boolean
+  countryCode: string
+}
+
+export type UsersIndex = Record<string, Omit<User, 'id'>>
+
+export type ProcessedCommandMessage = {
+  command: Commands
 }
 
 export enum SpaceshipsTypes {

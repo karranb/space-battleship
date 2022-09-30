@@ -40,7 +40,7 @@ describe('Room logic', () => {
     const mockedName = 'An name example'
     const promise1 = new Promise(resolve => {
       clientSocketWithName.on(Commands.NEW_USER_SET, value => {
-        const { id, name } = JSON.parse(value)
+        const { id, name } = value
         expect(id).toBe(clientSocketWithoutName.id)
         expect(name).toBe(mockedName)
         resolve(true)
@@ -48,12 +48,16 @@ describe('Room logic', () => {
     })
     const promise2 = new Promise(resolve => {
       clientSocketWithoutName.on(Commands.COMMAND_PROCESSED, value => {
-        const { command } = JSON.parse(value)
+        const { command } = value
         expect(command).toBe(Commands.NAME)
         resolve(true)
       })
     })
-    clientSocketWithoutName.emit(Commands.NAME, mockedName)
+    clientSocketWithoutName.emit(Commands.NAME, {
+      name: mockedName,
+      countryCode: 'BR',
+      VERSION: undefined,
+    })
     await promise1
     await promise2
   })
@@ -61,7 +65,7 @@ describe('Room logic', () => {
   it("Can't set name if already set", done => {
     const mockedNewName = 'new name'
     clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toBe(Commands.NAME)
       const serverSideSocket = game.webSocket.getSocket(clientSocketWithName.id)
       if (serverSideSocket) {
@@ -70,37 +74,37 @@ describe('Room logic', () => {
       done()
     })
 
-    clientSocketWithName.emit(Commands.NAME, mockedNewName)
+    clientSocketWithName.emit(Commands.NAME, { name: mockedNewName })
   })
 
   it("Can't set empty name", done => {
     const mockedName = ''
 
     clientSocketWithoutName.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toBe(Commands.NAME)
       done()
     })
 
-    clientSocketWithoutName.emit(Commands.NAME, mockedName)
+    clientSocketWithoutName.emit(Commands.NAME, { name: mockedName })
   })
 
   it("Can't set trimmed empty name", done => {
     const mockedName = ' '
 
     clientSocketWithoutName.on(Commands.COMMAND_ERROR, value => {
-      const { command } = JSON.parse(value)
+      const { command } = value
       expect(command).toBe(Commands.NAME)
       done()
     })
-    clientSocketWithoutName.emit(Commands.NAME, mockedName)
+    clientSocketWithoutName.emit(Commands.NAME, { name: mockedName })
   })
 
   it('Get user list on name set', async done => {
     const name = 'Another name'
-    clientSocketWithoutName.emit(Commands.NAME, name)
-    clientSocketWithoutName.on(Commands.GET_USERS_LIST, (value: string) => {
-      const list: User[] = JSON.parse(value)
+    clientSocketWithoutName.emit(Commands.NAME, { name })
+    clientSocketWithoutName.on(Commands.GET_USERS_LIST, value => {
+      const list: User[] = value
       const sockets = game.webSocket.getSockets()
       expect(sockets.filter(socket => socket.data.name).length).toBe(list.length)
       list.forEach(item => {
@@ -121,8 +125,8 @@ describe('Room logic', () => {
   it('Can send a room message', async done => {
     const mockedMessage = 'Message'
     clientSocketWithName.emit(Commands.ROOM_MESSAGE, mockedMessage)
-    clientSocketWithoutName.on(Commands.ROOM_MESSAGE, (value: string) => {
-      const { id, message } = JSON.parse(value)
+    clientSocketWithoutName.on(Commands.ROOM_MESSAGE, value => {
+      const { id, message } = value
       expect(message).toStrictEqual(mockedMessage)
       expect(id).toStrictEqual(clientSocketWithName.id)
       done()
@@ -134,8 +138,8 @@ describe('Room logic', () => {
 
     clientSocketWithoutName.emit(Commands.ROOM_MESSAGE, mockedMessage)
 
-    clientSocketWithoutName.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketWithoutName.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.ROOM_MESSAGE)
       done()
     })
@@ -147,7 +151,7 @@ describe('Room logic', () => {
 
   it('Is notified on user disconnect', async done => {
     const clientSocketId = clientSocketWithName.id
-    clientSocketWithoutName.on(Commands.USER_DISCONNECTED, (value: string) => {
+    clientSocketWithoutName.on(Commands.USER_DISCONNECTED, value => {
       expect(value).toBe(clientSocketId)
       done()
     })
@@ -159,8 +163,8 @@ describe('Room logic', () => {
    */
 
   it('Can get user list', async done => {
-    clientSocketWithoutName.on(Commands.GET_USERS_LIST, (value: string) => {
-      const list: User[] = JSON.parse(value)
+    clientSocketWithoutName.on(Commands.GET_USERS_LIST, value => {
+      const list: User[] = value
       const sockets = game.webSocket.getSockets()
       expect(sockets.filter(socket => socket.data.name).length).toBe(list.length)
       list.forEach(item => {

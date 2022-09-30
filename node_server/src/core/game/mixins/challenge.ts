@@ -33,7 +33,7 @@ function challengeMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       socket.data.challenges?.forEach((challengeId: string) => {
         const challenge = this.cancelChallenge(challengeId)
         if (challenge) {
-          const message = JSON.stringify({ challengeId, reason: socket.id })
+          const message = { challengeId, reason: socket.id }
           this.sendMessage(challenge.challenger, Commands.CHALLENGE_CLOSE, message)
           this.sendMessage(challenge.challenged, Commands.CHALLENGE_CLOSE, message)
         }
@@ -52,18 +52,18 @@ function challengeMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       this.cancelUserChallenges(socket)
     }
 
-    handleCloseChallenge(socket: Socket, challengeId: string): void {
-      const challenge = this.cancelChallenge(challengeId)
+    handleCloseChallenge(socket: Socket, challengeId: unknown): void {
+      const challenge = this.cancelChallenge(challengeId as string)
       if (!challenge) {
         throw new SocketError('This challenge does not exist anymore')
       }
 
-      const message = JSON.stringify({ challengeId, reason: socket.id })
+      const message = { challengeId, reason: socket.id }
       this.sendMessage(challenge.challenger, Commands.CHALLENGE_CLOSE, message)
       this.sendMessage(challenge.challenged, Commands.CHALLENGE_CLOSE, message)
     }
 
-    handleChallengeUser(socket: Socket, value: string): void {
+    handleChallengeUser(socket: Socket, value: unknown): void {
       if (!socket.data.name) {
         throw new SocketError('You are not signed in')
       }
@@ -72,7 +72,7 @@ function challengeMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
         throw new SocketError('You Are already playing')
       }
 
-      const challenged = this.webSocket.getSocket(value)
+      const challenged = this.webSocket.getSocket(value as string)
       if (!challenged || challenged.data.game) {
         throw new SocketError('Player not available anymore')
       }
@@ -83,7 +83,7 @@ function challengeMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
         timer: this.setTimeout(() => {
           const challenge = this.cancelChallenge(challengeId)
           if (challenge) {
-            const message = JSON.stringify({ challengeId, reason: 'TIMEOUT' })
+            const message = { challengeId, reason: 'TIMEOUT' }
             this.sendMessage(challenge.challenger, Commands.CHALLENGE_CLOSE, message)
             this.sendMessage(challenge.challenged, Commands.CHALLENGE_CLOSE, message)
           }
@@ -98,23 +98,23 @@ function challengeMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
         challengedId: challenged.id,
         challengerId: socket.id,
       }
-      this.sendMessage(challenged, Commands.CHALLENGE, JSON.stringify(message))
-      this.sendMessage(socket, Commands.CHALLENGE, JSON.stringify(message))
+      this.sendMessage(challenged, Commands.CHALLENGE, message)
+      this.sendMessage(socket, Commands.CHALLENGE, message)
       this.sendProcessedMessage(socket, Commands.CHALLENGE)
     }
 
     handleChallengeAccept(onChallengeAccept: (challenger: Socket, challenged: Socket) => void) {
-      return (socket: Socket, challengeId: string): void => {
-        const challenge = this.getChallenge(challengeId)
+      return (socket: Socket, challengeId: unknown): void => {
+        const challenge = this.getChallenge(challengeId as string)
         if (challenge.challenged.id !== socket.id) {
           throw new SocketError('You are not allowed to accept this challenge')
         }
         onChallengeAccept(challenge.challenger, challenge.challenged)
 
-        const message = JSON.stringify({
+        const message = {
           challenger: challenge.challenger.id,
           challenged: socket.id,
-        })
+        }
         this.sendMessage(challenge.challenger, Commands.CHALLENGE_CONFIRM, message)
         this.sendMessage(socket, Commands.CHALLENGE_CONFIRM, message)
         this.cancelUserChallenges(socket)

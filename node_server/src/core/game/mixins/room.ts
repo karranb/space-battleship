@@ -20,38 +20,34 @@ function roomMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       }
     }
 
-    handleSetUserName(socket: Socket, message: string): void {
+    handleSetUserName(socket: Socket, message: unknown): void {
       if (socket.data.name) {
         throw new SocketError('Name is already set')
       }
-      const { name, version, countryCode } = JSON.parse(message)
-
+      const { name, version, countryCode } = message as {
+        name: string
+        version: string
+        countryCode: string
+      }
       const parsedName = name.trim()
       if (!parsedName) {
         throw new SocketError('Empty name is not allowed')
       }
       const supportedVersions = process.env.SUPPORTED_VERSIONS?.split(',') ?? []
-      if (!supportedVersions.includes(version)) {
+      if (supportedVersions.length && !supportedVersions.includes(version)) {
         throw new SocketError('Version not supported')
       }
-
       socket.data.name = parsedName
       socket.data.countryCode = countryCode
       this.sendProcessedMessage(socket, Commands.NAME)
-      this.webSocket.broadcastMessage(
-        Commands.NEW_USER_SET,
-        JSON.stringify(this.getUserData(socket))
-      )
+      this.webSocket.broadcastMessage(Commands.NEW_USER_SET, this.getUserData(socket))
       this.handleGetUsersList(socket)
     }
 
-    handleSetCountryCode(socket: Socket, countryCode: string): void {
-      socket.data.countryCode = countryCode
+    handleSetCountryCode(socket: Socket, countryCode: unknown): void {
+      socket.data.countryCode = countryCode as string
       this.sendProcessedMessage(socket, Commands.SET_COUNTRY_CODE)
-      this.webSocket.broadcastMessage(
-        Commands.USER_COUNTRY_CODE_SET,
-        JSON.stringify(this.getUserData(socket))
-      )
+      this.webSocket.broadcastMessage(Commands.USER_COUNTRY_CODE_SET, this.getUserData(socket))
       this.handleGetUsersList(socket)
     }
 
@@ -64,16 +60,13 @@ function roomMixin<TBase extends SpaceshipBattleMixin>(Base: TBase) {
       this.sendMessage(
         socket,
         Commands.GET_USERS_LIST,
-        JSON.stringify(sockets.map(socket => this.getUserData(socket)).filter(({ name }) => !!name))
+        sockets.map(socket => this.getUserData(socket)).filter(({ name }) => !!name)
       )
     }
 
-    handleRoomMessage(socket: Socket, message: string): void {
+    handleRoomMessage(socket: Socket, message: unknown): void {
       this.validateIsSignedIn(socket)
-      this.webSocket.broadcastMessage(
-        Commands.ROOM_MESSAGE,
-        JSON.stringify({ id: socket.id, message })
-      )
+      this.webSocket.broadcastMessage(Commands.ROOM_MESSAGE, { id: socket.id, message })
     }
 
     setupRoomListeners(socket: Socket): void {

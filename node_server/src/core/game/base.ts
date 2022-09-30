@@ -13,20 +13,16 @@ class SpaceshipBattleBase {
     this.webSocket = webSocket
   }
 
-  sendMessage(socket: Socket, command: Commands, message?: string): void {
+  sendMessage(socket: Socket, command: Commands, message?: unknown): void {
     this.webSocket.sendMessage(socket, command, message)
   }
 
   sendErrorMessage(socket: Socket, command: Commands, message: string): void {
-    this.sendMessage(socket, Commands.COMMAND_ERROR, JSON.stringify({ command, message }))
+    this.sendMessage(socket, Commands.COMMAND_ERROR, { command, message })
   }
 
   sendProcessedMessage(socket: Socket, command: Commands, data?: Record<string, unknown>): void {
-    this.sendMessage(
-      socket,
-      Commands.COMMAND_PROCESSED,
-      JSON.stringify({ command, ...(data ?? {}) })
-    )
+    this.sendMessage(socket, Commands.COMMAND_PROCESSED, { command, ...(data ?? {}) })
   }
 
   setTimeout(callback: () => void, time: number): NodeJS.Timeout {

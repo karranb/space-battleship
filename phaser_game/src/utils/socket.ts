@@ -1,5 +1,6 @@
-import { Commands } from 'interfaces/shared'
 import { Socket } from 'socket.io-client'
+
+import { Commands } from 'interfaces/shared'
 
 export type SocketSceneOpenHandler = () => void
 export type SocketSceneCloseHandler = () => void
@@ -22,7 +23,7 @@ export class BaseSocketHandler {
     this.webSocketClient.off()
   }
 
-  protected send(command: Commands, value?: string): void {
+  protected send(command: Commands, value?: string | Record<string, unknown>): void {
     this.webSocketClient.emit(command, value)
   }
 
@@ -36,7 +37,7 @@ export class BaseSocketHandler {
     openHandler: SocketSceneOpenHandler,
     closeHandler: SocketSceneCloseHandler
   ): void {
-    this.webSocketClient.off()
+    this.clearSocketListeners()
     this.webSocketClient.on('connect', openHandler)
     this.webSocketClient.on('disconnect', closeHandler)
     this.webSocketClient.on('connect_error', closeHandler)

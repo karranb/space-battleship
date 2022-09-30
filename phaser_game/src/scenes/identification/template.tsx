@@ -1,13 +1,14 @@
-import React, { useEffect, useRef } from 'react'
-import cx from 'classnames'
 import 'antd/dist/antd.css'
 import { notification } from 'antd'
+import cx from 'classnames'
+import React, { useEffect, useRef } from 'react'
 
+import mainMenuButton from 'assets/main-menu-button.png'
 import { Container } from 'components/container'
 import { TextInput } from 'components/input'
-import { ErrorTypes } from 'utils/constants'
 import i18next from 'i18n'
-import mainMenuButton from 'assets/main-menu-button.png'
+import { ErrorTypes } from 'utils/constants'
+
 import styles from './styles.module.css'
 
 export type IdentificationTemplateProps = {

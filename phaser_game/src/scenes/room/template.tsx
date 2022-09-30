@@ -1,18 +1,17 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { CloseOutlined, DownOutlined,MenuOutlined } from '@ant-design/icons'
+import { Dropdown, Menu, Modal, notification } from 'antd'
 import cx from 'classnames'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import buttonBackground from 'assets/button-background.png'
 import tab from 'assets/tab.png'
-
 import { Container } from 'components/container'
 import { TextInput } from 'components/input'
 import i18next from 'i18n'
+import { COUNTRIES } from 'utils/countries'
+import { debounce } from 'utils/ui'
 
 import styles from './styles.module.css'
-import debounce from 'lodash/debounce'
-import { Dropdown, Menu, Modal, notification } from 'antd'
-import { MenuOutlined, CloseOutlined, DownOutlined } from '@ant-design/icons'
-import { COUNTRIES } from 'utils/constants'
 
 export enum MessageType {
   USER = 'USER',
@@ -49,8 +48,8 @@ export type RoomTemplateProps = {
   countryCode: string
 }
 
-const debounceOptions = { leading: true, trailing: false }
-const debounceTime = 300
+// const debounceOptions = { leading: true, trailing: false }
+// const debounceTime = 300
 
 export const RoomTemplate = ({
   countryCode,
@@ -70,7 +69,7 @@ export const RoomTemplate = ({
   const [selectedUser, setSelectedUser] = useState<string | undefined>(undefined)
 
   const debouncedChallengeClick = useCallback(
-    debounce(() => handleSubmitChallenge(selectedUser), debounceTime, debounceOptions),
+    debounce(() => handleSubmitChallenge(selectedUser)),
     [selectedUser]
   )
 
@@ -94,16 +93,12 @@ export const RoomTemplate = ({
   )
 
   const debounceSendMessageClick = useCallback(
-    debounce(
-      () => {
-        handleSubmitMessage(inputRef.current?.value)
-        if (inputRef.current) {
-          inputRef.current.value = ''
-        }
-      },
-      debounceTime,
-      debounceOptions
-    ),
+    debounce(() => {
+      handleSubmitMessage(inputRef.current?.value)
+      if (inputRef.current) {
+        inputRef.current.value = ''
+      }
+    }),
     []
   )
 

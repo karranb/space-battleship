@@ -1,5 +1,6 @@
-import { GameTemplate, GameTemplateProps, Message } from './template'
 import BaseUIHandler from 'utils/ui'
+
+import { GameTemplate, GameTemplateProps, Message } from './template'
 
 export enum ResultTypes {
   victory = 'victory',

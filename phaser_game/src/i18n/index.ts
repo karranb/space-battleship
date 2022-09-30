@@ -1,4 +1,5 @@
 import universalLanguageDetect from '@unly/universal-language-detector'
+
 import i18next from 'i18next'
 
 import en from './langs/en'

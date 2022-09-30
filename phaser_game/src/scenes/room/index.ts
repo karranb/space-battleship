@@ -1,12 +1,14 @@
 import 'phaser'
 import { Socket } from 'socket.io-client'
 
-import { ErrorTypes, SCENES } from 'utils/constants'
-import debounce from 'lodash/debounce'
+import i18next from 'i18n'
+import { User, UsersIndex } from 'interfaces/shared'
+import { ErrorTypes, SCENES, StorageKeys } from 'utils/constants'
+import { getFromLocalStorage, setToLocalStorage } from 'utils/storage'
+import { debounce } from 'utils/ui'
 
 import RoomSocketHandler from './socket'
 import RoomUI from './ui'
-import i18next from 'i18n'
 
 class Room extends Phaser.Scene {
   private UI?: RoomUI
@@ -23,36 +25,28 @@ class Room extends Phaser.Scene {
     this.socketHandler = new RoomSocketHandler(data.webSocketClient)
     this.returnKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
     this.reason = data.reason
-    this.countryCode = data.countryCode ?? localStorage.getItem('countryCode') ?? ''
+    this.countryCode = data.countryCode ?? getFromLocalStorage(StorageKeys.countryCode) ?? ''
   }
 
   setupWebsocketListeners = (): void => {
-    const handleGetUsersList = (value: string): void => {
-      const users = JSON.parse(value).reduce(
-        (
-          acc: Record<string, string>,
-          {
-            id,
-            name,
-            isPlaying,
-            countryCode,
-          }: { id: string; name: string; isPlaying: boolean; countryCode: string }
-        ) => ({
+    const handleGetUsersList = (value: unknown): void => {
+      const users = (value as User[]).reduce(
+        (acc: UsersIndex, user: User) => ({
           ...acc,
-          [id]: { name, isPlaying, countryCode },
+          [user.id]: { name: user.name, isPlaying: user.isPlaying, countryCode: user.countryCode },
         }),
-        {}
+        {} as UsersIndex
       )
       this.UI?.updateUsers(users)
     }
 
-    const handleUserDisconnected = (value: string): void => {
-      this.UI?.addQuittedMessage(value)
-      this.UI?.removeUser(value)
+    const handleUserDisconnected = (value: unknown): void => {
+      this.UI?.addQuittedMessage(value as string)
+      this.UI?.removeUser(value as string)
     }
 
-    const handleCloseChallenge = (value: string): void => {
-      const { challengeId, reason } = JSON.parse(value)
+    const handleCloseChallenge = (value: unknown): void => {
+      const { challengeId, reason } = value as { challengeId: string; reason: string }
       if (reason === 'TIMEOUT') {
         this.UI?.setChallengeClosedMessage(challengeId, i18next.t('The challenge timed out'))
         return
@@ -64,13 +58,13 @@ class Room extends Phaser.Scene {
       )
     }
 
-    const handleErrorChallenge = (value: string): void => {
-      const { message } = JSON.parse(value)
+    const handleErrorChallenge = (value: unknown): void => {
+      const { message } = value as { message: string }
       this.UI?.addErrorMessage(message)
     }
 
-    const handleAcceptChallenge = (message: string): void => {
-      const { challenger, challenged } = JSON.parse(message)
+    const handleAcceptChallenge = (message: unknown): void => {
+      const { challenger, challenged } = message as { challenger: string; challenged: string }
       const challengerName = this.UI?.getUserName(challenger)
       const challengedName = this.UI?.getUserName(challenged)
       this.scene.start(SCENES.ShipsSelect, {
@@ -82,8 +76,12 @@ class Room extends Phaser.Scene {
       })
     }
 
-    const handleChallenge = (value: string): void => {
-      const { challengeId, challengerId, challengedId } = JSON.parse(value)
+    const handleChallenge = (value: unknown): void => {
+      const { challengeId, challengerId, challengedId } = value as {
+        challengeId: string
+        challengerId: string
+        challengedId: string
+      }
       if (this.socketHandler?.isMe(challengedId)) {
         this.UI?.addChallengedMessage(challengerId, challengeId)
         return
@@ -93,8 +91,8 @@ class Room extends Phaser.Scene {
       }
     }
 
-    const handleUserConnected = (value: string): void => {
-      const item = JSON.parse(value)
+    const handleUserConnected = (value: unknown): void => {
+      const item = value as User
       this.UI?.updateUsers({
         ...this.UI.getUsers(),
         [item.id]: {
@@ -106,8 +104,8 @@ class Room extends Phaser.Scene {
       this.UI?.addJoinedMessage(item.name)
     }
 
-    const handleRoomMessage = (value: string): void => {
-      const { id, message } = JSON.parse(value)
+    const handleRoomMessage = (value: unknown): void => {
+      const { id, message } = value as { id: string; message: string }
       this.UI?.addUserMessage(id, message)
     }
 
@@ -125,8 +123,8 @@ class Room extends Phaser.Scene {
       this.UI?.addBackFromGameMessage(socketId)
     }
 
-    const handleUpdateCountryCode = (value: string) => {
-      const { id, countryCode } = JSON.parse(value)
+    const handleUpdateCountryCode = (value: unknown) => {
+      const { id, countryCode } = value as { id: string; countryCode: string }
       this.UI?.updateUserCountryCode(id, countryCode)
     }
 
@@ -172,7 +170,7 @@ class Room extends Phaser.Scene {
       },
       handleUpdateFlag: (countryCode: string) => {
         this.socketHandler?.sendUpdateFlag(countryCode)
-        localStorage.setItem('countryCode', countryCode)
+        setToLocalStorage(StorageKeys.countryCode, countryCode)
         this.UI?.updateProps({ countryCode })
       },
       handleRefuseChallengeClick: (id: string) => this.socketHandler?.sendMessageRefuse(id),
@@ -187,13 +185,7 @@ class Room extends Phaser.Scene {
 
     this.returnKey?.on(
       'down',
-      debounce(
-        () => {
-          this.UI?.sendMessage()
-        },
-        300,
-        { leading: true, trailing: false }
-      )
+      debounce(() => this.UI?.sendMessage())
     )
   }
 

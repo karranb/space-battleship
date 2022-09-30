@@ -1,15 +1,16 @@
 import './style.css'
 import 'normalize.css'
 import 'phaser'
+import { AppUpdate, AppUpdateAvailability } from '@robingenz/capacitor-app-update'
+
 import { PHASER_CONFIG } from './config/phaser'
+import AboutScene from 'scenes/about'
+import Boot from 'scenes/boot'
+import GameScene from 'scenes/game'
 import Identification from 'scenes/identification'
 import Room from 'scenes/room'
-import { SCENES } from './utils/constants'
-import Boot from 'scenes/boot'
 import ShipsSelect from 'scenes/ships-select'
-import GameScene from 'scenes/game'
-import { AppUpdate, AppUpdateAvailability } from '@robingenz/capacitor-app-update'
-import AboutScene from 'scenes/about'
+import { SCENES } from './utils/constants'
 
 class Game extends Phaser.Game {
   constructor() {

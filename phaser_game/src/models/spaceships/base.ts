@@ -8,6 +8,12 @@ export enum SpaceshipColors {
   BLUE = 'blue',
 }
 
+export enum SpaceshipStates {
+  MOVING = 'MOVING',
+  STOPPED = 'STOPPED',
+  DESTROYED = 'DESTROYED',
+}
+
 export type BaseSpaceshipProps = {
   x: number
   y: number
@@ -17,7 +23,7 @@ export type BaseSpaceshipProps = {
   scene: Game
   angle: number
   id?: number
-  state?: 'MOVING' | 'STOPPED' | 'DESTROYED'
+  state?: SpaceshipStates
   spaceshipName?: SpaceshipsTypes
   owner?: Player
   color: SpaceshipColors
@@ -27,7 +33,7 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
   x: number
   y: number
   scene: Game
-  state = 'STOPPED'
+  state = SpaceshipStates.STOPPED
 
   declare body: Phaser.Physics.Arcade.Body
   protected id?: number
@@ -44,8 +50,6 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
   protected progressBar?: Phaser.GameObjects.Graphics
   protected color?: SpaceshipColors
   protected spaceshipName?: SpaceshipsTypes
-  // protected width?: number
-  // protected height?: number
 
   constructor({
     scene,
@@ -59,9 +63,7 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     id,
     color,
     spaceshipName,
-  }: // width,
-  // height,
-  BaseSpaceshipProps) {
+  }: BaseSpaceshipProps) {
     const texturePrefix = `${spaceshipName}-${color}`
     const textures = {
       stopped: `${texturePrefix}-stopped`,
@@ -69,7 +71,6 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     }
     super(scene, x, y, textures.stopped)
     this.textures = textures
-
     this.spaceshipName = spaceshipName
     this.textures = textures
     this.play(textures.stopped)
@@ -86,6 +87,10 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     this.owner = owner
     this.setRotation(Phaser.Math.DegToRad(angle))
     this.color = color
+  }
+
+  getRadius() {
+    return this.body.radius
   }
 
   getDisplayWidth() {
@@ -121,8 +126,13 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
       },
     })
     const line = new Phaser.Geom.Line(this.x, this.y, x, y)
-    this.destination = new Phaser.Math.Vector2(x, y)
     this.pathGraphic.strokeLineShape(line)
+
+    this.destination = new Phaser.Math.Vector2(x, y)
+  }
+
+  getDestination() {
+    return this.destination
   }
 
   setTarget(x: number, y: number, targetSprite?: Phaser.GameObjects.Sprite): void {
@@ -133,13 +143,8 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     this.targetSprite = targetSprite
   }
 
-  startRound(): void {
-    this.pathGraphic?.destroy()
-    this.targetSprite?.destroy()
+  rotateToDestination() {
     if (this.destination) {
-      this.play(this.textures.moving)
-      this.state = 'MOVING'
-      this.scene.physics.moveToObject(this, this.destination, 50)
       const angle = Phaser.Math.Angle.Between(
         this.x,
         this.y,
@@ -150,6 +155,17 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  startRound(): void {
+    this.pathGraphic?.destroy()
+    this.targetSprite?.destroy()
+    this.rotateToDestination()
+    if (this.destination) {
+      this.play(this.textures.moving)
+      this.state = SpaceshipStates.MOVING
+      this.scene.physics.moveToObject(this, this.destination, 50)
+    }
+  }
+
   shoot(): SingleBullet | undefined {
     if (this.target) {
       return new SingleBullet(this.scene, this.x, this.y, this.target, this)
@@ -157,12 +173,16 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     return undefined
   }
 
+  getTarget() {
+    return this.target
+  }
+
   endRound(): void {
     if (this.destination) {
       this.body.setVelocity(0, 0)
     }
     this.play(this.textures.stopped)
-    this.state = 'STOPPED'
+    this.state = SpaceshipStates.STOPPED
     this.destination = undefined
     this.target = undefined
   }
@@ -171,27 +191,27 @@ abstract class BaseSpaceship extends Phaser.Physics.Arcade.Sprite {
     this.life -= damage
     if (this.life <= 0) {
       this.destroy()
-    } else {
-      if (this.hitTimer) {
-        this.hitTimer.destroy()
-        this.setAlpha(1)
-      }
-      this.hitTimer = this.scene.time.addEvent({
-        delay: 50,
-        callback: () => {
-          if ((this.hitTimer?.getRepeatCount() ?? 0) > 5) {
-            this.alpha = this.alpha - 0.1
-          } else {
-            this.alpha = this.alpha + 0.1
-          }
-        },
-        repeat: 10,
-      })
+      return
     }
+    if (this.hitTimer) {
+      this.hitTimer.destroy()
+      this.setAlpha(1)
+    }
+    this.hitTimer = this.scene.time.addEvent({
+      delay: 50,
+      callback: () => {
+        if ((this.hitTimer?.getRepeatCount() ?? 0) > 5) {
+          this.alpha = this.alpha - 0.1
+        } else {
+          this.alpha = this.alpha + 0.1
+        }
+      },
+      repeat: 10,
+    })
   }
 
   destroy(): void {
-    this.state = 'DESTROYED'
+    this.state = SpaceshipStates.DESTROYED
     this.scene?.addExplosion(this.x, this.y)
     this.destroyProgressBar()
     this.hitTimer?.destroy()

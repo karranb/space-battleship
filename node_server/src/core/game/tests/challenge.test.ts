@@ -51,14 +51,14 @@ describe('Challenge logic', () => {
     clientSocketWithName.emit(Commands.CHALLENGE, clientSocketChallenged.id)
 
     const promiseChallenge = new Promise(resolve => {
-      clientSocketChallenged.on(Commands.CHALLENGE, (value: string) => {
-        expect(JSON.parse(value).challengerId).toBe(clientSocketWithName.id)
+      clientSocketChallenged.on(Commands.CHALLENGE, value => {
+        expect(value.challengerId).toBe(clientSocketWithName.id)
         resolve(true)
       })
     })
     const promiseChallengeSent = new Promise(resolve => {
-      clientSocketWithName.on(Commands.COMMAND_PROCESSED, (value: string) => {
-        const { command } = JSON.parse(value)
+      clientSocketWithName.on(Commands.COMMAND_PROCESSED, value => {
+        const { command } = value
         expect(command).toBe(Commands.CHALLENGE)
         resolve(true)
       })
@@ -69,8 +69,8 @@ describe('Challenge logic', () => {
   it("Can't Challenge another user if did not set name", async done => {
     clientSocketWithoutName.emit(Commands.CHALLENGE, clientSocketChallenged.id)
 
-    clientSocketWithoutName.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketWithoutName.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
 
       expect(command).toBe(Commands.CHALLENGE)
       done()
@@ -80,8 +80,8 @@ describe('Challenge logic', () => {
   it("Can't Challenge a user that quitted", async done => {
     clientSocketChallenged.close()
     clientSocketChallenger.emit(Commands.CHALLENGE, clientSocketChallenged.id)
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.CHALLENGE)
       done()
     })
@@ -92,8 +92,8 @@ describe('Challenge logic', () => {
 
     clientSocketWithName.emit(Commands.CHALLENGE, clientSocketChallenged.id)
 
-    clientSocketWithName.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.CHALLENGE)
       done()
     })
@@ -104,8 +104,8 @@ describe('Challenge logic', () => {
 
     clientSocketChallenger.emit(Commands.CHALLENGE, clientSocketWithName.id)
 
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.CHALLENGE)
       done()
     })
@@ -117,8 +117,8 @@ describe('Challenge logic', () => {
 
   it('Challenge is cancelled after user quit', async done => {
     clientSocketChallenged.close()
-    clientSocketChallenger.on(Commands.CHALLENGE_CLOSE, (value: string) => {
-      const { challengeId: retrievedChallengeId } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.CHALLENGE_CLOSE, value => {
+      const { challengeId: retrievedChallengeId } = value
       expect(retrievedChallengeId).toBe(challengeId)
       done()
     })
@@ -135,8 +135,8 @@ describe('Challenge logic', () => {
       clientSocketChallenged
     )
 
-    clientSocketChallenger.on(Commands.CHALLENGE_CLOSE, (value: string) => {
-      const { challengeId: retrievedChallengeId } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.CHALLENGE_CLOSE, value => {
+      const { challengeId: retrievedChallengeId } = value
       expect(retrievedChallengeId).toBe(newChallengeId)
       done()
     })
@@ -149,20 +149,20 @@ describe('Challenge logic', () => {
   test('Challenger can cancel challenge', async done => {
     clientSocketChallenger.emit(Commands.CHALLENGE_CLOSE, challengeId)
 
-    const validateMessage = (value: string): void => {
-      const { challengeId: retrievedChallengeId } = JSON.parse(value)
+    const validateMessage = (value: { challengeId: string }): void => {
+      const { challengeId: retrievedChallengeId } = value
       expect(retrievedChallengeId).toBe(challengeId)
     }
 
     const promise1 = new Promise(resolve => {
-      clientSocketChallenger.on(Commands.CHALLENGE_CLOSE, (value: string) => {
+      clientSocketChallenger.on(Commands.CHALLENGE_CLOSE, value => {
         validateMessage(value)
         resolve(true)
       })
     })
 
     const promise2 = new Promise(resolve => {
-      clientSocketChallenged.on(Commands.CHALLENGE_CLOSE, (value: string) => {
+      clientSocketChallenged.on(Commands.CHALLENGE_CLOSE, value => {
         validateMessage(value)
         resolve(true)
       })
@@ -176,16 +176,16 @@ describe('Challenge logic', () => {
     clientSocketChallenged.emit(Commands.CHALLENGE_CLOSE, challengeId)
 
     const promise1 = new Promise(resolve => {
-      clientSocketChallenged.on(Commands.CHALLENGE_CLOSE, (value: string) => {
-        const { challengeId: retrievedChallengeId } = JSON.parse(value)
+      clientSocketChallenged.on(Commands.CHALLENGE_CLOSE, value => {
+        const { challengeId: retrievedChallengeId } = value
         expect(retrievedChallengeId).toBe(challengeId)
         resolve(true)
       })
     })
 
     const promise2 = new Promise(resolve => {
-      clientSocketChallenger.on(Commands.CHALLENGE_CLOSE, (value: string) => {
-        const { challengeId: retrievedChallengeId } = JSON.parse(value)
+      clientSocketChallenger.on(Commands.CHALLENGE_CLOSE, value => {
+        const { challengeId: retrievedChallengeId } = value
         expect(retrievedChallengeId).toBe(challengeId)
         resolve(true)
       })
@@ -200,8 +200,8 @@ describe('Challenge logic', () => {
     await timeout(10)
     clientSocketChallenger.emit(Commands.CHALLENGE_CLOSE, challengeId)
 
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.CHALLENGE_CLOSE)
       done()
     })
@@ -210,8 +210,8 @@ describe('Challenge logic', () => {
   it("Can't cancel inexistent challenge", async done => {
     clientSocketWithName.emit(Commands.CHALLENGE_CLOSE, 'invalid')
 
-    clientSocketWithName.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.CHALLENGE_CLOSE)
       done()
     })
@@ -223,8 +223,8 @@ describe('Challenge logic', () => {
 
   it('Can accept challenge', async done => {
     const promise1 = new Promise(resolve => {
-      clientSocketChallenged.on(Commands.CHALLENGE_CONFIRM, (value: string) => {
-        const { challenged, challenger } = JSON.parse(value)
+      clientSocketChallenged.on(Commands.CHALLENGE_CONFIRM, value => {
+        const { challenged, challenger } = value
         expect(challenged).toBe(clientSocketChallenged.id)
         expect(challenger).toBe(clientSocketChallenger.id)
         resolve(true)
@@ -232,8 +232,8 @@ describe('Challenge logic', () => {
     })
 
     const promise2 = new Promise(resolve => {
-      clientSocketChallenger.on(Commands.CHALLENGE_CONFIRM, (value: string) => {
-        const { challenged, challenger } = JSON.parse(value)
+      clientSocketChallenger.on(Commands.CHALLENGE_CONFIRM, value => {
+        const { challenged, challenger } = value
         expect(challenged).toBe(clientSocketChallenged.id)
         expect(challenger).toBe(clientSocketChallenger.id)
         resolve(true)
@@ -249,8 +249,8 @@ describe('Challenge logic', () => {
   test("Challenger Can't accept challenge", async done => {
     clientSocketChallenger.emit(Commands.CHALLENGE_CONFIRM, challengeId)
 
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.CHALLENGE_CONFIRM)
       done()
     })
@@ -259,8 +259,8 @@ describe('Challenge logic', () => {
   it("Can't accept inexistent challenge", async done => {
     clientSocketChallenger.emit(Commands.CHALLENGE_CONFIRM, 'invalid')
 
-    clientSocketChallenger.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketChallenger.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.CHALLENGE_CONFIRM)
       done()
     })
@@ -269,8 +269,8 @@ describe('Challenge logic', () => {
   it("Can't accept others challenge", async done => {
     clientSocketWithName.emit(Commands.CHALLENGE_CONFIRM, challengeId)
 
-    clientSocketWithName.on(Commands.COMMAND_ERROR, (value: string) => {
-      const { command } = JSON.parse(value)
+    clientSocketWithName.on(Commands.COMMAND_ERROR, value => {
+      const { command } = value
       expect(command).toBe(Commands.CHALLENGE_CONFIRM)
       done()
     })

@@ -1,20 +1,19 @@
-import React, { useCallback, useRef } from 'react'
-
-import { TextInput } from 'components/input'
-import { HEIGHT, WIDTH } from 'utils/constants'
-import buttonBackground from 'assets/button-background.png'
-import spaceshipArrowImage from 'assets/spaceship-select-arrow.png'
-
-import styles from './styles.module.css'
-import debounce from 'lodash/debounce'
-import i18next from 'i18n'
-import { ResultTypes } from './ui'
-
-import victoryBadge from 'assets/victory_badge2.png'
-import notVictoryBadge from 'assets/not_victory_badge.png'
 import { Tooltip } from 'antd'
 import { TooltipPlacement } from 'antd/lib/tooltip'
+import React, { useCallback, useRef } from 'react'
+
+import buttonBackground from 'assets/button-background.png'
+import notVictoryBadge from 'assets/not_victory_badge.png'
+import spaceshipArrowImage from 'assets/spaceship-select-arrow.png'
+import victoryBadge from 'assets/victory_badge2.png'
+import { TextInput } from 'components/input'
+import i18next from 'i18n'
+import { HEIGHT, WIDTH } from 'utils/constants'
+import { debounce } from 'utils/ui'
+
 import GameSocketHandler from './socket'
+import styles from './styles.module.css'
+import { ResultTypes } from './ui'
 
 export type Message = {
   name?: string
@@ -64,16 +63,12 @@ export const GameTemplate = ({
 }: GameTemplateProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const debounceSendMessageClick = useCallback(
-    debounce(
-      () => {
-        handleSubmitMessage?.(inputRef.current?.value ?? '')
-        if (inputRef.current) {
-          inputRef.current.value = ''
-        }
-      },
-      300,
-      { leading: true, trailing: false }
-    ),
+    debounce(() => {
+      handleSubmitMessage?.(inputRef.current?.value ?? '')
+      if (inputRef.current) {
+        inputRef.current.value = ''
+      }
+    }),
     []
   )
 
@@ -165,7 +160,10 @@ export const GameTemplate = ({
         style={{ left: `${WIDTH - domWidth}px`, width: `${domWidth}px`, height: `${HEIGHT}px` }}
       >
         <div className={styles.giveUpButton} onClick={() => handleGiveUpClick?.()}>
-          <>X{' - '}{i18next.t('GIVE UP')}</>
+          <>
+            X{' - '}
+            {i18next.t('GIVE UP')}
+          </>
           <img src={buttonBackground} className={styles.buttonBackground} />
         </div>
         <div className={styles.boxWrapper}>
@@ -180,17 +178,6 @@ export const GameTemplate = ({
 
         <div className={styles.separator} />
 
-        {/* <p className={styles.tutorial}>
-          <>1. {i18next.t('Click on one of your spaceships')}</>
-          <br />
-          <>2. {i18next.t('Select a destination inside the reachable area')}</>
-          <br />
-          <>3. {i18next.t('Click on a place to shoot')}</>
-          <br />
-          <>4. {i18next.t('Repeat steps 1-3 to the other spaceships')}</>
-          <br />
-          <>5. {i18next.t('Press Done')}</>
-        </p> */}
         {!isWaitingOponent ? (
           <div className={styles.doneButton} onClick={() => handleSubmitReady?.()}>
             <>{i18next.t('DONE')}</>

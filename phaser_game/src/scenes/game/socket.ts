@@ -1,4 +1,5 @@
 import { Socket } from 'socket.io-client'
+
 import { Commands } from 'interfaces/shared'
 import { BaseSocketHandler } from 'utils/socket'
 
@@ -11,7 +12,7 @@ class GameSocketHandler extends BaseSocketHandler {
     this.webSocketClient.off()
   }
 
-  public sendClose(message: string): void {
+  public sendClose(message: unknown): void {
     this.webSocketClient.emit(Commands.CLOSE_GAME, message)
   }
 
@@ -20,14 +21,11 @@ class GameSocketHandler extends BaseSocketHandler {
   }
 
   public sendSetDestination(spaceship: number, x: number, y: number): void {
-    this.webSocketClient.emit(
-      Commands.SET_SPACESHIP_DESTINATION,
-      JSON.stringify({ spaceship, x, y })
-    )
+    this.webSocketClient.emit(Commands.SET_SPACESHIP_DESTINATION, { spaceship, x, y })
   }
 
   public sendSetTarget(spaceship: number, x: number, y: number): void {
-    this.webSocketClient.emit(Commands.SET_SPACESHIP_TARGET, JSON.stringify({ spaceship, x, y }))
+    this.webSocketClient.emit(Commands.SET_SPACESHIP_TARGET, { spaceship, x, y })
   }
 
   public sendRoundStarted(): void {

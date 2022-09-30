@@ -1,4 +1,5 @@
 import { SpaceshipsTypes } from 'interfaces/shared'
+
 import BaseSpaceship, { BaseSpaceshipProps } from './base'
 
 class Fast extends BaseSpaceship {
@@ -32,6 +33,10 @@ class Fast extends BaseSpaceship {
   update(): Fast {
     super.update()
     return this
+  }
+
+  getClass() {
+    return Fast
   }
 }
 
