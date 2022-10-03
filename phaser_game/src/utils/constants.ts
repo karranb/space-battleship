@@ -18,4 +18,5 @@ export enum ErrorTypes {
 export enum StorageKeys {
   countryCode = 'countryCode',
   username = 'username',
+  volume = 'volume',
 }

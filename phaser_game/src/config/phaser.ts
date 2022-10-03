@@ -14,6 +14,9 @@ export const PHASER_CONFIG = {
   dom: { createContainer: true },
   title: 'Title',
   version: '0.0.1',
+  audio: {
+    disableWebAudio: true,
+  },
   physics: {
     default: 'arcade',
     arcade: {

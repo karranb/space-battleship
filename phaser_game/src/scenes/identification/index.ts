@@ -1,6 +1,8 @@
 import 'phaser'
 import axios from 'axios'
 
+import AFewJumpsAwayMP3 from 'assets/a-few-jumps-away.mp3'
+import AFewJumpsAwayOGG from 'assets/a-few-jumps-away.ogg'
 import { Commands, ProcessedCommandMessage } from 'interfaces/shared'
 import { ErrorTypes, SCENES, StorageKeys } from 'utils/constants'
 import BaseScene from 'utils/phaser'
@@ -13,9 +15,20 @@ class Identification extends BaseScene {
   private UI?: IdentificationUI
   private returnKey?: Phaser.Input.Keyboard.Key
   private socketHandler?: IdentificationSocketHandler
+  private music?: Phaser.Sound.WebAudioSound
+  private volume = 0.5
+  private firstInteraction = false
 
   constructor() {
     super(SCENES.Identification)
+    try {
+      const storagedValue = getFromLocalStorage(StorageKeys.volume)
+      if (storagedValue) {
+        this.volume = Number(storagedValue)
+      }
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   clearData(): void {
@@ -31,7 +44,7 @@ class Identification extends BaseScene {
         return storageCountryCode
       }
     } catch (err) {
-      null
+      console.error(err)
     }
 
     return axios
@@ -58,15 +71,16 @@ class Identification extends BaseScene {
     const handleNameMessage = (message: unknown): void => {
       const { command } = message as ProcessedCommandMessage
       if (command === Commands.NAME) {
+        this.fadeOutMusic()
         this.redirect(SCENES.Room, {
           webSocketClient: this.socketHandler?.getWebSocketClient(),
           countryCode,
+          volume: this.volume,
         })
       }
     }
 
     const handleError = (...props: any[]) => {
-      // eslint-disable-next-line no-console
       console.error('error', props)
       this.UI?.updateProps({ showLoading: false, error: ErrorTypes.not_able_to_connect })
     }
@@ -85,9 +99,26 @@ class Identification extends BaseScene {
       this.UI?.updateProps({ error: undefined })
     }
 
-    const handleVersusComputerClick = () => this.redirect(SCENES.ShipsSelect)
+    const handleVersusComputerClick = () => {
+      this.redirect(SCENES.ShipsSelect, {
+        volume: this.volume,
+        music: this.music,
+        fadeOutMusic: this.fadeOutMusic,
+      })
+    }
 
     const handleAboutClick = () => this.redirect(SCENES.About)
+
+    const handleMuteClick = () => {
+      const isMuted = !this.UI?.getProps()?.isMuted
+      this.UI?.updateProps({
+        isMuted,
+      })
+      this.volume = isMuted ? 0 : 0.5
+
+      setToLocalStorage(StorageKeys.volume, `${this.volume}`)
+      this.music?.setVolume(this.volume)
+    }
 
     this.UI = new IdentificationUI(this, {
       defaultName,
@@ -96,8 +127,26 @@ class Identification extends BaseScene {
       handleCloseMessage,
       handleSubmit,
       handleVersusComputerClick,
+      handleMuteClick,
       showLoading: false,
     })
+  }
+
+  fadeOutMusic = () => {
+    if (!this.music) {
+      return
+    }
+    const music = this.music
+    this.music = undefined
+    const interval = setInterval(() => {
+      const newVolume = music.volume - 0.05
+      if (newVolume <= 0) {
+        music.stop()
+        clearInterval(interval)
+        return
+      }
+      music.setVolume(newVolume)
+    }, 100)
   }
 
   async init(data: { error: ErrorTypes }): Promise<void> {
@@ -108,11 +157,39 @@ class Identification extends BaseScene {
     this.returnKey?.on('down', () => this.UI?.submit())
   }
 
+  playTheme() {
+    if (!this.music) {
+      this.music = this.sound.add('menu_theme') as Phaser.Sound.WebAudioSound
+    }
+    this.music.play({ volume: this.volume })
+  }
+
+  setupMusic() {
+    const loader = this.load.audio('menu_theme', [AFewJumpsAwayOGG, AFewJumpsAwayMP3])
+    loader.start()
+
+    const handleFirstUserInteraction = () => {
+      this.firstInteraction = true
+      this.playTheme()
+      window.removeEventListener('scroll', handleFirstUserInteraction)
+      window.removeEventListener('click', handleFirstUserInteraction)
+    }
+    if (!this.firstInteraction) {
+      window.addEventListener('scroll', handleFirstUserInteraction)
+      window.addEventListener('click', handleFirstUserInteraction)
+    }
+  }
+
   create(): void {
-    // hack to try to hide the search bar
-    setTimeout(() => {
-      window.scrollTo(0, 100)
-    }, 100)
+    // hack to hide the searchbar
+    setTimeout(() => window.scrollTo(0, 100), 100)
+
+    if (!this.music) {
+      this.setupMusic()
+
+      // hack to try to start music
+      setTimeout(() => this.playTheme(), 100)
+    }
   }
 }
 

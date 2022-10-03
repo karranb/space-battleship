@@ -1,6 +1,20 @@
-> TODO: 
+### Requirements:
 
-- validate messages
-- readme
+- Node
+- Yarn
 
-NODE_PATH=dist pm2 start node dist/index.js
+### How to run locally
+
+- Install dependencies
+
+```bash
+$ yarn install
+```
+
+- Create a .env.development file based on the env.example
+
+- Start server
+
+```bash
+$ yarn dev
+```

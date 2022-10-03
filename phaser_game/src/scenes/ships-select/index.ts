@@ -12,13 +12,14 @@ import SpaceshipSelectSocketHandler from './socket'
 import ShipsSelectUI from './ui'
 
 class ShipsSelect extends BaseScene {
-  private elements: BaseSpaceship[] = []
-  private challenger?: string
   private challenged?: string
+  private challengedName?: string
+  private challenger?: string
+  private challengerName?: string
+  private elements: BaseSpaceship[] = []
+  private fadeOutMusic?: () => void
   private UI?: ShipsSelectUI
   private socketHandler?: SpaceshipSelectSocketHandler
-  private challengerName?: string
-  private challengedName?: string
 
   constructor() {
     super(SCENES.ShipsSelect)
@@ -34,11 +35,13 @@ class ShipsSelect extends BaseScene {
     challenged: string
     challengedName: string
     challengerName: string
+    fadeOutMusic?: () => void
   }): void {
     this.challenged = data.challenged
     this.challenger = data.challenger
     this.challengerName = data.challengerName
     this.challengedName = data.challengedName
+    this.fadeOutMusic = data.fadeOutMusic
     this.setupUI(data.challenger, data.webSocketClient)
   }
 
@@ -112,6 +115,7 @@ class ShipsSelect extends BaseScene {
       handleSubmit: () => {
         const myChoices = getMyChoices()
         const enemyChoices = getRandomChoices()
+        this.fadeOutMusic?.()
         this.redirect(SCENES.Game, {
           spaceships,
           isChallenger,

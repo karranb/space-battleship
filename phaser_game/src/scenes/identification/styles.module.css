@@ -104,3 +104,15 @@
   margin-top: 20px;
   font-size: 12px;
 }
+
+.soundsButton {
+  color: white;
+  font-family: neuropol;
+  text-align: center;
+  cursor: pointer;
+  text-shadow: 6px 0px 5px #1db4be, 0px 3px 5px #1db4be, -3px -3px 5px #1db4be;
+  font-size: 9px;
+  position: absolute;
+  bottom: 10px;
+  right: 30px;
+}

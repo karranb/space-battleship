@@ -18,6 +18,13 @@ export const AboutTemplate = ({ handleBackClick }: AboutTemplateProps) => {
         {`${i18next.t('Game developed by Karran.')}`}
         <br />
         {`${i18next.t('Suggestions / Bugs can be sent to karranrb@gmail.com')}`}
+        <br />
+        {`${i18next.t('Theme Music: "A few jumps away" by Arthur Vyncke')}`}
+        <br />
+        {`${i18next.t('Assets: ')}`}
+        <a href="https://craftpix.net/product/asteroids-crusher-2d-game-kit/?num=2&count=65&sq=space&pos=1">
+          CraftPix
+        </a>
       </p>
       <div className={styles.messageButton} onClick={handleBackClick}>
         <>{i18next.t('BACK')}</>

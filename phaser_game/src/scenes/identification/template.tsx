@@ -11,14 +11,18 @@ import { ErrorTypes } from 'utils/constants'
 
 import styles from './styles.module.css'
 
+// import { SoundOutlined } from '@ant-design/icons'
+
 export type IdentificationTemplateProps = {
   handleSubmit: (value: string) => void
   defaultName?: string
   showLoading?: boolean
   error?: ErrorTypes
+  isMuted?: boolean
   handleCloseMessage?: () => void
   handleVersusComputerClick: () => void
   handleAboutClick: () => void
+  handleMuteClick: () => void
 }
 
 export const IdentificationTemplate = ({
@@ -29,6 +33,8 @@ export const IdentificationTemplate = ({
   handleAboutClick,
   error,
   handleVersusComputerClick,
+  handleMuteClick,
+  isMuted,
 }: IdentificationTemplateProps) => {
   const inputRef = useRef<HTMLInputElement>(null)
   useEffect(() => {
@@ -75,6 +81,9 @@ export const IdentificationTemplate = ({
         <div className={styles.versusComputer} onClick={() => handleAboutClick()}>
           {`${i18next.t('ABOUT')}`}
         </div>
+      </div>
+      <div className={styles.soundsButton} onClick={() => handleMuteClick?.()}>
+        {isMuted ? `${i18next.t('SOUNDS OFF')}` : `${i18next.t('SOUNDS ON')}`}
       </div>
       <div className={cx(!showLoading && styles.hide)}>
         <p className={styles.connecting}>{`${i18next.t('Connecting')}:...`}</p>

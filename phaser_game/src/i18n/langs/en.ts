@@ -65,4 +65,6 @@ export default {
   SETTINGS: 'SETTINGS',
   ['CHANGE FLAG']: 'CHANGE FLAG',
   ['BACK TO MAIN MENU']: 'BACK TO MAIN MENU',
+  ['SOUNDS ON']: 'SOUNDS ON',
+  ['SOUNDS OFF']: 'SOUNDS OFF',
 }
