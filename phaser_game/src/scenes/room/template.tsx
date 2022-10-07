@@ -173,7 +173,7 @@ export const RoomTemplate = ({
             </div>
             <div className={styles.users}>
               {Object.entries(users).map(([id, user]) => {
-                const imgUrl = user.countryCode ? COUNTRIES[user.countryCode].image : ''
+                const imgUrl = user.countryCode ? COUNTRIES[user.countryCode]?.image : ''
 
                 return (
                   <div
