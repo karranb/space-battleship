@@ -69,4 +69,4 @@ export default {
     ['SOUNDS ON']: 'HANGOK BEKAPCSOLVA',
     ['SOUNDS OFF']: 'HANGOK KIKAPCSOLVA',
   }
-  
+ 
