@@ -56,9 +56,8 @@ export default {
     ['Click where you want your spaceship to shoot at']: 'Kattints oda, ahova szeretnéd, hogy lőjjön űrhajód',
     ['Repeat the process with the other spaceships and press DONE']:
       'Ismételd meg a lépéseket a többi űrhajóval, majd kattints a KÉSZre',
-    ['A játékot Karran készítette']: 'Jogo desenvolvido por Karran.',
-    ['Javasaltokat / Hibákat a karranrb@gmail.com-ra lehet küldeni']:
-      'Sugestões / Bugs podem ser enviados para karranrb@gmail.com',
+    ['Game developed by Karran.']: 'A játékot Karran készítette',
+    ['Suggestions / Bugs can be sent to karranrb@gmail.com']: 'Javasaltokat / Hibákat a karranrb@gmail.com-ra lehet küldeni',
     ABOUT: 'BŐVEBBEN',
     ['Enemy gave up']: 'Az ellenfél feladta',
     ['Your enemy gave up.']: 'Az ellenfeled feladta',
