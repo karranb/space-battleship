@@ -23,6 +23,14 @@
 
 ### Articles
 
+Gameplay Images
+
+![NEW GAME](gameplay-image/newgame.png?raw=true "NEW GAME")
+![NEW GAME](gameplay-image/WAITING.png?raw=true "NEW GAME")
+![NEW GAME](gameplay-image/CHOOSESPACESHIP.png?raw=true "NEW GAME")
+![NEW GAME](gameplay-image/GAMEPLAY.png?raw=true "NEW GAME")
+
+
 ### Todo:
 
 - [ ] CI
