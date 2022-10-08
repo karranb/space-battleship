@@ -1,8 +1,10 @@
 ## Space Battleship
 
+Space Battleship is a Multiplayer spaceship game.
+
+
 ![Space Battleship lmage](./public/images/image.jpg)
 
-Space Battleship is a Multiplayer spaceship game.
 
 **Hosted on / Play Here**
 
