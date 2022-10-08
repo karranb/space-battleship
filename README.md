@@ -1,6 +1,8 @@
 ## Space Battleship
 
-**Space Battleship is a Multiplayer spaceship game**.
+![Space Battleship lmage](./public/images/image.jpg)
+
+Space Battleship is a Multiplayer spaceship game.
 
 **Hosted on / Play Here**
 
@@ -16,7 +18,7 @@
 
 ### Contributing
 
-**Want to contribute to Space Battleship?**, awesome!
+Want to contribute to Space Battleship? awesome!
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
