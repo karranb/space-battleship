@@ -5,13 +5,14 @@ import i18next from 'i18next'
 import en from './langs/en'
 import pt from './langs/pt'
 import hu from './langs/hu'
+import ina from './langs/ina'
 
 const lng = universalLanguageDetect({
-  supportedLanguages: ['en', 'pt', 'hu'],
+  supportedLanguages: ['en', 'pt', 'hu', 'ina'],
   fallbackLanguage: 'en',
 })
 
-const languages: Record<string, Record<string, string>> = { en, pt, hu }
+const languages: Record<string, Record<string, string>> = { en, pt, hu, ina }
 
 const resources = Object.entries(languages).reduce(
   (acc, [key, translation]) => ({
