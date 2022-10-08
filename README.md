@@ -26,9 +26,9 @@
 Gameplay Images
 
 ![NEW GAME](gameplay-image/newgame.png?raw=true "NEW GAME")
-![NEW GAME](gameplay-image/WAITING.png?raw=true "NEW GAME")
-![NEW GAME](gameplay-image/CHOOSESPACESHIP.png?raw=true "NEW GAME")
-![NEW GAME](gameplay-image/GAMEPLAY.png?raw=true "NEW GAME")
+![WAITING FOR OPONENT](gameplay-image/WAITING.png?raw=true "WAITING FOR OPONENT")
+![CHOOSE SPACESHIP](gameplay-image/CHOOSESPACESHIP.png?raw=true "CHOOSE SPACESHIP")
+![GAMEPLAY](gameplay-image/GAMEPLAY.png?raw=true "GAMEPLAY")
 
 
 ### Todo:
