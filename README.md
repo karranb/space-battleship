@@ -21,14 +21,12 @@
 
 **After your pull request is merged**, you can safely delete your branch.
 
-### Articles
+### Gameplay Images
 
-Gameplay Images
-
-![NEW GAME](gameplay-image/newgame.png?raw=true "NEW GAME")
-![WAITING FOR OPONENT](gameplay-image/WAITING.png?raw=true "WAITING FOR OPONENT")
-![CHOOSE SPACESHIP](gameplay-image/CHOOSESPACESHIP.png?raw=true "CHOOSE SPACESHIP")
-![GAMEPLAY](gameplay-image/GAMEPLAY.png?raw=true "GAMEPLAY")
+![NEW GAME](docs/newgame.png?raw=true "NEW GAME")
+![WAITING FOR OPONENT](docs/WAITING.png?raw=true "WAITING FOR OPONENT")
+![CHOOSE SPACESHIP](docs/CHOOSESPACESHIP.png?raw=true "CHOOSE SPACESHIP")
+![GAMEPLAY](docs/GAMEPLAY.png?raw=true "GAMEPLAY")
 
 
 ### Todo:
