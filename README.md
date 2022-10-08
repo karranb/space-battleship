@@ -1,10 +1,12 @@
 ## Space Battleship
 
+**Space Battleship is a Multiplayer spaceship game**.
+
 **Hosted on / Play Here**
 
 - [spacesbattheship.com](https://spacesbattleship.com/)
 - [itch.io](https://karran.itch.io/space-battleship)
-- [Google Play](https://play.google.com/store/apps/details?id=com.spacebattleship.app)
+- [Google Play Store](https://play.google.com/store/apps/details?id=com.spacebattleship.app)
 
 ### Architecture
 
@@ -13,6 +15,8 @@
 - [Frontend](./phaser_game)
 
 ### Contributing
+
+**Want to contribute to Space Battleship?**, awesome!
 
 1. Fork it!
 2. Create your feature branch: `git checkout -b my-new-feature`
