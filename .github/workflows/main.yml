@@ -9,6 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
+
   build-ui:
     runs-on: ubuntu-latest
     defaults:
@@ -24,16 +25,14 @@ jobs:
    
   lint-backend:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./node_server
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
       with:
         node-version: 16
     - run: yarn install
-    - run: yarn lint
+    - run: cd ./node_server && yarn install
+    - run: cd ./node_server && yarn lint
     
   test-backend:
     runs-on: ubuntu-latest
@@ -62,3 +61,4 @@ jobs:
         node-version: 16
     - run: yarn install
     - run: yarn build
+  
