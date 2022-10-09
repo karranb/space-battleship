@@ -7,3 +7,4 @@ node_server/src/static/game
 key
 *.pepk
 *.pem
+.DS_Store
