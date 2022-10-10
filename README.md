@@ -26,6 +26,7 @@
 ![NEW GAME](docs/newgame.png?raw=true "NEW GAME")
 ![WAITING FOR OPONENT](docs/WAITING.png?raw=true "WAITING FOR OPONENT")
 ![CHOOSE SPACESHIP](docs/CHOOSESPACESHIP.png?raw=true "CHOOSE SPACESHIP")
+![INTENSE GAMEPLAY](docs/game.png?raw=true "INTENSE GAMEPLAY")
 ![GAMEPLAY](docs/GAMEPLAY.png?raw=true "GAMEPLAY")
 
 
