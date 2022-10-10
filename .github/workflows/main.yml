@@ -10,11 +10,23 @@ on:
 
 jobs:
 
+  lint-ui:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+    - run: yarn install
+    - run: cd ./phaser_game && yarn install
+    - run: cd ./phaser_game && yarn lint
+
   build-ui:
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./phaser_game
+    needs: [lint-ui]
     steps:
     - uses: actions/checkout@v3
     - uses: actions/setup-node@v3
@@ -61,4 +73,3 @@ jobs:
         node-version: 16
     - run: yarn install
     - run: yarn build
-  
