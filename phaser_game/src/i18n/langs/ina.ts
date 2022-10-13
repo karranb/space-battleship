@@ -22,7 +22,7 @@ export default {
   ['Speed']: 'Kecepatan',
   ['Shield']: 'Tameng',
   ['ARMORY']: 'GUDANG SENJATA',
-  ['GIVE UP']: 'MEENYERAH',
+  ['GIVE UP']: 'MENYERAH',
   ['DONE']: 'SELESAI',
   ['WAITING OPONENT']: 'MENUNGGU LAWAN',
   [`There's no other spaceship/armory option available now, please press done to continue`]: `Tidak ada opsi pesawat ruang angkasa/persenjataan lain yang tersedia sekarang, silakan tekan selesai untuk melanjutkan`,
