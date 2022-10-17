@@ -7,13 +7,14 @@ import fr from './langs/fr'
 import hu from './langs/hu'
 import ina from './langs/ina'
 import pt from './langs/pt'
+import it from './langs/it'
 
 const lng = universalLanguageDetect({
-  supportedLanguages: ['en', 'fr', 'pt', 'hu', 'ina'],
+  supportedLanguages: ['en', 'fr', 'pt', 'hu', 'ina','it'],
   fallbackLanguage: 'en',
 })
 
-const languages: Record<string, Record<string, string>> = { en, fr, pt, hu, ina }
+const languages: Record<string, Record<string, string>> = { en, fr, pt, hu, ina, it }
 
 const resources = Object.entries(languages).reduce(
   (acc, [key, translation]) => ({
