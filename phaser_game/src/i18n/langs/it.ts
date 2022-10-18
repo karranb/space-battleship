@@ -36,7 +36,7 @@ export default {
   ["You can't challenge yourself, select someone else"]:
     "Non puoi sfidare te stesso, seleziona qualcun`altro",
   ['You need to select someone to challenge']: 'Devi selezionare qualcuno da sfidare',
-  ['The opponent']: 'L'avversario',
+  ['The opponent']: "L'avversario",
   [`canceled the challenge`]: `ha annullato la sfida`,
   ['The challenge timed out']: 'La sfida è scaduta',
   ['CHALLENGE']: 'SFIDA',
