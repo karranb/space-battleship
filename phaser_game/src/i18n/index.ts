@@ -6,8 +6,8 @@ import en from './langs/en'
 import fr from './langs/fr'
 import hu from './langs/hu'
 import ina from './langs/ina'
-import pt from './langs/pt'
 import it from './langs/it'
+import pt from './langs/pt'
 
 const lng = universalLanguageDetect({
   supportedLanguages: ['en', 'fr', 'pt', 'hu', 'ina','it'],
