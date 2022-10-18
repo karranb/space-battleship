@@ -10,7 +10,7 @@ import it from './langs/it'
 import pt from './langs/pt'
 
 const lng = universalLanguageDetect({
-  supportedLanguages: ['en', 'fr', 'pt', 'hu', 'ina','it'],
+  supportedLanguages: ['en', 'fr', 'pt', 'hu', 'ina', 'it'],
   fallbackLanguage: 'en',
 })
 
